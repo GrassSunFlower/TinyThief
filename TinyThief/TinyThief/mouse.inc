@@ -84,7 +84,9 @@ eventResponses proc imageID: DWORD
 	.IF step == 5
 		INVOKE isCorrectOrder
 		.IF eax == 1
-			INVOKE MessageBox, NULL, addr szText, addr szCaption, MB_OK
+			mov ebx, pSequenceLength
+			mov pSequence[ebx * 4], IMG_42101
+			add pSequenceLength, 1
 		.ELSE
 			INVOKE resetIcon
 			mov step, 0

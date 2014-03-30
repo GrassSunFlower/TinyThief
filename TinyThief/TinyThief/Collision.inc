@@ -27,6 +27,17 @@ JudgeCollisions proc
 		.ENDIF
 		inc ecx
 	.ENDW
+
+	mov ecx, 0
+	.WHILE ecx < pSequenceLength
+		mov ebx, pSequence[ecx * 4]
+		inc ebx
+		INVOKE JudgeCollision, ebx
+		.IF PassBy != -1
+			jmp	_EXIT
+		.ENDIF
+		inc ecx
+	.ENDW
 _EXIT:
 	ret
 JudgeCollisions endp
