@@ -96,12 +96,9 @@ eventResponses endp
 ; #########################################################################
 
 processScenario0 proc
-	;INVOKE InitItem, IMG_0, 0, 0, 350, 477, 446, 574, 0, 1
-		;INVOKE InitItem, IMG_1, 0, 0, 360, 434, 491, 568, 0, 1
-		;INVOKE InitItem, IMG_2, 0, 0, 363, 436, 423, 499, 0, 1
 	INVOKE clickPosition, 350, 477, 446, 574
 	.IF eax == 1
-		scenario = 1
+		mov Scenario, 1
 	.ENDIF
 	ret
 processScenario0 endp
@@ -109,12 +106,24 @@ processScenario0 endp
 ; #########################################################################
 
 processScenario1 proc
+	INVOKE clickPosition, 0, 0, SCREEN_X, SCREEN_Y
+	.IF eax == 1
+		mov Scenario, 2
+	.ENDIF
 	ret
 processScenario1 endp
 
 ; #########################################################################
 
 processScenario2 proc
+	INVOKE clickPosition, 365, 429, 443, 506
+	.IF eax == 1
+		mov Scenario, 4
+		mov Thief_X, 100
+		mov Thief_Y, 510
+		mov Click_X, 100
+		mov Click_Y, 510
+	.ENDIF
 	ret
 processScenario2 endp
 
