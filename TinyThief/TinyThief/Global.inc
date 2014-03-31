@@ -36,6 +36,20 @@ IMG_42103			equ		27
 IMG_42104			equ		28
 IMG_422				equ		29
 
+IMG_300				equ		31
+IMG_301				equ		32
+IMG_30201			equ		33
+IMG_30202			equ		34
+IMG_30301			equ		35
+IMG_30302			equ		36
+IMG_30401			equ		37
+IMG_30402			equ		38
+IMG_305				equ		39
+IMG_30601			equ		40
+IMG_30602			equ		41
+IMG_30701			equ		42
+IMG_30702			equ		43
+
 ;窗体大小
 SCREEN_X EQU 820
 SCREEN_Y EQU 642
@@ -45,6 +59,7 @@ SCREEN_Y EQU 642
 
 ;----------------------------------------------------------------
 MyItem STRUCT
+	img		dd	0
 	iwidth	dd	0
 	iheight	dd	0
 	x1			dd	0
@@ -95,16 +110,19 @@ MyItem ends
 	drawIcon					dd			IMG_415, IMG_416, IMG_417, IMG_418, IMG_419
 	correctOrder			dd			IMG_415, IMG_416, IMG_417, IMG_418, IMG_419
 	player						dd			5 DUP (?)
-	step							dd			0;五个icon的点击步骤
-	PPTstatus		dd		0	;需要播放PPT的状态
-	Apple			BYTE	0	;是否收集到了苹果
-	Banana			BYTE	0	;是否收集到了香蕉
-	Pear			BYTE	0	;是否收集到了梨子
-	Dog				BYTE	0	;是否收集到了狗？水獭？狐狸？
-	Triangle		BYTE	0	;当前是否拿到了三角
-	Cross			BYTE	0	;当前是否拿到了十字
-	Circle			BYTE	0	;当前是否拿到了圆
-		
+	step							dd			0								;五个icon的点击步骤
+	PPTstatus					dd			0								;需要播放PPT的状态
+	Apple						BYTE			0								;是否收集到了苹果
+	Banana						BYTE			0								;是否收集到了香蕉
+	Pear							BYTE			0								;是否收集到了梨子
+	Dog							BYTE			0								;是否收集到了狗？水獭？狐狸？
+	Triangle					BYTE			0								;当前是否拿到了三角
+	Cross						BYTE			0								;当前是否拿到了十字
+	Circle						BYTE			0								;当前是否拿到了圆
+	Thief_right_s_img		dd			0
+	Thief_left_s_img		dd			0
+	Thief_right_r_img		dd			0
+	Thief_left_r_img		dd			0
 	
 .const
 	szClassName			db			"TinyThiefClass", 0
@@ -116,33 +134,43 @@ MyItem ends
 .code
 
 	InitItem proc id:DWORD, iwidth:DWORD, iheight:DWORD, x1:DWORD, y1:DWORD, x2:DWORD, y2:DWORD, pMethod:BYTE, eClick:BYTE
+		local count:DWORD
 
 		mov eax, id
 		mov ebx, TYPE MyItem
 		mul ebx
-		mov ecx, iwidth
-		mov (MyItem PTR ItemList[eax]).iwidth, ecx
-		mov ecx, iheight
-		mov (MyItem PTR ItemList[eax]).iheight, ecx
-		mov ecx, x1
-		mov (MyItem PTR ItemList[eax]).x1, ecx
-		mov ecx, y1
-		mov (MyItem PTR ItemList[eax]).y1, ecx
-		mov ecx, x2
-		mov (MyItem PTR ItemList[eax]).x2, ecx
-		mov ecx, y2
-		mov (MyItem PTR ItemList[eax]).y2, ecx
-		mov cl, pMethod
-		mov (MyItem PTR ItemList[eax]).pMethod, cl
-		mov cl, eClick
-		mov (MyItem PTR ItemList[eax]).eClick, cl
+		mov count, eax
+		INVOKE LoadBitmap, hInstance, id
+		mov ecx, count
+		mov (MyItem PTR ItemList[ecx]).img, eax
+		mov ebx, iwidth
+		mov (MyItem PTR ItemList[ecx]).iwidth, ebx
+		mov ebx, iheight
+		mov (MyItem PTR ItemList[ecx]).iheight, ebx
+		mov ebx, x1
+		mov (MyItem PTR ItemList[ecx]).x1, ebx
+		mov ebx, y1
+		mov (MyItem PTR ItemList[ecx]).y1, ebx
+		mov ebx, x2
+		mov (MyItem PTR ItemList[ecx]).x2, ebx
+		mov ebx, y2
+		mov (MyItem PTR ItemList[ecx]).y2, ebx
+		mov bl, pMethod
+		mov (MyItem PTR ItemList[ecx]).pMethod, bl
+		mov bl, eClick
+		mov (MyItem PTR ItemList[ecx]).eClick, bl
 	
 		ret
 
 	InitItem endp
 
 	InitItemList proc
-
+	
+		INVOKE InitItem, IMG_0, 0, 0, 0, 0, 0, 0, 0, 1
+		INVOKE InitItem, IMG_1, 0, 0, 0, 0, 0, 0, 0, 1
+		INVOKE InitItem, IMG_2, 0, 0, 0, 0, 0, 0, 0, 1
+		
+		INVOKE InitItem, IMG_400, 0, 0, 0, 0, 0, 0, 0, 1
 		INVOKE InitItem, IMG_401, 65, 143, 74, 43, 139, 96, 0, 1
 		INVOKE InitItem, IMG_402, 65, 143, 194, 43, 259, 96, 0, 1
 		INVOKE InitItem, IMG_403, 65, 143, 309, 39, 374, 93, 0, 1
@@ -169,6 +197,28 @@ MyItem ends
 		INVOKE InitItem, IMG_42103, 62, 109, 319, 438, 381, 491, 0, 0
 		INVOKE InitItem, IMG_42104, 62, 109, 319, 438, 381, 491, 0, 0
 		INVOKE InitItem, IMG_422, 43, 42, 749, 547, 792, 0, 0, 0
+
+		INVOKE InitItem, IMG_301, 93, 101, 45, 61, 138, 162, 0, 0
+		INVOKE InitItem, IMG_30201, 105, 149, 198, 41, 303, 190, 0, 0
+		INVOKE InitItem, IMG_30202, 105, 149, 222, 41, 279, 95, 0, 1
+		INVOKE InitItem, IMG_30301, 105, 149, 311, 36, 416, 185, 0, 0
+		INVOKE InitItem, IMG_30302, 105, 149, 333, 36, 395, 93, 0, 1
+		INVOKE InitItem, IMG_30401, 105, 149, 424, 34, 529, 183, 0, 0
+		INVOKE InitItem, IMG_30402, 105, 149, 444, 34, 508, 90, 0, 1
+		INVOKE InitItem, IMG_305, 45, 133, 543, 46, 587, 179, 0, 0
+		INVOKE InitItem, IMG_30601, 148, 451, 610, 40, 677, 94, 1, 1	
+		INVOKE InitItem, IMG_30602, 105, 149, 685, 354, 746, 407, 1, 1
+		INVOKE InitItem, IMG_30701, 111, 138, 635, 190, 690, 244, 1, 1	
+		INVOKE InitItem, IMG_30702, 111, 138, 635, 204, 690, 257, 1, 1
+		
+		INVOKE LoadBitmap, hInstance, 1111
+		mov Thief_right_s_img, eax
+		INVOKE LoadBitmap, hInstance, 2222
+		mov Thief_left_s_img, eax
+		INVOKE LoadBitmap, hInstance, 3333
+		mov Thief_right_r_img, eax
+		INVOKE LoadBitmap, hInstance, 4444
+		mov Thief_left_r_img, eax
 	
 		ret
 

@@ -29,7 +29,7 @@ PlayMp3File proc hWin:DWORD,NameOfFile:DWORD
             INVOKE mciSendCommand,0,MCI_OPEN,MCI_OPEN_TYPE or MCI_OPEN_ELEMENT,ADDR mciOpenParms
             mov eax,mciOpenParms.wDeviceID
             mov Mp3DeviceID,eax
-            INVOKE mciSendCommand,Mp3DeviceID,MCI_PLAY,MCI_NOTIFY,ADDR mciPlayParms
+            ;INVOKE mciSendCommand,Mp3DeviceID,MCI_PLAY,MCI_NOTIFY,ADDR mciPlayParms
             ret  
 
 PlayMp3File endp
