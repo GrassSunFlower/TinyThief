@@ -65,11 +65,80 @@ isCorrectOrder proc
 isCorrectOrder endp
 
 ; #########################################################################
-
+doorTransition proc imageID: DWORD
+	.IF imageID == IMG_401
+		mov Thief_X, 100
+		mov Thief_Y, 293
+		mov PassBy, -1
+		mov Orientation, 0
+	.ELSEIF imageID == IMG_402
+		mov Thief_X, 445
+		mov Thief_Y, 510
+		mov PassBy, -1
+		mov Orientation, 0
+	.ELSEIF imageID == IMG_403
+		mov Thief_X, 555
+		mov Thief_Y, 290
+		mov PassBy, -1
+		mov Orientation, 0
+	.ELSEIF imageID == IMG_404
+		mov Thief_X, 380
+		mov Thief_Y, 340
+		mov PassBy, -1
+		mov Orientation, 0
+	.ELSEIF imageID == IMG_405
+		mov Thief_X, 682
+		mov Thief_Y, 146
+		mov PassBy, -1
+		mov Orientation, 1
+	.ELSEIF imageID == IMG_406
+		mov Thief_X, 555
+		mov Thief_Y, 510
+		mov PassBy, -1
+		mov Orientation, 1
+	.ELSEIF imageID == IMG_407
+		mov Thief_X, 228
+		mov Thief_Y, 510
+		mov PassBy, -1
+		mov Orientation, 1
+	.ELSEIF imageID == IMG_408
+		mov Thief_X, 678
+		mov Thief_Y, 510
+		mov PassBy, -1
+		mov Orientation, 1
+	.ELSEIF imageID == IMG_409
+		mov Thief_X, 328
+		mov Thief_Y, 151
+		mov PassBy, -1
+		mov Orientation, 1
+	.ELSEIF imageID == IMG_410
+	.ELSEIF imageID == IMG_411
+		mov Thief_X, 680
+		mov Thief_Y, 290
+		mov PassBy, -1
+		mov Orientation, 1
+	.ELSEIF imageID == IMG_412
+		mov Thief_X, 380
+		mov Thief_Y, 340
+		mov PassBy, -1
+		mov Orientation, 0
+	.ELSEIF imageID == IMG_413
+		mov Thief_X, 228
+		mov PassBy, -1
+		mov Orientation, 1
+	.ELSEIF imageID == IMG_414
+		mov Thief_X, 545
+		mov PassBy, -1
+		mov Orientation, 0
+	.ENDIF
+	ret
+doorTransition endp
+; #########################################################################
 eventResponses proc imageID: DWORD
 	mov ecx, 0
 	mov Run, 0
 	.IF imageID == IMG_0
+	;点击了五个icon之一
 	.ELSEIF imageID == IMG_415 || imageID == IMG_416 || imageID == IMG_417 || imageID == IMG_418 || imageID == IMG_419
 		INVOKE removeIcon, imageID
 		mov eax, step
@@ -80,8 +149,30 @@ eventResponses proc imageID: DWORD
 		mov Click_X, edx
 		mov edx, Thief_Y
 		mov Click_Y, edx
+	;点击了门
+	.ELSEIF imageID >= IMG_401 && imageID <=IMG_414
+		INVOKE doorTransition, imageID
+		mov edx, Thief_X
+		mov Click_X, edx
+		mov edx, Thief_Y
+		mov Click_Y, edx
+	;点击了拿起苹果
+	.ELSEIF imageID == IMG_42102
+		mov Apple, 1
+		mov ecx, 0
+		.WHILE ecx < pSequenceLength
+			mov ebx, pSequence[ecx * 4]
+			.IF ebx == IMG_42101
+				mov pSequence[ecx * 4], IMG_42104
+				mov cClick, 0
+				mov pThief, 0
+				mov PPTstatus, 1
+				jmp _EXIT
+			.ENDIF
+		.ENDW
 	.ENDIF
-	.IF step == 5
+	;五个icon都点亮了
+	.IF step == 5 && Apple == 0
 		INVOKE isCorrectOrder
 		.IF eax == 1
 			mov ebx, pSequenceLength
@@ -92,6 +183,7 @@ eventResponses proc imageID: DWORD
 			mov step, 0
 		.ENDIF
 	.ENDIF
+_EXIT:
 	ret
 eventResponses endp
 
@@ -151,6 +243,19 @@ processScenario4 proc
 			mov pSequence[eax*4], -1
 			ret
 		.ELSE
+			;提示
+			mov ebx, PassBy
+			.IF ebx != -1
+				mov edx, TYPE MyItem
+				mov eax, ebx
+				mul edx
+				mov ebx, eax
+				INVOKE clickPosition, (ItemList[ebx]).x1, (ItemList[ebx]).y1, (ItemList[ebx]).x2, (ItemList[ebx]).y2
+				.IF eax == 1
+					INVOKE eventResponses, PassBy
+				.ENDIF
+			.ENDIF
+			;五个icon
 			mov count, 0
 			mov ecx, 0
 			.WHILE drawIcon[ecx*4] >= 0 && ecx < 5
@@ -173,6 +278,7 @@ processScenario4 proc
 					mov ecx, count
 				.ENDIF
 			.ENDW
+			;其余
 			mov ecx, 0
 			mov count, 0
 			.WHILE pSequence[ecx*4] >= 0 && ecx < pSequenceLength
@@ -195,8 +301,24 @@ processScenario4 proc
 				.ENDIF
 			.ENDW
 		.ENDIF
+	.ELSE
+		;拿苹果时的ppt
+		.IF PPTstatus == 1
+			mov ecx, 0
+			.WHILE ecx < pSequenceLength
+				mov ebx, pSequence[ecx * 4]
+				.IF ebx == IMG_42104
+					mov pSequence[ecx * 4], IMG_42103
+					mov cClick, 1
+					mov pThief, 1
+					mov Thief_X, 360
+					mov Click_X, 360
+					mov Orientation, 1
+					jmp ending
+				.ENDIF
+			.ENDW
+		.ENDIF
 	.ENDIF
-
 	ending:
 	ret
 processScenario4 endp

@@ -18,24 +18,30 @@ JudgeCollision endp
 
 ;еп╤окЫспеЖв╡
 JudgeCollisions proc
-	mov ecx, IMG_401
 	mov PassBy, -1
-	.WHILE ecx < IMG_415
-		INVOKE JudgeCollision, ecx
-		.IF PassBy != -1
-			jmp	_EXIT
-		.ENDIF
-		inc ecx
-	.ENDW
-
+	.IF Scenario == 4
+		mov ecx, IMG_401
+		.WHILE ecx < IMG_415
+			INVOKE JudgeCollision, ecx
+			.IF PassBy != -1
+				jmp	_EXIT
+			.ENDIF
+			inc ecx
+		.ENDW
+	.ENDIF
 	mov ecx, 0
 	.WHILE ecx < pSequenceLength
 		mov ebx, pSequence[ecx * 4]
-		inc ebx
+		.IF ebx == IMG_42101
+			inc ebx
+		.ELSE
+			jmp _NEXT
+		.ENDIF
 		INVOKE JudgeCollision, ebx
 		.IF PassBy != -1
 			jmp	_EXIT
 		.ENDIF
+	_NEXT:
 		inc ecx
 	.ENDW
 _EXIT:

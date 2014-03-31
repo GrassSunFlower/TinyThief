@@ -29,7 +29,7 @@ PlayMp3File proc hWin:DWORD,NameOfFile:DWORD
             INVOKE mciSendCommand,0,MCI_OPEN,MCI_OPEN_TYPE or MCI_OPEN_ELEMENT,ADDR mciOpenParms
             mov eax,mciOpenParms.wDeviceID
             mov Mp3DeviceID,eax
-            ;INVOKE mciSendCommand,Mp3DeviceID,MCI_PLAY,MCI_NOTIFY,ADDR mciPlayParms
+            INVOKE mciSendCommand,Mp3DeviceID,MCI_PLAY,MCI_NOTIFY,ADDR mciPlayParms
             ret  
 
 PlayMp3File endp
@@ -41,7 +41,6 @@ _ProcWinMain proc uses ebx edi esi, hWnd, uMsg, wParam, lParam
 		local @stPos:POINT
 		local @hSysMenu
 
-		;mov eax, uMsg
 		.IF uMsg == WM_CREATE
 			
 			;INVOKE GetSubMenu, hMenu, 1
@@ -80,9 +79,9 @@ _ProcWinMain proc uses ebx edi esi, hWnd, uMsg, wParam, lParam
 		.ELSEIF uMsg == WM_KEYDOWN						;键盘事件
 			;INVOKE InvalidateRect, hWnd, NULL, FALSE
 		.ELSEIF uMsg == WM_LBUTTONDOWN					;鼠标事件
-			.IF cClick == 0
-				ret
-			.ENDIF
+			;.IF cClick == 0
+			;	ret
+			;.ENDIF
 			INVOKE GetWindowRect, hWnd, ADDR @stRect
 			INVOKE GetCursorPos, ADDR @stPos
 			mov edx, @stPos.x
@@ -156,7 +155,7 @@ _WinMain proc
 		INVOKE ShowWindow, hWinMain, SW_SHOWNORMAL
 		INVOKE UpdateWindow, hWinMain
                                 
-		INVOKE PlayMp3File,hWinMain,ADDR MusicName
+		;INVOKE PlayMp3File,hWinMain,ADDR MusicName
 
 		;消息循环
 		.WHILE TRUE

@@ -95,7 +95,16 @@ MyItem ends
 	drawIcon					dd			IMG_415, IMG_416, IMG_417, IMG_418, IMG_419
 	correctOrder			dd			IMG_415, IMG_416, IMG_417, IMG_418, IMG_419
 	player						dd			5 DUP (?)
-	step							dd			0
+	step							dd			0;五个icon的点击步骤
+	PPTstatus		dd		0	;需要播放PPT的状态
+	Apple			BYTE	0	;是否收集到了苹果
+	Banana			BYTE	0	;是否收集到了香蕉
+	Pear			BYTE	0	;是否收集到了梨子
+	Dog				BYTE	0	;是否收集到了狗？水獭？狐狸？
+	Triangle		BYTE	0	;当前是否拿到了三角
+	Cross			BYTE	0	;当前是否拿到了十字
+	Circle			BYTE	0	;当前是否拿到了圆
+		
 	
 .const
 	szClassName			db			"TinyThiefClass", 0
@@ -134,7 +143,7 @@ MyItem ends
 
 	InitItemList proc
 
-		INVOKE InitItem, IMG_401, 65, 143, 194, 43, 259, 96, 0, 1
+		INVOKE InitItem, IMG_401, 65, 143, 74, 43, 139, 96, 0, 1
 		INVOKE InitItem, IMG_402, 65, 143, 194, 43, 259, 96, 0, 1
 		INVOKE InitItem, IMG_403, 65, 143, 309, 39, 374, 93, 0, 1
 		INVOKE InitItem, IMG_404, 65, 143, 658, 39, 723, 93, 0, 1
