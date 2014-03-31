@@ -28,6 +28,12 @@ JudgeCollisions proc
 			.ENDIF
 			inc ecx
 		.ENDW
+		.IF Triangle == 0	;如果三角已捡起来了则不再判断
+			INVOKE JudgeCollision, IMG_42001
+			.IF PassBy != -1
+				jmp	_EXIT
+			.ENDIF
+		.ENDIF
 	.ENDIF
 	mov ecx, 0
 	.WHILE ecx < pSequenceLength
