@@ -175,6 +175,7 @@ eventResponses proc imageID: DWORD
 				mov PPTstatus, 1
 				jmp _EXIT
 			.ENDIF
+			inc ecx
 		.ENDW
 	.ENDIF
 	;五个icon都点亮了
@@ -218,11 +219,12 @@ processScenario1 endp
 processScenario2 proc
 	INVOKE clickPosition, 365, 429, 443, 506
 	.IF eax == 1
-		mov Scenario, 4
-		mov Thief_X, 100
-		mov Thief_Y, 510
-		mov Click_X, 100
-		mov Click_Y, 510
+		mov Scenario, 3
+		mov Thief_X, 73
+		mov Thief_Y, 128
+		mov Click_X, 73
+		mov Click_Y, 128
+		mov doorNo, 1
 	.ENDIF
 	ret
 processScenario2 endp
@@ -230,6 +232,57 @@ processScenario2 endp
 ; #########################################################################
 
 processScenario3 proc
+	LOCAL imgID: DWORD, count: DWORD
+	.IF cClick == 1
+		.IF pThief == 0
+			mov pThief, 1
+			mov eax, pSequenceLength
+			.IF Scenario == 4
+				mov pSequence[eax*4], 0
+			.ENDIF
+			add eax, 1
+			mov pSequence[eax*4], -1
+			ret
+		.ELSE
+			;提示
+			mov ebx, PassBy
+			.IF ebx != -1
+				mov edx, TYPE MyItem
+				mov eax, ebx
+				mul edx
+				mov ebx, eax
+				INVOKE clickPosition, (ItemList[ebx]).x1, (ItemList[ebx]).y1, (ItemList[ebx]).x2, (ItemList[ebx]).y2
+				.IF eax == 1
+					INVOKE eventResponses, PassBy
+				.ENDIF
+			.ENDIF
+			;其余
+			mov ecx, 0
+			mov count, 0
+			.WHILE pSequence[ecx*4] >= 0 && ecx < pSequenceLength
+				mov ebx, pSequence[ecx*4]
+				mov edx, TYPE MyItem
+				mov eax, ebx
+				mul edx
+				mov esi, eax
+				mov dl, (ItemList[edx]).eClick
+				.IF dl == 0
+					ret
+				.ENDIF
+				INVOKE clickPosition, (ItemList[esi]).x1, (ItemList[esi]).y1, (ItemList[esi]).x2, (ItemList[esi]).y2
+				.IF eax == 1
+					INVOKE eventResponses, imgID
+					ret
+				.ELSE
+					add count, 1
+					mov ecx, count
+				.ENDIF
+			.ENDW
+		.ENDIF
+	.ELSE
+		
+	.ENDIF
+	ending:
 	ret
 processScenario3 endp
 
@@ -322,6 +375,7 @@ processScenario4 proc
 					mov Orientation, 1
 					jmp ending
 				.ENDIF
+				inc ecx
 			.ENDW
 		.ENDIF
 	.ENDIF
