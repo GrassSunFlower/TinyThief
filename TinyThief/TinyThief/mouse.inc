@@ -156,6 +156,12 @@ eventResponses proc imageID: DWORD
 		mov Click_X, edx
 		mov edx, Thief_Y
 		mov Click_Y, edx
+	;点击了拿起三角
+	.ELSEIF imageID == IMG_42001
+		mov Triangle, 1
+		mov ecx, pSequenceLength
+		mov pSequence[ecx * 4], IMG_42002
+		inc pSequenceLength
 	;点击了拿起苹果
 	.ELSEIF imageID == IMG_42102
 		mov Apple, 1
