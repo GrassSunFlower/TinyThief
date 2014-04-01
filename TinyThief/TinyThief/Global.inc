@@ -69,7 +69,6 @@ MyItem STRUCT
 	pMethod		BYTE	0	;绘制方法,0使用DrawObject,1使用DrawTransparentObject
 	eClick			BYTE 0	;是否有鼠标事件，0没有，1有
 MyItem ends
-;！！！！！！undone！！！！！！！！
 ;----------------------------------------------------------------
 
 ;数据段
@@ -96,7 +95,7 @@ MyItem ends
 	cClick						BYTE			1								;判断是否要响应接下来的鼠标事件
 	pThief						BYTE			1								;判断是否要绘制Thief
 	;数据型全局变量
-	Scenario					dd			0								;当前场景
+	Scenario					dd			4								;当前场景
 	Thief_X						dd			100							;Thief横坐标
 	Thief_Y						dd			510							;Thief纵坐标
 	Click_X						dd			100							;鼠标点击点的横坐标
@@ -110,15 +109,17 @@ MyItem ends
 	drawIcon					dd			IMG_415, IMG_416, IMG_417, IMG_418, IMG_419
 	correctOrder			dd			IMG_415, IMG_416, IMG_417, IMG_418, IMG_419
 	player						dd			5 DUP (?)
-	step							dd			0								;五个icon的点击步骤
-	PPTstatus					dd			0								;需要播放PPT的状态
-	Apple						BYTE			0								;是否收集到了苹果
-	Banana						BYTE			0								;是否收集到了香蕉
-	Pear							BYTE			0								;是否收集到了梨子
-	Dog							BYTE			0								;是否收集到了狗？水獭？狐狸？
-	Triangle					BYTE			0								;当前是否拿到了三角
-	Cross						BYTE			0								;当前是否拿到了十字
-	Circle						BYTE			0								;当前是否拿到了圆
+	step							dd			0						;五个icon的点击步骤
+	PPTstatus					dd			0							;需要播放PPT的状态
+	Apple						BYTE			0						;是否收集到了苹果
+	Banana						BYTE			0						;是否收集到了香蕉
+	Pear						BYTE			0						;是否收集到了梨子
+	Dog							BYTE			0						;是否收集到了狗？水獭？狐狸？
+	Triangle					BYTE			0						;当前是否拿到了三角
+	Cross						BYTE			0						;当前是否拿到了十字
+	Circle						BYTE			0						;当前是否拿到了圆
+	doorNo						BYTE			0						;场景三打开的门序号，0表示全关
+	doorOpen					BYTE			0						;场景三的上侧阻挡门是否已经打开
 	Thief_right_s_img		dd			0
 	Thief_left_s_img		dd			0
 	Thief_right_r_img		dd			0
@@ -169,6 +170,7 @@ MyItem ends
 		INVOKE InitItem, IMG_0, 0, 0, 0, 0, 0, 0, 0, 1
 		INVOKE InitItem, IMG_1, 0, 0, 0, 0, 0, 0, 0, 1
 		INVOKE InitItem, IMG_2, 0, 0, 0, 0, 0, 0, 0, 1
+		INVOKE InitItem, IMG_300, 0, 0, 0, 0, 0, 0, 0, 0
 		
 		INVOKE InitItem, IMG_400, 0, 0, 0, 0, 0, 0, 0, 1
 		INVOKE InitItem, IMG_401, 65, 143, 74, 43, 139, 96, 0, 1

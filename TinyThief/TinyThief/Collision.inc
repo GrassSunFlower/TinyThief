@@ -19,7 +19,18 @@ JudgeCollision endp
 ;判断所有碰撞
 JudgeCollisions proc
 	mov PassBy, -1
-	.IF Scenario == 4
+	.IF Scenario == 3
+		.IF doorNo == 1
+			INVOKE JudgeCollision, IMG_30202
+		.ELSEIF doorNo == 2
+			INVOKE JudgeCollision, IMG_30302
+		.ELSEIF doorNo == 3
+			INVOKE JudgeCollision, IMG_30402
+		.ENDIF
+		.IF PassBy != -1
+			jmp	_EXIT
+		.ENDIF
+	.ELSEIF Scenario == 4
 		mov ecx, IMG_401
 		.WHILE ecx < IMG_415
 			INVOKE JudgeCollision, ecx
@@ -57,8 +68,15 @@ JudgeCollisions endp
 ThiefMove proc
 	local MAX_X:DWORD
 	local MIN_X:DWORD
+	mov MAX_X, 750
+	mov MIN_X, 50
 	.IF Scenario == 1
 	.ELSEIF Scenario == 2
+	.ELSEIF Scenario == 3
+		.IF Thief_Y >= 128 && Thief_Y <= 148 && doorOpen == 0	;门未开的上
+			mov MAX_X, 525
+			mov MIN_X, 35
+		.ENDIF
 	.ELSEIF Scenario == 4
 		.IF Thief_Y == 510		;下
 			mov MAX_X, 735
@@ -88,27 +106,41 @@ ThiefMove proc
 	.IF Click_X < ebx
 		mov Click_X, ebx
 	.ENDIF
+	;普通移动处理
 	mov ebx, Click_X
 	.IF ebx > Thief_X
+		;特殊移动处理1：场景3下楼梯
+		.IF Scenario == 3 && Thief_Y >= 128 && Thief_Y <= 144 &&Thief_X >= 150 && Thief_X <= 170
+			add Thief_Y, 4
+		.ENDIF
 		add Thief_X, 5
 		.IF ebx > Thief_X
 			mov Run, 1
 		.ELSE
 			mov Run, 0
-			mov ebx, Click_X
-			mov Thief_X, ebx
+			mov ebx, Thief_X
+			mov Click_X, ebx
 		.ENDIF
 	.ELSEIF ebx < Thief_X
+		;特殊移动处理1：场景3下楼梯
+		.IF Scenario == 3 && Thief_Y >= 132 && Thief_Y <= 148 &&Thief_X >= 150 && Thief_X <= 170
+			sub Thief_Y, 4
+		.ENDIF
 		sub Thief_X, 5
 		.IF ebx < Thief_X
 			mov Run, 1
 		.ELSE
 			mov Run, 0
-			mov ebx, Click_X
-			mov Thief_X, ebx
+			mov ebx, Thief_X
+			mov Click_X, ebx
 		.ENDIF
 	.ELSE
 		mov Run, 0
+	.ENDIF
+	.IF Scenario == 3 && Thief_Y == 128 && Thief_X > 145 && Thief_X < 150
+		mov Thief_X, 150
+	.ELSEIF Scenario == 3 && Thief_Y == 144 && Thief_X > 170 && Thief_X < 175
+		mov Thief_X, 170
 	.ENDIF
 	ret
 ThiefMove endp
