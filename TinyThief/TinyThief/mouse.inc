@@ -1,4 +1,16 @@
 ; #########################################################################
+;将pSequence数组全部重置为-1
+ResetpSequence proc
+	mov ecx, 0
+	.WHILE ecx < pSequenceLength
+		mov pSequence[ecx*4], -1
+		inc ecx
+	.ENDW
+	mov pSequenceLength, 0
+	ret
+ResetpSequence endp
+
+; #########################################################################
 
 clickPosition proc left: DWORD, top: DWORD, right: DWORD, bottom: DWORD
 	mov eax, 0
@@ -111,7 +123,14 @@ doorTransition proc imageID: DWORD
 		mov Thief_Y, 151
 		mov PassBy, -1
 		mov Orientation, 1
-	.ELSEIF imageID == IMG_410
+	.ELSEIF imageID == IMG_410	;切换回场景3
+		mov Thief_X, 250
+		mov Thief_Y, 148
+		mov Scenario, 3
+		INVOKE ResetpSequence
+		mov pSequence[0], IMG_30301
+		mov pSequence[4], IMG_422
+		mov pSequenceLength, 2
 	.ELSEIF imageID == IMG_411
 		mov Thief_X, 680
 		mov Thief_Y, 290
@@ -134,7 +153,28 @@ doorTransition proc imageID: DWORD
 	ret
 doorTransition endp
 ; #########################################################################
-eventResponses proc imageID: DWORD
+;针对场景3的事件响应
+eventResponses3 proc imageID: DWORD
+	mov ecx, 0
+	mov Run, 0
+	.IF imageID == IMG_30202
+		mov pSequence[0], -1
+		mov pSequenceLength, 0
+		mov Scenario, 4
+		mov Thief_X, 100
+		mov Thief_Y, 510
+		mov Click_X, 100
+		mov Thief_Y, 510
+		mov Orientation, 0
+	.ENDIF
+_EXIT:
+	ret
+eventResponses3 endp
+
+; #########################################################################
+; #########################################################################
+;针对场景4的事件响应
+eventResponses4 proc imageID: DWORD
 	mov ecx, 0
 	mov Run, 0
 	.IF imageID == IMG_0
@@ -161,6 +201,9 @@ eventResponses proc imageID: DWORD
 		mov Triangle, 1
 		mov ecx, pSequenceLength
 		mov pSequence[ecx * 4], IMG_42002
+		inc pSequenceLength
+		inc ecx
+		mov pSequence[ecx * 4], IMG_422
 		inc pSequenceLength
 	;点击了拿起苹果
 	.ELSEIF imageID == IMG_42102
@@ -192,7 +235,7 @@ eventResponses proc imageID: DWORD
 	.ENDIF
 _EXIT:
 	ret
-eventResponses endp
+eventResponses4 endp
 
 ; #########################################################################
 
@@ -225,6 +268,8 @@ processScenario2 proc
 		mov Click_X, 73
 		mov Click_Y, 128
 		mov doorNo, 1
+		mov pSequence[0], IMG_30201
+		inc pSequenceLength
 	.ENDIF
 	ret
 processScenario2 endp
@@ -253,7 +298,7 @@ processScenario3 proc
 				mov ebx, eax
 				INVOKE clickPosition, (ItemList[ebx]).x1, (ItemList[ebx]).y1, (ItemList[ebx]).x2, (ItemList[ebx]).y2
 				.IF eax == 1
-					INVOKE eventResponses, PassBy
+					INVOKE eventResponses3, PassBy
 				.ENDIF
 			.ENDIF
 			;其余
@@ -271,7 +316,7 @@ processScenario3 proc
 				.ENDIF
 				INVOKE clickPosition, (ItemList[esi]).x1, (ItemList[esi]).y1, (ItemList[esi]).x2, (ItemList[esi]).y2
 				.IF eax == 1
-					INVOKE eventResponses, imgID
+					INVOKE eventResponses3, imgID
 					ret
 				.ELSE
 					add count, 1
@@ -311,7 +356,10 @@ processScenario4 proc
 				mov ebx, eax
 				INVOKE clickPosition, (ItemList[ebx]).x1, (ItemList[ebx]).y1, (ItemList[ebx]).x2, (ItemList[ebx]).y2
 				.IF eax == 1
-					INVOKE eventResponses, PassBy
+					INVOKE eventResponses4, PassBy
+				.ENDIF
+				.IF Scenario == 3
+					jmp ending
 				.ENDIF
 			.ENDIF
 			;五个icon
@@ -330,7 +378,7 @@ processScenario4 proc
 				.ENDIF
 				INVOKE clickPosition, (ItemList[esi]).x1, (ItemList[esi]).y1, (ItemList[esi]).x2, (ItemList[esi]).y2
 				.IF eax == 1
-					INVOKE eventResponses, imgID
+					INVOKE eventResponses4, imgID
 					ret
 				.ELSE
 					add count, 1
@@ -352,7 +400,7 @@ processScenario4 proc
 				.ENDIF
 				INVOKE clickPosition, (ItemList[esi]).x1, (ItemList[esi]).y1, (ItemList[esi]).x2, (ItemList[esi]).y2
 				.IF eax == 1
-					INVOKE eventResponses, imgID
+					INVOKE eventResponses4, imgID
 					ret
 				.ELSE
 					add count, 1

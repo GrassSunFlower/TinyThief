@@ -20,23 +20,27 @@ JudgeCollision endp
 JudgeCollisions proc
 	mov PassBy, -1
 	.IF Scenario == 3
-		.IF doorNo == 1
-			INVOKE JudgeCollision, IMG_30202
-		.ELSEIF doorNo == 2
-			INVOKE JudgeCollision, IMG_30302
-		.ELSEIF doorNo == 3
-			INVOKE JudgeCollision, IMG_30402
-		.ENDIF
+		;.IF doorNo == 1
+		;	INVOKE JudgeCollision, IMG_30202
+		;.ELSEIF doorNo == 2
+		;	INVOKE JudgeCollision, IMG_30302
+		;.ELSEIF doorNo == 3
+		;		INVOKE JudgeCollision, IMG_30402
+		;.ENDIF
 		.IF PassBy != -1
 			jmp	_EXIT
 		.ENDIF
 	.ELSEIF Scenario == 4
 		mov ecx, IMG_401
 		.WHILE ecx < IMG_415
+			.IF ecx == IMG_410 && Triangle == 0
+				jmp _NEXTDOOR
+			.ENDIF
 			INVOKE JudgeCollision, ecx
 			.IF PassBy != -1
 				jmp	_EXIT
 			.ENDIF
+		_NEXTDOOR:
 			inc ecx
 		.ENDW
 		.IF Triangle == 0	;如果三角已捡起来了则不再判断
@@ -49,7 +53,7 @@ JudgeCollisions proc
 	mov ecx, 0
 	.WHILE ecx < pSequenceLength
 		mov ebx, pSequence[ecx * 4]
-		.IF ebx == IMG_42101
+		.IF ebx == IMG_42101 || ebx == IMG_30201 || ebx == IMG_30301 || ebx == IMG_30401
 			inc ebx
 		.ELSE
 			jmp _NEXT
