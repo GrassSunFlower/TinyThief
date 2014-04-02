@@ -166,6 +166,15 @@ eventResponses3 proc imageID: DWORD
 		mov Click_X, 100
 		mov Thief_Y, 510
 		mov Orientation, 0
+	.ELSEIF imageID == IMG_30302
+		mov pSequence[0], -1
+		mov pSequenceLength, 0
+		mov Scenario, 5
+		mov Thief_X, 100
+		mov Thief_Y, 510
+		mov Click_X, 100
+		mov Thief_Y, 510
+		mov Orientation, 0
 	.ENDIF
 _EXIT:
 	ret

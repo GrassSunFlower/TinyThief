@@ -11,6 +11,8 @@ DrawObject proc bID:DWORD, img:DWORD, xDesc:DWORD, yDesc:DWORD, sWidth:DWORD, sH
 		mov xDesc, 311
 	.ELSEIF bID == IMG_30402
 		mov xDesc, 424
+	.ELSEIF bID == IMG_50901 || bID == IMG_50902
+		mov yDesc, 404
 	.ENDIF
 
 	INVOKE SelectObject,hdcImage,img
@@ -68,6 +70,8 @@ DrawBackground proc
 		INVOKE DrawObject, IMG_300, (ItemList[IMG_300*(TYPE MyItem)]).img,0,0,SCREEN_X,SCREEN_Y
 	.ELSEIF Scenario == 4
 		INVOKE DrawObject, IMG_400, (ItemList[IMG_400*(TYPE MyItem)]).img,0,0,SCREEN_X,SCREEN_Y
+	.ELSEIF Scenario == 5
+		INVOKE DrawObject, IMG_500, (ItemList[IMG_500*(TYPE MyItem)]).img,0,0,SCREEN_X,SCREEN_Y
 	.ENDIF
 	ret
 DrawBackground endp

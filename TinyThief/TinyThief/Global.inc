@@ -50,6 +50,35 @@ IMG_30602			equ		41
 IMG_30701			equ		42
 IMG_30702			equ		43
 
+IMG_500				equ		44
+IMG_501				equ		45
+IMG_5020101		equ		46
+IMG_5020102		equ		47
+IMG_5020103		equ		48
+IMG_5020104		equ		49
+IMG_5020201		equ		50
+IMG_5020202		equ		51
+IMG_5020203		equ		52
+IMG_5020204		equ		53
+IMG_5020301		equ		54
+IMG_5020302		equ		55
+IMG_5020303		equ		56
+IMG_5020304		equ		57
+IMG_503				equ		58
+IMG_504				equ		59
+IMG_505				equ		60
+IMG_506				equ		61
+IMG_507				equ		62
+IMG_50801			equ		63
+IMG_50802			equ		64
+IMG_50901			equ		65
+IMG_50902			equ		66
+IMG_50903			equ		67
+IMG_50904			equ		68
+IMG_50905			equ		69
+IMG_50906			equ		70
+IMG_510				equ		71
+
 ;窗体大小
 SCREEN_X EQU 820
 SCREEN_Y EQU 642
@@ -62,12 +91,12 @@ MyItem STRUCT
 	img			dd	0
 	iwidth		dd	0
 	iheight		dd	0
-	x1			dd	0
-	y1			dd	0
-	x2			dd	0
-	y2			dd	0
-	pMethod		BYTE	0	;绘制方法,0使用DrawObject,1使用DrawTransparentObject
-	eClick			BYTE 0	;是否有鼠标事件，0没有，1有
+	x1				dd	0
+	y1				dd	0
+	x2				dd	0
+	y2				dd	0
+	pMethod			BYTE	0	;绘制方法,0使用DrawObject,1使用DrawTransparentObject
+	eClick				BYTE 0	;是否有鼠标事件，0没有，1有
 MyItem ends
 ;----------------------------------------------------------------
 
@@ -171,8 +200,9 @@ MyItem ends
 		INVOKE InitItem, IMG_1, 0, 0, 0, 0, 0, 0, 0, 1
 		INVOKE InitItem, IMG_2, 0, 0, 0, 0, 0, 0, 0, 1
 		INVOKE InitItem, IMG_300, 0, 0, 0, 0, 0, 0, 0, 0
-		
 		INVOKE InitItem, IMG_400, 0, 0, 0, 0, 0, 0, 0, 1
+		INVOKE InitItem, IMG_500, 0, 0, 0, 0, 0, 0, 0, 1
+		
 		INVOKE InitItem, IMG_401, 65, 143, 74, 43, 139, 96, 0, 1
 		INVOKE InitItem, IMG_402, 65, 143, 194, 43, 259, 96, 0, 1
 		INVOKE InitItem, IMG_403, 65, 143, 309, 39, 374, 93, 0, 1
@@ -212,6 +242,34 @@ MyItem ends
 		INVOKE InitItem, IMG_30602, 105, 149, 685, 354, 746, 407, 1, 1
 		INVOKE InitItem, IMG_30701, 111, 138, 635, 190, 690, 244, 1, 1	
 		INVOKE InitItem, IMG_30702, 111, 138, 635, 204, 690, 257, 1, 1
+
+		INVOKE InitItem, IMG_501, 490, 106, 52, 78, 0, 0, 1, 0
+		INVOKE InitItem, IMG_5020101, 287, 287, 148, 151, 0, 0, 1, 0
+		INVOKE InitItem, IMG_5020102, 287, 287, 148, 151, 0, 0, 1, 0
+		INVOKE InitItem, IMG_5020103, 287, 287, 148, 151, 0, 0, 1, 0
+		INVOKE InitItem, IMG_5020104, 287, 287, 148, 151, 0, 0, 1, 0
+		INVOKE InitItem, IMG_5020201, 287, 287, 148, 151, 0, 0, 1, 0
+		INVOKE InitItem, IMG_5020202, 287, 287, 148, 151, 0, 0, 1, 0
+		INVOKE InitItem, IMG_5020203, 287, 287, 148, 151, 0, 0, 1, 0
+		INVOKE InitItem, IMG_5020204, 287, 287, 148, 151, 0, 0, 1, 0
+		INVOKE InitItem, IMG_5020301, 287, 287, 148, 151, 0, 0, 1, 0
+		INVOKE InitItem, IMG_5020302, 287, 287, 148, 151, 0, 0, 1, 0
+		INVOKE InitItem, IMG_5020303, 287, 287, 148, 151, 0, 0, 1, 0
+		INVOKE InitItem, IMG_5020304, 287, 287, 148, 151, 0, 0, 1, 0
+		INVOKE InitItem, IMG_503, 62, 140, 89, 397, 151, 450, 0, 1
+		INVOKE InitItem, IMG_504, 56, 110, 214, 427, 270, 480, 1, 1
+		INVOKE InitItem, IMG_505, 56, 110, 297, 426, 353, 478, 1, 1
+		INVOKE InitItem, IMG_506, 56, 110, 383, 425, 439, 477, 0, 1
+		INVOKE InitItem, IMG_507, 48, 114, 553, 419, 0, 0, 0, 0
+		INVOKE InitItem, IMG_50801, 57, 108, 629, 421, 686, 473, 0, 1
+		INVOKE InitItem, IMG_50802, 57, 108, 629, 421, 0, 0, 0, 0
+		INVOKE InitItem, IMG_50901, 56, 97, 686, 451, 741, 500, 0, 1
+		INVOKE InitItem, IMG_50902, 56, 97, 686, 451, 741, 500, 0, 1
+		INVOKE InitItem, IMG_50903, 56, 97, 686, 404, 0, 0, 0, 0
+		INVOKE InitItem, IMG_50904, 56, 97, 686, 404, 741, 459, 0, 1
+		INVOKE InitItem, IMG_50905, 56, 97, 682, 433, 0, 0, 0, 1
+		INVOKE InitItem, IMG_50906, 56, 97, 686, 404, 0, 0, 0, 0
+		INVOKE InitItem, IMG_510, 44, 40, 699, 549, 0, 0, 0, 0
 		
 		INVOKE LoadBitmap, hInstance, 1111
 		mov Thief_right_s_img, eax
