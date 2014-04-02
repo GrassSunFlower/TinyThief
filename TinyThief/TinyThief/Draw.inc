@@ -41,17 +41,20 @@ DrawTransparentObject endp
 
 ;ªÊ÷∆µ¡‘Ù
 DrawThief proc 
-
+	local thiefX
+	mov eax, Thief_X
+	mov thiefX, eax
+	sub thiefX, 32
 	.IF Orientation == 0
 		.IF Run == 0
-			INVOKE DrawTransparentObject, 1111, Thief_right_s_img,Thief_X,Thief_Y,25,32
+			INVOKE DrawTransparentObject, 1111, Thief_right_s_img,thiefX,Thief_Y,25,32
 		.ELSE
-			INVOKE DrawTransparentObject, 3333, Thief_right_r_img,Thief_X,Thief_Y,25,32
+			INVOKE DrawTransparentObject, 3333, Thief_right_r_img,thiefX,Thief_Y,25,32
 		.ENDIF
 	.ELSEIF Run == 0
-		INVOKE DrawTransparentObject, 2222, Thief_left_s_img,Thief_X,Thief_Y,25,32
+		INVOKE DrawTransparentObject, 2222, Thief_left_s_img,thiefX,Thief_Y,25,32
 	.ELSE
-		INVOKE DrawTransparentObject, 4444, Thief_left_r_img,Thief_X,Thief_Y,25,32
+		INVOKE DrawTransparentObject, 4444, Thief_left_r_img,thiefX,Thief_Y,25,32
 	.ENDIF
 
     ret
