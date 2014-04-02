@@ -86,7 +86,7 @@ _ProcWinMain proc uses ebx edi esi, hWnd, uMsg, wParam, lParam
 			INVOKE GetCursorPos, ADDR @stPos
 			mov edx, @stPos.x
 			sub edx, @stRect.left
-			sub edx, 32
+			;sub edx, 32
 			mov Click_X, edx
 			
 			.IF Click_X > 800

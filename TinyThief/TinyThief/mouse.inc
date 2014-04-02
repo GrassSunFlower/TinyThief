@@ -79,74 +79,80 @@ isCorrectOrder endp
 ; #########################################################################
 doorTransition proc imageID: DWORD
 	.IF imageID == IMG_401
-		mov Thief_X, 100
+		mov Thief_X, 136
 		mov Thief_Y, 293
 		mov PassBy, -1
 		mov Orientation, 0
 	.ELSEIF imageID == IMG_402
-		mov Thief_X, 445
+		mov Thief_X, 481
 		mov Thief_Y, 510
 		mov PassBy, -1
 		mov Orientation, 0
 	.ELSEIF imageID == IMG_403
-		mov Thief_X, 555
+		mov Thief_X, 591
 		mov Thief_Y, 290
 		mov PassBy, -1
 		mov Orientation, 0
 	.ELSEIF imageID == IMG_404
-		mov Thief_X, 380
+		mov Thief_X, 416
 		mov Thief_Y, 340
 		mov PassBy, -1
 		mov Orientation, 0
 	.ELSEIF imageID == IMG_405
-		mov Thief_X, 682
+		mov Thief_X, 718
 		mov Thief_Y, 146
 		mov PassBy, -1
 		mov Orientation, 1
 	.ELSEIF imageID == IMG_406
-		mov Thief_X, 555
+		mov Thief_X, 591
 		mov Thief_Y, 510
 		mov PassBy, -1
 		mov Orientation, 1
 	.ELSEIF imageID == IMG_407
-		mov Thief_X, 228
+		mov Thief_X, 264
 		mov Thief_Y, 510
 		mov PassBy, -1
 		mov Orientation, 1
 	.ELSEIF imageID == IMG_408
-		mov Thief_X, 678
+		mov Thief_X, 714
 		mov Thief_Y, 510
 		mov PassBy, -1
 		mov Orientation, 1
 	.ELSEIF imageID == IMG_409
-		mov Thief_X, 328
+		mov Thief_X, 364
 		mov Thief_Y, 151
 		mov PassBy, -1
 		mov Orientation, 1
 	.ELSEIF imageID == IMG_410	;切换回场景3
-		mov Thief_X, 250
+		mov Thief_X, 286
 		mov Thief_Y, 148
 		mov Scenario, 3
 		INVOKE ResetpSequence
-		mov pSequence[0], IMG_30301
-		mov pSequence[4], IMG_422
-		mov pSequenceLength, 2
+		.IF Triangle == 1
+			mov pSequence[0], IMG_30301
+			mov pSequence[4], IMG_422
+			mov pSequenceLength, 2
+		.ELSE
+			mov pSequence[0], IMG_30201
+			mov pSequenceLength, 1
+			mov AppleShow, 0
+		.ENDIF
 	.ELSEIF imageID == IMG_411
-		mov Thief_X, 680
+		mov Thief_X, 716
 		mov Thief_Y, 290
 		mov PassBy, -1
 		mov Orientation, 1
 	.ELSEIF imageID == IMG_412
-		mov Thief_X, 380
+		mov Thief_X, 416
 		mov Thief_Y, 340
 		mov PassBy, -1
 		mov Orientation, 0
 	.ELSEIF imageID == IMG_413
-		mov Thief_X, 228
+		mov Thief_X, 264
 		mov PassBy, -1
 		mov Orientation, 1
 	.ELSEIF imageID == IMG_414
-		mov Thief_X, 545
+		mov Thief_X, 581
 		mov PassBy, -1
 		mov Orientation, 0
 	.ENDIF
@@ -161,11 +167,20 @@ eventResponses3 proc imageID: DWORD
 		mov pSequence[0], -1
 		mov pSequenceLength, 0
 		mov Scenario, 4
-		mov Thief_X, 100
+		mov Thief_X, 136
 		mov Thief_Y, 510
-		mov Click_X, 100
+		mov Click_X, 136
 		mov Thief_Y, 510
 		mov Orientation, 0
+		.IF step == 5 && Apple == 0 && AppleShow == 0
+			INVOKE isCorrectOrder
+			.IF eax == 1
+				mov AppleShow, 1
+				mov ebx, pSequenceLength
+				mov pSequence[ebx * 4], IMG_42101
+				add pSequenceLength, 1
+			.ENDIF
+		.ENDIF
 	.ELSEIF imageID == IMG_30302
 		mov pSequence[0], -1
 		mov pSequenceLength, 0
@@ -205,6 +220,7 @@ eventResponses4 proc imageID: DWORD
 		mov Click_X, edx
 		mov edx, Thief_Y
 		mov Click_Y, edx
+		jmp _EXIT
 	;点击了拿起三角
 	.ELSEIF imageID == IMG_42001
 		mov Triangle, 1
@@ -230,10 +246,10 @@ eventResponses4 proc imageID: DWORD
 			inc ecx
 		.ENDW
 	.ENDIF
-	;五个icon都点亮了
-	.IF step == 5 && Apple == 0
+	.IF step == 5 && Apple == 0 && AppleShow == 0
 		INVOKE isCorrectOrder
 		.IF eax == 1
+			mov AppleShow, 1
 			mov ebx, pSequenceLength
 			mov pSequence[ebx * 4], IMG_42101
 			add pSequenceLength, 1
@@ -272,9 +288,9 @@ processScenario2 proc
 	INVOKE clickPosition, 365, 429, 443, 506
 	.IF eax == 1
 		mov Scenario, 3
-		mov Thief_X, 73
+		mov Thief_X, 109
 		mov Thief_Y, 128
-		mov Click_X, 73
+		mov Click_X, 109
 		mov Click_Y, 128
 		mov doorNo, 1
 		mov pSequence[0], IMG_30201
@@ -366,6 +382,7 @@ processScenario4 proc
 				INVOKE clickPosition, (ItemList[ebx]).x1, (ItemList[ebx]).y1, (ItemList[ebx]).x2, (ItemList[ebx]).y2
 				.IF eax == 1
 					INVOKE eventResponses4, PassBy
+					jmp ending
 				.ENDIF
 				.IF Scenario == 3
 					jmp ending
@@ -427,8 +444,8 @@ processScenario4 proc
 					mov pSequence[ecx * 4], IMG_42103
 					mov cClick, 1
 					mov pThief, 1
-					mov Thief_X, 360
-					mov Click_X, 360
+					mov Thief_X, 396
+					mov Click_X, 396
 					mov Orientation, 1
 					jmp ending
 				.ENDIF

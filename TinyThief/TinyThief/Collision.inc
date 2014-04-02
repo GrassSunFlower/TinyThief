@@ -33,9 +33,6 @@ JudgeCollisions proc
 	.ELSEIF Scenario == 4
 		mov ecx, IMG_401
 		.WHILE ecx < IMG_415
-			.IF ecx == IMG_410 && Triangle == 0
-				jmp _NEXTDOOR
-			.ENDIF
 			INVOKE JudgeCollision, ecx
 			.IF PassBy != -1
 				jmp	_EXIT
@@ -78,27 +75,27 @@ ThiefMove proc
 	.ELSEIF Scenario == 2
 	.ELSEIF Scenario == 3
 		.IF Thief_Y >= 128 && Thief_Y <= 148 && doorOpen == 0	;门未开的上
-			mov MAX_X, 525
-			mov MIN_X, 35
+			mov MAX_X, 561
+			mov MIN_X, 71
 		.ENDIF
 	.ELSEIF Scenario == 4
 		.IF Thief_Y == 510		;下
-			mov MAX_X, 735
+			mov MAX_X, 771
 			mov MIN_X, 50
 		.ELSEIF Thief_Y == 293	;左中
-			mov MAX_X, 269
+			mov MAX_X, 305
 			mov MIN_X, 50
 		.ELSEIF Thief_Y == 290	;右中
-			mov MAX_X, 735
+			mov MAX_X, 771
 			mov MIN_X, 515
 		.ELSEIF Thief_Y == 340	;中
-			mov MAX_X, 432
+			mov MAX_X, 468
 			mov MIN_X, 350
 		.ELSEIF Thief_Y == 151	;左上
-			mov MAX_X, 377
+			mov MAX_X, 413
 			mov MIN_X, 50
 		.ELSEIF Thief_Y == 146	;右上
-			mov MAX_X, 735
+			mov MAX_X, 771
 			mov MIN_X, 463
 		.ENDIF
 	.ENDIF
@@ -114,7 +111,7 @@ ThiefMove proc
 	mov ebx, Click_X
 	.IF ebx > Thief_X
 		;特殊移动处理1：场景3下楼梯
-		.IF Scenario == 3 && Thief_Y >= 128 && Thief_Y <= 144 &&Thief_X >= 150 && Thief_X <= 170
+		.IF Scenario == 3 && Thief_Y >= 128 && Thief_Y <= 144 &&Thief_X >= 185 && Thief_X <= 205
 			add Thief_Y, 4
 		.ENDIF
 		add Thief_X, 5
@@ -127,7 +124,7 @@ ThiefMove proc
 		.ENDIF
 	.ELSEIF ebx < Thief_X
 		;特殊移动处理1：场景3下楼梯
-		.IF Scenario == 3 && Thief_Y >= 132 && Thief_Y <= 148 &&Thief_X >= 150 && Thief_X <= 170
+		.IF Scenario == 3 && Thief_Y >= 132 && Thief_Y <= 148 &&Thief_X >= 185 && Thief_X <= 205
 			sub Thief_Y, 4
 		.ENDIF
 		sub Thief_X, 5
@@ -141,10 +138,10 @@ ThiefMove proc
 	.ELSE
 		mov Run, 0
 	.ENDIF
-	.IF Scenario == 3 && Thief_Y == 128 && Thief_X > 145 && Thief_X < 150
-		mov Thief_X, 150
-	.ELSEIF Scenario == 3 && Thief_Y == 144 && Thief_X > 170 && Thief_X < 175
-		mov Thief_X, 170
+	.IF Scenario == 3 && Thief_Y == 128 && Thief_X > 180 && Thief_X < 185
+		mov Thief_X, 185
+	.ELSEIF Scenario == 3 && Thief_Y == 144 && Thief_X > 205 && Thief_X < 210
+		mov Thief_X, 205
 	.ENDIF
 	ret
 ThiefMove endp
