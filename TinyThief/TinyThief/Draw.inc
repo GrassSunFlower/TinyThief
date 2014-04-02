@@ -4,6 +4,15 @@
 ;ªÊ÷∆ŒÔ∆∑
 DrawObject proc bID:DWORD, img:DWORD, xDesc:DWORD, yDesc:DWORD, sWidth:DWORD, sHeight:DWORD
 
+
+	.IF bID == IMG_30202
+		mov xDesc, 198
+	.ELSEIF bID == IMG_30302
+		mov xDesc, 311
+	.ELSEIF bID == IMG_30402
+		mov xDesc, 424
+	.ENDIF
+
 	INVOKE SelectObject,hdcImage,img
 	INVOKE BitBlt,hdcMem,xDesc,yDesc,sWidth,sHeight,hdcImage,0,0,SRCCOPY
 	
@@ -18,12 +27,6 @@ DrawTransparentObject proc bID:DWORD, img:DWORD, xDesc:DWORD, yDesc:DWORD, sWidt
 	.IF bID == IMG_30601 || bID == IMG_30602
 		mov xDesc, 601
 		mov yDesc, 40
-	.ELSEIF bID == IMG_30202
-		mov xDesc, 198
-	.ELSEIF bID == IMG_30302
-		mov xDesc, 311
-	.ELSEIF bID == IMG_30402
-		mov xDesc, 424
 	.ELSEIF bID == IMG_30701 || bID == IMG_30702
 		mov yDesc, 165
 	.ENDIF

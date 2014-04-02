@@ -59,9 +59,9 @@ SCREEN_Y EQU 642
 
 ;----------------------------------------------------------------
 MyItem STRUCT
-	img		dd	0
-	iwidth	dd	0
-	iheight	dd	0
+	img			dd	0
+	iwidth		dd	0
+	iheight		dd	0
 	x1			dd	0
 	y1			dd	0
 	x2			dd	0
@@ -95,7 +95,7 @@ MyItem ends
 	cClick						BYTE			1								;判断是否要响应接下来的鼠标事件
 	pThief						BYTE			1								;判断是否要绘制Thief
 	;数据型全局变量
-	Scenario					dd			4								;当前场景
+	Scenario					dd			0								;当前场景
 	Thief_X						dd			100							;Thief横坐标
 	Thief_Y						dd			510							;Thief纵坐标
 	Click_X						dd			100							;鼠标点击点的横坐标
