@@ -123,6 +123,7 @@ MyItem ends
 	;控制型全局变量
 	cClick						BYTE			1								;判断是否要响应接下来的鼠标事件
 	pThief						BYTE			1								;判断是否要绘制Thief
+	isStopped					BYTE			0
 	;数据型全局变量
 	Scenario					dd			0								;当前场景
 	Thief_X						dd			136							;Thief横坐标
