@@ -79,6 +79,16 @@ IMG_50905			equ		69
 IMG_50906			equ		70
 IMG_510				equ		71
 
+IMG_90101			equ		72
+IMG_90102			equ		73
+IMG_90200			equ		74
+IMG_90201			equ		75
+IMG_90202			equ		76
+IMG_90203			equ		77
+IMG_90204			equ		78
+IMG_90205			equ		79
+IMG_90206			equ		80
+
 ;¥∞ÃÂ¥Û–°
 SCREEN_X EQU 820
 SCREEN_Y EQU 642
@@ -270,6 +280,16 @@ MyItem ends
 		INVOKE InitItem, IMG_50905, 56, 97, 682, 433, 0, 0, 0, 1
 		INVOKE InitItem, IMG_50906, 56, 97, 686, 404, 0, 0, 0, 0
 		INVOKE InitItem, IMG_510, 44, 40, 699, 549, 0, 0, 0, 0
+
+		INVOKE InitItem, IMG_90101, 150, 350, 0, 0, 0, 0, 1, 0
+		INVOKE InitItem, IMG_90102, 150, 350, 0, 0, 0, 0, 1, 0
+		INVOKE InitItem, IMG_90200, 261, 123, 270, 13, 0, 0, 1, 0
+		INVOKE InitItem, IMG_90201, 26, 26, 290, 54, 0, 0, 0, 0
+		INVOKE InitItem, IMG_90202, 26, 26, 304, 28, 0, 0, 0, 0
+		INVOKE InitItem, IMG_90203, 26, 26, 318, 54, 0, 0, 0, 0
+		INVOKE InitItem, IMG_90204, 24, 23, 306, 78, 0, 0, 0, 0
+		INVOKE InitItem, IMG_90205, 78, 95, 360, 27, 0, 0, 1, 0
+		INVOKE InitItem, IMG_90206, 49, 67, 460, 33, 0, 0, 0, 0
 		
 		INVOKE LoadBitmap, hInstance, 1111
 		mov Thief_right_s_img, eax
