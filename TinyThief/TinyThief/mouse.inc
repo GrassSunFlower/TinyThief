@@ -196,13 +196,14 @@ _EXIT:
 eventResponses3 endp
 
 ; #########################################################################
+; #########################################################################
 ;针对场景4的事件响应
 eventResponses4 proc imageID: DWORD
 	mov ecx, 0
 	mov Run, 0
 	.IF imageID == IMG_0
 	;点击了五个icon之一
-	.ELSEIF imageID == IMG_415 && imageID == IMG_419
+	.ELSEIF imageID == IMG_415 || imageID == IMG_416 || imageID == IMG_417 || imageID == IMG_418 || imageID == IMG_419
 		INVOKE removeIcon, imageID
 		mov eax, step
 		mov ebx, imageID
@@ -274,7 +275,7 @@ processScenario0 endp
 ; #########################################################################
 
 processScenario1 proc
-	INVOKE clickPosition, 360, 490, 435, 565
+	INVOKE clickPosition, 0, 0, SCREEN_X, SCREEN_Y
 	.IF eax == 1
 		mov Scenario, 2
 	.ENDIF
@@ -483,38 +484,7 @@ processScenario8 endp
 ; #########################################################################
 
 processMouseEvent proc currentScenario:DWORD
-	.IF isStopped == 0 && currentScenario >= 3 && currentScenario <= 6
-		; stop
-		INVOKE clickPosition, 
-		.IF eax == 1 
-			mov isStopped, 19, 16, 47, 45
-			mov ebx, pSequenceLength
-
-			jmp _EXIT
-		.ENDIF
-		; star
-		INVOKE clickPosition, 63, 16, 96, 45
-		.IF eax == 1
-			jmp _EXIT
-		.ENDIF
-	.ELSEIF isStoped == 1 && currentScenario >= 3 && currentScenario <= 6
-		; continue
-		INVOKE clickPosition, 72, 58, 118, 115
-		.IF eax == 1
-			mov isStopped, 1
-			jmp _EXIT
-		.ENDIF
-		; restart
-		INVOKE clickPosition, 72, 142, 118, 195
-		.IF eax == 1
-			jmp _EXIT
-		.ENDIF
-		; sound
-		INVOKE clickPosition, 72, 225, 118, 280
-		.IF eax == 1
-			jmp _EXIT
-		.ENDIF
-	.ENDIF
+	mov ebx, 0
 	.IF currentScenario == 0
 		INVOKE processScenario0
 	.ELSEIF currentScenario == 1
