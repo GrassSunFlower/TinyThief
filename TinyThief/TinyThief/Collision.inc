@@ -20,13 +20,6 @@ JudgeCollision endp
 JudgeCollisions proc
 	mov PassBy, -1
 	.IF Scenario == 3
-		;.IF doorNo == 1
-		;	INVOKE JudgeCollision, IMG_30202
-		;.ELSEIF doorNo == 2
-		;	INVOKE JudgeCollision, IMG_30302
-		;.ELSEIF doorNo == 3
-		;		INVOKE JudgeCollision, IMG_30402
-		;.ENDIF
 		.IF PassBy != -1
 			jmp	_EXIT
 		.ENDIF
@@ -37,11 +30,33 @@ JudgeCollisions proc
 			.IF PassBy != -1
 				jmp	_EXIT
 			.ENDIF
-		_NEXTDOOR:
 			inc ecx
 		.ENDW
 		.IF Triangle == 0	;如果三角已捡起来了则不再判断
 			INVOKE JudgeCollision, IMG_42001
+			.IF PassBy != -1
+				jmp	_EXIT
+			.ENDIF
+		.ENDIF
+	.ELSEIF Scenario == 5
+		mov ecx, IMG_503
+		.WHILE ecx <= IMG_506
+			INVOKE JudgeCollision, ecx
+			.IF PassBy != -1
+				jmp	_EXIT
+			.ENDIF
+			inc ecx
+		.ENDW
+		;处理梨子拾取过程
+		.IF pearStep == 2
+			INVOKE JudgeCollision, IMG_50904
+
+		.ENDIF
+		.IF PassBy != -1
+			jmp	_EXIT
+		.ENDIF
+		.IF Cross == 0	;如果十字已捡起来了则不再判断
+		INVOKE JudgeCollision, IMG_50801
 			.IF PassBy != -1
 				jmp	_EXIT
 			.ENDIF
@@ -74,7 +89,7 @@ ThiefMove proc
 	.IF Scenario == 1
 	.ELSEIF Scenario == 2
 	.ELSEIF Scenario == 3
-		.IF Thief_Y >= 128 && Thief_Y <= 148 && doorOpen == 0	;门未开的上
+		.IF Thief_Y >= 128 && Thief_Y <= 148 && door3Open == 0	;门未开的上
 			mov MAX_X, 561
 			mov MIN_X, 71
 		.ENDIF
@@ -98,6 +113,14 @@ ThiefMove proc
 			mov MAX_X, 771
 			mov MIN_X, 463
 		.ENDIF
+	.ELSEIF Scenario == 5
+		.IF door5Open == 0	;门未开的上
+			mov MAX_X, 561
+			mov MIN_X, 71
+		.ELSE
+			mov MAX_X, 760
+			mov MIN_X, 71
+		.ENDIF
 	.ENDIF
 	mov ebx, MAX_X
 	.IF Click_X > ebx
@@ -111,7 +134,7 @@ ThiefMove proc
 	mov ebx, Click_X
 	.IF ebx > Thief_X
 		;特殊移动处理1：场景3下楼梯
-		.IF Scenario == 3 && Thief_Y >= 128 && Thief_Y <= 144 &&Thief_X >= 185 && Thief_X <= 205
+		.IF Scenario == 3 && Thief_Y >= 128 && Thief_Y <= 144 && Thief_X >= 185 && Thief_X <= 205
 			add Thief_Y, 4
 		.ENDIF
 		add Thief_X, 5
@@ -124,7 +147,7 @@ ThiefMove proc
 		.ENDIF
 	.ELSEIF ebx < Thief_X
 		;特殊移动处理1：场景3下楼梯
-		.IF Scenario == 3 && Thief_Y >= 132 && Thief_Y <= 148 &&Thief_X >= 185 && Thief_X <= 205
+		.IF Scenario == 3 && Thief_Y >= 132 && Thief_Y <= 148 && Thief_X >= 185 && Thief_X <= 205
 			sub Thief_Y, 4
 		.ENDIF
 		sub Thief_X, 5
@@ -145,3 +168,37 @@ ThiefMove proc
 	.ENDIF
 	ret
 ThiefMove endp
+
+; #########################################################################
+;将pSequence数组全部重置为-1
+ResetpSequence proc
+	mov ecx, 0
+	.WHILE ecx < pSequenceLength
+		mov pSequence[ecx*4], -1
+		inc ecx
+	.ENDW
+	mov pSequenceLength, 0
+	ret
+ResetpSequence endp
+
+; #########################################################################
+;播放逃跑ppt
+RunForYouLife proc
+	
+	.IF Thief_X > 120 
+		sub Thief_X, 5
+	.ELSE
+		mov StingPos, 300
+		mov cClick, 1
+		mov cJudge, 1
+		mov Scenario, 3
+		INVOKE ResetpSequence
+		mov pSequence[0], IMG_30301
+		mov pSequenceLength, 1
+		mov Thief_Y, 148
+		mov Thief_X, 348
+		mov Click_Y, 148
+		mov Click_X, 348
+	.ENDIF
+	ret
+RunForYouLife endp

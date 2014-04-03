@@ -127,6 +127,25 @@ DrawIcons proc
 	ret
 DrawIcons endp
 
+;绘制收集品
+DrawCollection proc
+	.IF Triangle == 1
+		mov eax, IMG_422
+		mov esi, eax
+		mov edx, TYPE MyItem
+		mul edx
+		INVOKE DrawObject, esi, (ItemList[eax]).img, (ItemList[eax]).x1, (ItemList[eax]).y1,(ItemList[eax]).iwidth, (ItemList[eax]).iheight
+	.ENDIF
+	.IF Cross == 1
+		mov eax, IMG_510
+		mov esi, eax
+		mov edx, TYPE MyItem
+		mul edx
+		INVOKE DrawObject, esi, (ItemList[eax]).img, (ItemList[eax]).x1, (ItemList[eax]).y1,(ItemList[eax]).iwidth, (ItemList[eax]).iheight
+	.ENDIF
+	ret
+DrawCollection endp
+
 ;绘制提示
 DrawPassBy proc
 	.IF PassBy == -1
@@ -145,6 +164,48 @@ DrawPassBy proc
 	ret
 DrawPassBy endp
 
+;绘制场景五的倒刺
+DrawSting proc
+	mov eax, IMG_501
+	mov esi, eax
+	mov edx, TYPE MyItem
+	mul edx
+	mov ebx, (ItemList[eax]).y1
+	sub ebx, StingPos
+	INVOKE DrawTransparentObject, esi, (ItemList[eax]).img, (ItemList[eax]).x1, ebx, (ItemList[eax]).iwidth, (ItemList[eax]).iheight
+	.IF StingPos == 0
+		mov PassBy, -1
+		mov cJudge, 0
+		mov cClick, 0
+		mov Click_X, 110
+		mov Orientation, 1
+		INVOKE RunForYouLife
+		jmp _EXIT
+	.ENDIF
+	.IF door5Open == 0
+		sub StingPos, 1
+	.ENDIF
+_EXIT:
+	ret
+DrawSting endp
+
+;绘制场景五的圈
+DrawRounds proc
+	LOCAL count:DWORD
+	mov count, 0
+	.WHILE count < 3
+		mov ecx, count
+		mov eax, Rounds[ecx*4]
+		mov esi, eax
+		mov edx, TYPE MyItem
+		mul edx
+		INVOKE DrawTransparentObject, esi, (ItemList[eax]).img, (ItemList[eax]).x1, (ItemList[eax]).y1, (ItemList[eax]).iwidth, (ItemList[eax]).iheight
+		inc count
+	.ENDW
+_EXIT:
+	ret
+DrawRounds endp
+
 DrawProc proc
 
 	INVOKE DrawBackground
@@ -154,6 +215,11 @@ DrawProc proc
 	.IF Scenario > 2
 		INVOKE DrawItems
 		INVOKE DrawPassBy
+		INVOKE DrawCollection
+		.IF Scenario == 5
+			INVOKE DrawRounds
+			INVOKE DrawSting
+		.ENDIF
 		.IF pThief == 1
 			INVOKE DrawThief
 		.ENDIF
