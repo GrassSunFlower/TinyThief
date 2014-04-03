@@ -169,14 +169,14 @@ MyItem ends
 	MusicName				db			"he is a pirate.mp3",0
 	;控制型全局变量
 	cClick						BYTE			1								;判断是否要响应接下来的鼠标事件
+	cJudge						BYTE			1								;判断是否要判断接下来的碰撞事件
 	pThief						BYTE			1								;判断是否要绘制Thief
-	isStopped					BYTE			0
 	;数据型全局变量
-	Scenario					dd			0								;当前场景
+	Scenario					dd			5								;当前场景
 	Thief_X						dd			136							;Thief横坐标
-	Thief_Y						dd			510							;Thief纵坐标
+	Thief_Y						dd			500							;Thief纵坐标
 	Click_X						dd			136							;鼠标点击点的横坐标
-	Click_Y						dd			510							;鼠标点击点的纵坐标
+	Click_Y						dd			500							;鼠标点击点的纵坐标
 	Orientation				BYTE	0										;Thief朝向,0代表向右,1代表朝左
 	Run							BYTE	0										;Thief状态,0代表站立,1代表运动
 	PassBy						dd			-1								;路过的提示
@@ -187,7 +187,10 @@ MyItem ends
 	correctOrder			dd			IMG_415, IMG_416, IMG_417, IMG_418, IMG_419
 	player						dd			5 DUP (?)
 	step							dd			0						;五个icon的点击步骤
+	pearStep					dd			0							;梨子隐藏的点击步骤
 	PPTstatus					dd			0							;需要播放PPT的状态
+	StingPos					dd				300						;刺的位置
+	Rounds						dd				IMG_5020101, IMG_5020201, IMG_5020301	;场景5三个圈
 	Apple						BYTE			0						;是否收集到了苹果
 	AppleShow					BYTE			0						;是否已画出苹果
 	Banana						BYTE			0						;是否收集到了香蕉
@@ -196,8 +199,8 @@ MyItem ends
 	Triangle					BYTE			0						;当前是否拿到了三角
 	Cross						BYTE			0						;当前是否拿到了十字
 	Circle						BYTE			0						;当前是否拿到了圆
-	doorNo						BYTE			0						;场景三打开的门序号，0表示全关
-	doorOpen					BYTE			0						;场景三的上侧阻挡门是否已经打开
+	door3Open					BYTE			0						;场景三的上侧阻挡门是否已经打开
+	door5Open					BYTE			0						;场景五的阻挡门是否已经打开
 	Thief_right_s_img		dd			0
 	Thief_left_s_img		dd			0
 	Thief_right_r_img		dd			0
@@ -248,7 +251,7 @@ MyItem ends
 		INVOKE InitItem, IMG_0, 0, 0, 0, 0, 0, 0, 0, 1
 		INVOKE InitItem, IMG_1, 0, 0, 0, 0, 0, 0, 0, 1
 		INVOKE InitItem, IMG_2, 0, 0, 0, 0, 0, 0, 0, 1
-		INVOKE InitItem, IMG_300, 0, 0, 0, 0, 0, 0, 0, 0
+		INVOKE InitItem, IMG_300, 0, 0, 0, 0, 0, 0, 0, 1
 		INVOKE InitItem, IMG_400, 0, 0, 0, 0, 0, 0, 0, 1
 		INVOKE InitItem, IMG_500, 0, 0, 0, 0, 0, 0, 0, 1
 		INVOKE InitItem, IMG_600, 0, 0, 0, 0, 0, 0, 0, 1

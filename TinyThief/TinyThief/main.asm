@@ -50,11 +50,14 @@ _ProcWinMain proc uses ebx edi esi, hWnd, uMsg, wParam, lParam
 			;INVOKE AppendMenu, @hSysMenu, MF_SEPARATOR, 0, NULL
 			;INVOKE AppendMenu, @hSysMenu, 0, IDM_HELP, offset szMenuHelp
 			INVOKE InitItemList
+			mov pSequence[0], IMG_50901
+			mov pSequenceLength, 1
 			INVOKE SetTimer, hWnd, 1001, 50, NULL
 		.ELSEIF uMsg == WM_TIMER						;计时器事件
-			INVOKE JudgeCollisions
+			.IF cJudge == 1
+				INVOKE JudgeCollisions
+			.ENDIF
 			INVOKE ThiefMove
-			;INVOKE MessageBox, NULL, addr szText, addr szCaption, MB_OK
 			INVOKE InvalidateRect, hWnd, NULL, FALSE
 		.ELSEIF uMsg == WM_PAINT						;绘制事件
 			INVOKE BeginPaint, hWnd, addr @stPs
@@ -79,9 +82,9 @@ _ProcWinMain proc uses ebx edi esi, hWnd, uMsg, wParam, lParam
 		.ELSEIF uMsg == WM_KEYDOWN						;键盘事件
 			;INVOKE InvalidateRect, hWnd, NULL, FALSE
 		.ELSEIF uMsg == WM_LBUTTONDOWN					;鼠标事件
-			;.IF cClick == 0
-			;	ret
-			;.ENDIF
+			.IF cClick == 0
+				ret
+			.ENDIF
 			INVOKE GetWindowRect, hWnd, ADDR @stRect
 			INVOKE GetCursorPos, ADDR @stPos
 			mov edx, @stPos.x

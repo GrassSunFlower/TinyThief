@@ -1,14 +1,3 @@
-; #########################################################################
-;将pSequence数组全部重置为-1
-ResetpSequence proc
-	mov ecx, 0
-	.WHILE ecx < pSequenceLength
-		mov pSequence[ecx*4], -1
-		inc ecx
-	.ENDW
-	mov pSequenceLength, 0
-	ret
-ResetpSequence endp
 
 ; #########################################################################
 
@@ -77,6 +66,19 @@ isCorrectOrder proc
 isCorrectOrder endp
 
 ; #########################################################################
+;检查场景5的圈是否正确
+CheckRounds proc
+	.IF Rounds[0] == IMG_5020102 && Rounds[4] == IMG_5020203 && Rounds[8] == IMG_5020304
+		mov door5Open, 1
+		mov ecx, pSequenceLength
+		mov pSequence[ecx*4], IMG_507
+		inc pSequenceLength
+	.ENDIF
+	ret
+CheckRounds endp
+
+; #########################################################################
+
 doorTransition proc imageID: DWORD
 	.IF imageID == IMG_401
 		mov Thief_X, 136
@@ -130,8 +132,7 @@ doorTransition proc imageID: DWORD
 		INVOKE ResetpSequence
 		.IF Triangle == 1
 			mov pSequence[0], IMG_30301
-			mov pSequence[4], IMG_422
-			mov pSequenceLength, 2
+			mov pSequenceLength, 1
 		.ELSE
 			mov pSequence[0], IMG_30201
 			mov pSequenceLength, 1
@@ -158,14 +159,14 @@ doorTransition proc imageID: DWORD
 	.ENDIF
 	ret
 doorTransition endp
+
 ; #########################################################################
 ;针对场景3的事件响应
 eventResponses3 proc imageID: DWORD
 	mov ecx, 0
 	mov Run, 0
 	.IF imageID == IMG_30202
-		mov pSequence[0], -1
-		mov pSequenceLength, 0
+		INVOKE ResetpSequence
 		mov Scenario, 4
 		mov Thief_X, 136
 		mov Thief_Y, 510
@@ -182,21 +183,37 @@ eventResponses3 proc imageID: DWORD
 			.ENDIF
 		.ENDIF
 	.ELSEIF imageID == IMG_30302
-		mov pSequence[0], -1
-		mov pSequenceLength, 0
+		INVOKE ResetpSequence
 		mov Scenario, 5
-		mov Thief_X, 100
-		mov Thief_Y, 510
-		mov Click_X, 100
-		mov Thief_Y, 510
+		mov Thief_X, 136
+		mov Thief_Y, 500
+		mov Click_X, 136
+		mov Thief_Y, 500
 		mov Orientation, 0
+		.IF pearStep == 0
+			mov eax, IMG_50901
+		.ELSEIF pearStep == 1
+			mov eax, IMG_50902
+		.ELSEIF pearStep == 2
+			mov eax, IMG_50903
+		.ELSEIF pearStep == 3
+			;mov eax, IMG_50902
+		.ELSEIF pearStep == 4
+			mov eax, IMG_50906
+		.ENDIF
+		mov pSequence[0], eax
+		mov pSequenceLength, 1
+		.IF door5Open == 1
+			mov pSequence[4], IMG_507
+			inc pSequenceLength
+		.ENDIF
 	.ENDIF
 _EXIT:
 	ret
 eventResponses3 endp
 
 ; #########################################################################
-; #########################################################################
+
 ;针对场景4的事件响应
 eventResponses4 proc imageID: DWORD
 	mov ecx, 0
@@ -228,8 +245,6 @@ eventResponses4 proc imageID: DWORD
 		mov pSequence[ecx * 4], IMG_42002
 		inc pSequenceLength
 		inc ecx
-		mov pSequence[ecx * 4], IMG_422
-		inc pSequenceLength
 	;点击了拿起苹果
 	.ELSEIF imageID == IMG_42102
 		mov Apple, 1
@@ -238,7 +253,6 @@ eventResponses4 proc imageID: DWORD
 			mov ebx, pSequence[ecx * 4]
 			.IF ebx == IMG_42101
 				mov pSequence[ecx * 4], IMG_42104
-				mov cClick, 0
 				mov pThief, 0
 				mov PPTstatus, 1
 				jmp _EXIT
@@ -261,6 +275,69 @@ eventResponses4 proc imageID: DWORD
 _EXIT:
 	ret
 eventResponses4 endp
+
+; #########################################################################
+;针对场景5的事件响应
+eventResponses5 proc imageID: DWORD
+	mov ecx, 0
+	mov Run, 0
+	.IF imageID == IMG_503
+		mov Scenario, 3
+		INVOKE ResetpSequence
+		.IF Cross == 1
+			mov pSequence[0], IMG_30401
+		.ELSE
+			mov pSequence[0], IMG_30301
+		.ENDIF
+		mov pSequenceLength, 1
+		mov Thief_Y, 148
+		mov Thief_X, 368
+		mov Click_Y, 148
+		mov Click_X, 368
+		mov StingPos, 300
+		mov Orientation, 0
+	.ELSEIF imageID == IMG_504
+		.IF Rounds[0] == IMG_5020104
+			mov Rounds[0], IMG_5020101
+		.ELSE
+			inc Rounds[0]
+		.ENDIF
+		INVOKE CheckRounds
+	.ELSEIF imageID == IMG_505
+		.IF Rounds[4] == IMG_5020204
+			mov Rounds[4], IMG_5020201
+		.ELSE
+			inc Rounds[4]
+		.ENDIF
+		INVOKE CheckRounds
+	.ELSEIF imageID == IMG_506
+		.IF Rounds[8] == IMG_5020304
+			mov Rounds[8], IMG_5020301
+		.ELSE
+			inc Rounds[8]
+		.ENDIF
+		INVOKE CheckRounds
+	.ELSEIF imageID == IMG_50801
+		mov Cross, 1
+		mov ecx, pSequenceLength
+		mov pSequence[ecx*4], IMG_50802
+		inc pSequenceLength
+	.ELSEIF imageID == IMG_50901
+		mov pearStep, 1
+		mov pSequence[0], IMG_50902
+	.ELSEIF imageID == IMG_50902
+		mov pearStep, 2
+		mov pSequence[0], IMG_50903
+	.ELSEIF imageID == IMG_50904
+		mov pearStep, 3
+		mov PPTstatus, 2
+		mov pSequence[0], IMG_50905
+		mov pThief, 0
+		jmp _EXIT
+	.ENDIF
+_EXIT:
+	ret
+eventResponses5 endp
 
 ; #########################################################################
 
@@ -292,7 +369,6 @@ processScenario2 proc
 		mov Thief_Y, 128
 		mov Click_X, 109
 		mov Click_Y, 128
-		mov doorNo, 1
 		mov pSequence[0], IMG_30201
 		inc pSequenceLength
 	.ENDIF
@@ -303,56 +379,44 @@ processScenario2 endp
 
 processScenario3 proc
 	LOCAL imgID: DWORD, count: DWORD
-	.IF cClick == 1
-		.IF pThief == 0
-			mov pThief, 1
-			mov eax, pSequenceLength
-			.IF Scenario == 4
-				mov pSequence[eax*4], 0
-			.ENDIF
-			add eax, 1
-			mov pSequence[eax*4], -1
-			ret
-		.ELSE
-			;提示
-			mov ebx, PassBy
-			.IF ebx != -1
-				mov edx, TYPE MyItem
-				mov eax, ebx
-				mul edx
-				mov ebx, eax
-				INVOKE clickPosition, (ItemList[ebx]).x1, (ItemList[ebx]).y1, (ItemList[ebx]).x2, (ItemList[ebx]).y2
-				.IF eax == 1
-					INVOKE eventResponses3, PassBy
-				.ENDIF
-			.ENDIF
-			;其余
-			mov ecx, 0
-			mov count, 0
-			.WHILE pSequence[ecx*4] >= 0 && ecx < pSequenceLength
-				mov ebx, pSequence[ecx*4]
-				mov edx, TYPE MyItem
-				mov eax, ebx
-				mul edx
-				mov esi, eax
-				mov dl, (ItemList[edx]).eClick
-				.IF dl == 0
-					ret
-				.ENDIF
-				INVOKE clickPosition, (ItemList[esi]).x1, (ItemList[esi]).y1, (ItemList[esi]).x2, (ItemList[esi]).y2
-				.IF eax == 1
-					INVOKE eventResponses3, imgID
-					ret
-				.ELSE
-					add count, 1
-					mov ecx, count
-				.ENDIF
-			.ENDW
+	;提示
+	mov ebx, PassBy
+	.IF ebx != -1
+		mov edx, TYPE MyItem
+		mov eax, ebx
+		mul edx
+		mov ebx, eax
+		INVOKE clickPosition, (ItemList[ebx]).x1, (ItemList[ebx]).y1, (ItemList[ebx]).x2, (ItemList[ebx]).y2
+		.IF eax == 1
+			INVOKE eventResponses3, PassBy
 		.ENDIF
-	.ELSE
-		
 	.ENDIF
-	ending:
+	;其余
+	mov ecx, 0
+	mov count, 0
+	.WHILE pSequence[ecx*4] >= 0 && ecx < pSequenceLength
+		mov ebx, pSequence[ecx*4]
+		mov imgID, ebx
+		mov edx, TYPE MyItem
+		mov eax, ebx
+		mul edx
+		mov esi, eax
+		mov dl, (ItemList[esi]).eClick
+		.IF dl == 0
+			jmp _NEXT
+		.ENDIF
+		INVOKE clickPosition, (ItemList[esi]).x1, (ItemList[esi]).y1, (ItemList[esi]).x2, (ItemList[esi]).y2
+		.IF eax == 1
+			INVOKE eventResponses3, imgID
+			mov ebx, Thief_X
+			mov Click_X, ebx
+			ret
+		.ENDIF
+		_NEXT:
+			add count, 1
+			mov ecx, count
+	.ENDW
+ending:
 	ret
 processScenario3 endp
 
@@ -360,106 +424,145 @@ processScenario3 endp
 
 processScenario4 proc
 	LOCAL imgID: DWORD, count: DWORD
-
-	.IF cClick == 1
-		.IF pThief == 0
-			mov pThief, 1
-			mov eax, pSequenceLength
-			.IF Scenario == 4
-				mov pSequence[eax*4], 0
+	;拿苹果时的ppt
+	.IF PPTstatus == 1
+		mov ecx, 0
+		.WHILE ecx < pSequenceLength
+			mov ebx, pSequence[ecx * 4]
+			.IF ebx == IMG_42104
+				mov pSequence[ecx * 4], IMG_42103
+				mov pThief, 1
+				mov Thief_X, 396
+				mov Click_X, 396
+				mov Orientation, 1
+				mov PPTstatus, 0
+				jmp ending
 			.ENDIF
-			add eax, 1
-			mov pSequence[eax*4], -1
-			ret
-		.ELSE
-			;提示
-			mov ebx, PassBy
-			.IF ebx != -1
-				mov edx, TYPE MyItem
-				mov eax, ebx
-				mul edx
-				mov ebx, eax
-				INVOKE clickPosition, (ItemList[ebx]).x1, (ItemList[ebx]).y1, (ItemList[ebx]).x2, (ItemList[ebx]).y2
-				.IF eax == 1
-					INVOKE eventResponses4, PassBy
-					jmp ending
-				.ENDIF
-				.IF Scenario == 3
-					jmp ending
-				.ENDIF
-			.ENDIF
-			;五个icon
-			mov count, 0
-			mov ecx, 0
-			.WHILE drawIcon[ecx*4] >= 0 && ecx < 5
-				mov ebx, drawIcon[ecx*4]
-				mov imgID, ebx
-				mov edx, TYPE MyItem
-				mov eax, ebx
-				mul edx
-				mov esi, eax
-				mov dl,  (ItemList[esi]).eClick 
-				.IF dl== 0
-					ret
-				.ENDIF
-				INVOKE clickPosition, (ItemList[esi]).x1, (ItemList[esi]).y1, (ItemList[esi]).x2, (ItemList[esi]).y2
-				.IF eax == 1
-					INVOKE eventResponses4, imgID
-					ret
-				.ELSE
-					add count, 1
-					mov ecx, count
-				.ENDIF
-			.ENDW
-			;其余
-			mov ecx, 0
-			mov count, 0
-			.WHILE pSequence[ecx*4] >= 0 && ecx < pSequenceLength
-				mov ebx, pSequence[ecx*4]
-				mov edx, TYPE MyItem
-				mov eax, ebx
-				mul edx
-				mov esi, eax
-				mov dl, (ItemList[edx]).eClick
-				.IF dl == 0
-					ret
-				.ENDIF
-				INVOKE clickPosition, (ItemList[esi]).x1, (ItemList[esi]).y1, (ItemList[esi]).x2, (ItemList[esi]).y2
-				.IF eax == 1
-					INVOKE eventResponses4, imgID
-					ret
-				.ELSE
-					add count, 1
-					mov ecx, count
-				.ENDIF
-			.ENDW
+			inc ecx
+		.ENDW
+	.ENDIF
+	;提示
+	mov ebx, PassBy
+	.IF ebx != -1
+		mov edx, TYPE MyItem
+		mov eax, ebx
+		mul edx
+		mov ebx, eax
+		INVOKE clickPosition, (ItemList[ebx]).x1, (ItemList[ebx]).y1, (ItemList[ebx]).x2, (ItemList[ebx]).y2
+		.IF eax == 1
+			INVOKE eventResponses4, PassBy
+			jmp ending
 		.ENDIF
-	.ELSE
-		;拿苹果时的ppt
-		.IF PPTstatus == 1
-			mov ecx, 0
-			.WHILE ecx < pSequenceLength
-				mov ebx, pSequence[ecx * 4]
-				.IF ebx == IMG_42104
-					mov pSequence[ecx * 4], IMG_42103
-					mov cClick, 1
-					mov pThief, 1
-					mov Thief_X, 396
-					mov Click_X, 396
-					mov Orientation, 1
-					jmp ending
-				.ENDIF
-				inc ecx
-			.ENDW
+		.IF Scenario == 3
+			jmp ending
 		.ENDIF
 	.ENDIF
-	ending:
+	;五个icon
+	mov count, 0
+	mov ecx, 0
+	.WHILE drawIcon[ecx*4] >= 0 && ecx < 5
+		mov ebx, drawIcon[ecx*4]
+		mov imgID, ebx
+		mov edx, TYPE MyItem
+		mov eax, ebx
+		mul edx
+		mov esi, eax
+		mov dl,  (ItemList[esi]).eClick 
+		.IF dl== 0
+			ret
+		.ENDIF
+		INVOKE clickPosition, (ItemList[esi]).x1, (ItemList[esi]).y1, (ItemList[esi]).x2, (ItemList[esi]).y2
+		.IF eax == 1
+			INVOKE eventResponses4, imgID
+			ret
+		.ELSE
+			add count, 1
+			mov ecx, count
+		.ENDIF
+	.ENDW
+	;其余
+	mov ecx, 0
+	mov count, 0
+	.WHILE pSequence[ecx*4] >= 0 && ecx < pSequenceLength
+		mov ebx, pSequence[ecx*4]
+		mov imgID, ebx
+		mov edx, TYPE MyItem
+		mov eax, ebx
+		mul edx
+		mov esi, eax
+		mov dl, (ItemList[esi]).eClick
+		.IF dl == 0
+			jmp _NEXT
+		.ENDIF
+		INVOKE clickPosition, (ItemList[esi]).x1, (ItemList[esi]).y1, (ItemList[esi]).x2, (ItemList[esi]).y2
+		.IF eax == 1
+			INVOKE eventResponses4, imgID
+			mov ebx, Thief_X
+			mov Click_X, ebx
+			ret
+		.ENDIF
+		_NEXT:
+			add count, 1
+			mov ecx, count
+	.ENDW
+ending:
 	ret
 processScenario4 endp
 
 ; #########################################################################
 
 processScenario5 proc
+	LOCAL imgID: DWORD, count: DWORD
+	;提示
+	;拿梨子时的ppt
+	.IF PPTstatus == 2
+		mov pSequence[0], IMG_50906
+		mov pThief, 1
+		mov Thief_X, 735
+		mov Click_X, 735
+		mov Orientation, 0
+		mov PPTstatus, 0
+		mov Pear, 1
+		mov pearStep, 4
+		jmp ending
+	.ENDIF
+	mov ebx, PassBy
+	.IF ebx != -1
+		mov edx, TYPE MyItem
+		mov eax, ebx
+		mul edx
+		mov ebx, eax
+		INVOKE clickPosition, (ItemList[ebx]).x1, (ItemList[ebx]).y1, (ItemList[ebx]).x2, (ItemList[ebx]).y2
+		.IF eax == 1
+			INVOKE eventResponses5, PassBy
+		.ENDIF
+	.ENDIF
+	;其余
+	mov ecx, 0
+	mov count, 0
+	.WHILE pSequence[ecx*4] >= 0 && ecx < pSequenceLength
+		mov ebx, pSequence[ecx*4]
+		mov imgID, ebx
+		mov edx, TYPE MyItem
+		mov eax, ebx
+		mul edx
+		mov esi, eax
+		mov dl, (ItemList[esi]).eClick
+		.IF dl == 0
+			jmp _NEXT
+		.ENDIF
+		INVOKE clickPosition, (ItemList[esi]).x1, (ItemList[esi]).y1, (ItemList[esi]).x2, (ItemList[esi]).y2
+		.IF eax == 1
+			INVOKE eventResponses5, imgID
+			mov ebx, Thief_X
+			mov Click_X, ebx
+			ret
+		.ENDIF
+		_NEXT:
+			add count, 1
+			mov ecx, count
+	.ENDW
+ending:
 	ret
 processScenario5 endp
 
