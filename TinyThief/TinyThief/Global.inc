@@ -89,6 +89,43 @@ IMG_90204			equ		78
 IMG_90205			equ		79
 IMG_90206			equ		80
 
+IMG_600				equ		81
+IMG_601				equ		82
+IMG_60201			equ		83
+IMG_60202			equ		84
+IMG_60301			equ		85
+IMG_60302			equ		86
+IMG_60401			equ		87
+IMG_60402			equ		88
+IMG_60501			equ		89
+IMG_60502			equ		90
+IMG_60601			equ		91
+IMG_60602			equ		92
+IMG_60603			equ		93
+IMG_60604			equ		94
+IMG_60605			equ		95
+IMG_60701			equ		96
+IMG_60702			equ		97
+IMG_60703			equ		98
+IMG_60801			equ		99
+IMG_60802			equ		100
+IMG_60803			equ		101
+IMG_60901			equ		102
+IMG_60902			equ		103
+IMG_60903			equ		104
+IMG_61001			equ		105
+IMG_61002			equ		106
+IMG_61003			equ		107
+IMG_61101			equ		108
+IMG_61102			equ		109
+IMG_612				equ		110
+IMG_61301			equ		111
+IMG_61302			equ		112
+IMG_61401			equ		113
+IMG_61402			equ		114
+IMG_61403			equ		115
+IMG_61404			equ		116
+
 ;¥∞ÃÂ¥Û–°
 SCREEN_X EQU 820
 SCREEN_Y EQU 642
@@ -212,8 +249,10 @@ MyItem ends
 		INVOKE InitItem, IMG_1, 0, 0, 0, 0, 0, 0, 0, 1
 		INVOKE InitItem, IMG_2, 0, 0, 0, 0, 0, 0, 0, 1
 		INVOKE InitItem, IMG_300, 0, 0, 0, 0, 0, 0, 0, 0
-		
 		INVOKE InitItem, IMG_400, 0, 0, 0, 0, 0, 0, 0, 1
+		INVOKE InitItem, IMG_500, 0, 0, 0, 0, 0, 0, 0, 1
+		INVOKE InitItem, IMG_600, 0, 0, 0, 0, 0, 0, 0, 1
+		
 		INVOKE InitItem, IMG_401, 65, 143, 74, 43, 139, 96, 0, 1
 		INVOKE InitItem, IMG_402, 65, 143, 194, 43, 259, 96, 0, 1
 		INVOKE InitItem, IMG_403, 65, 143, 309, 39, 374, 93, 0, 1
@@ -254,7 +293,7 @@ MyItem ends
 		INVOKE InitItem, IMG_30701, 111, 138, 635, 190, 690, 244, 1, 1	
 		INVOKE InitItem, IMG_30702, 111, 138, 635, 204, 690, 257, 1, 1
 		
-		INVOKE InitItem, IMG_501, 490, 106, 52, 78, 0, 0, 1, 0
+		INVOKE InitItem, IMG_501, 490, 406, 52, 78, 0, 0, 1, 0
 		INVOKE InitItem, IMG_5020101, 287, 287, 148, 151, 0, 0, 1, 0
 		INVOKE InitItem, IMG_5020102, 287, 287, 148, 151, 0, 0, 1, 0
 		INVOKE InitItem, IMG_5020103, 287, 287, 148, 151, 0, 0, 1, 0
@@ -291,6 +330,42 @@ MyItem ends
 		INVOKE InitItem, IMG_90204, 24, 23, 306, 78, 0, 0, 0, 0
 		INVOKE InitItem, IMG_90205, 78, 95, 360, 27, 0, 0, 1, 0
 		INVOKE InitItem, IMG_90206, 49, 67, 460, 33, 0, 0, 0, 0
+		
+		INVOKE InitItem, IMG_601, 62, 138, 632, 404, 694, 459, 0, 1
+		INVOKE InitItem, IMG_60201, 69, 112, 478, 434, 535, 489, 0, 1
+		INVOKE InitItem, IMG_60202, 69, 112, 478, 434, 0, 0, 0, 0
+		INVOKE InitItem, IMG_60301, 69, 112, 384, 434, 439, 488, 0, 1
+		INVOKE InitItem, IMG_60302, 69, 112, 384, 434, 0, 0, 0, 0
+		INVOKE InitItem, IMG_60401, 69, 112, 295, 438, 350, 491, 0, 1
+		INVOKE InitItem, IMG_60402, 69, 112, 295, 438, 0, 0, 0, 0
+		INVOKE InitItem, IMG_60501, 69, 112, 295, 438, 257, 491, 0, 1
+		INVOKE InitItem, IMG_60502, 69, 112, 295, 438, 0, 0, 0, 0
+		INVOKE InitItem, IMG_60601, 96, 92, 42, 461, 0, 0, 0, 0
+		INVOKE InitItem, IMG_60602, 96, 92, 42, 461, 0, 0, 0, 0
+		INVOKE InitItem, IMG_60603, 96, 92, 42, 461, 0, 0, 0, 0
+		INVOKE InitItem, IMG_60604, 96, 92, 42, 461, 0, 0, 0, 0
+		INVOKE InitItem, IMG_60605, 96, 92, 42, 461, 0, 0, 0, 0
+		INVOKE InitItem, IMG_60701, 345, 306, 123, 66, 0, 0, 0, 0
+		INVOKE InitItem, IMG_60702, 345, 306, 123, 66, 0, 0, 0, 0
+		INVOKE InitItem, IMG_60703, 345, 306, 123, 66, 0, 0, 0, 0
+		INVOKE InitItem, IMG_60801, 210, 358, 162, 74, 0, 0, 0, 0
+		INVOKE InitItem, IMG_60802, 210, 358, 162, 74, 0, 0, 0, 0
+		INVOKE InitItem, IMG_60803, 210, 358, 162, 74, 0, 0, 0, 0
+		INVOKE InitItem, IMG_60901, 252, 329, 384, 65, 0, 0, 0, 0
+		INVOKE InitItem, IMG_60902, 252, 329, 384, 65, 0, 0, 0, 0
+		INVOKE InitItem, IMG_60903, 252, 329, 384, 65, 0, 0, 0, 0
+		INVOKE InitItem, IMG_61001, 329, 278, 317, 66, 0, 0, 0, 0
+		INVOKE InitItem, IMG_61002, 329, 278, 317, 66, 0, 0, 0, 0
+		INVOKE InitItem, IMG_61003, 329, 278, 317, 66, 0, 0, 0, 0
+		INVOKE InitItem, IMG_61101, 53, 109, 353, 440, 0, 0, 0, 0
+		INVOKE InitItem, IMG_61102, 53, 109, 353, 440, 406, 495, 0, 1
+		INVOKE InitItem, IMG_612, 45, 44, 645, 547, 0, 0, 0, 0
+		INVOKE InitItem, IMG_61301, 58, 91, 44, 438, 102, 490, 0, 1
+		INVOKE InitItem, IMG_61302, 58, 91, 44, 438, 0, 0, 0, 0
+		INVOKE InitItem, IMG_61401, 65, 121, 449, 427, 0, 0, 0, 0
+		INVOKE InitItem, IMG_61402, 65, 121, 449, 427, 514, 480, 0, 1
+		INVOKE InitItem, IMG_61403, 65, 121, 449, 427, 0, 0, 0, 0
+		INVOKE InitItem, IMG_61404, 65, 121, 449, 427, 0, 0, 0, 0
 		
 		INVOKE LoadBitmap, hInstance, 1111
 		mov Thief_right_s_img, eax
