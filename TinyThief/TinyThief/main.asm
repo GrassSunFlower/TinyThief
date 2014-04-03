@@ -50,8 +50,8 @@ _ProcWinMain proc uses ebx edi esi, hWnd, uMsg, wParam, lParam
 			;INVOKE AppendMenu, @hSysMenu, MF_SEPARATOR, 0, NULL
 			;INVOKE AppendMenu, @hSysMenu, 0, IDM_HELP, offset szMenuHelp
 			INVOKE InitItemList
-			mov pSequence[0], IMG_50901
-			mov pSequenceLength, 1
+			;mov pSequence[0], IMG_50901
+			;mov pSequenceLength, 1
 			INVOKE SetTimer, hWnd, 1001, 50, NULL
 		.ELSEIF uMsg == WM_TIMER						;计时器事件
 			.IF cJudge == 1

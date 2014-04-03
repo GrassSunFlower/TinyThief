@@ -75,6 +75,8 @@ DrawBackground proc
 		INVOKE DrawObject, IMG_400, (ItemList[IMG_400*(TYPE MyItem)]).img,0,0,SCREEN_X,SCREEN_Y
 	.ELSEIF Scenario == 5
 		INVOKE DrawObject, IMG_500, (ItemList[IMG_500*(TYPE MyItem)]).img,0,0,SCREEN_X,SCREEN_Y
+	.ELSEIF Scenario == 6
+		INVOKE DrawObject, IMG_600, (ItemList[IMG_600*(TYPE MyItem)]).img,0,0,SCREEN_X,SCREEN_Y
 	.ENDIF
 	ret
 DrawBackground endp

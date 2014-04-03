@@ -172,7 +172,7 @@ MyItem ends
 	cJudge						BYTE			1								;判断是否要判断接下来的碰撞事件
 	pThief						BYTE			1								;判断是否要绘制Thief
 	;数据型全局变量
-	Scenario					dd			5								;当前场景
+	Scenario					dd			0								;当前场景
 	Thief_X						dd			136							;Thief横坐标
 	Thief_Y						dd			500							;Thief纵坐标
 	Click_X						dd			136							;鼠标点击点的横坐标
@@ -182,7 +182,7 @@ MyItem ends
 	PassBy						dd			-1								;路过的提示
 	pSequence				dd			20		DUP(-1)		;需要绘制的物体序号数组
 	pSequenceLength		dd			0
-	ItemList					MyItem	100		DUP(<>)		;物体数组
+	ItemList					MyItem	200		DUP(<>)		;物体数组
 	drawIcon					dd			IMG_415, IMG_416, IMG_417, IMG_418, IMG_419
 	correctOrder			dd			IMG_415, IMG_416, IMG_417, IMG_418, IMG_419
 	player						dd			5 DUP (?)
@@ -251,11 +251,9 @@ MyItem ends
 		INVOKE InitItem, IMG_0, 0, 0, 0, 0, 0, 0, 0, 1
 		INVOKE InitItem, IMG_1, 0, 0, 0, 0, 0, 0, 0, 1
 		INVOKE InitItem, IMG_2, 0, 0, 0, 0, 0, 0, 0, 1
-		INVOKE InitItem, IMG_300, 0, 0, 0, 0, 0, 0, 0, 1
-		INVOKE InitItem, IMG_400, 0, 0, 0, 0, 0, 0, 0, 1
-		INVOKE InitItem, IMG_500, 0, 0, 0, 0, 0, 0, 0, 1
-		INVOKE InitItem, IMG_600, 0, 0, 0, 0, 0, 0, 0, 1
 		
+		INVOKE InitItem, IMG_400, 0, 0, 0, 0, 0, 0, 0, 1
+		INVOKE InitItem, IMG_400, 0, 0, 0, 0, 0, 0, 0, 1
 		INVOKE InitItem, IMG_401, 65, 143, 74, 43, 139, 96, 0, 1
 		INVOKE InitItem, IMG_402, 65, 143, 194, 43, 259, 96, 0, 1
 		INVOKE InitItem, IMG_403, 65, 143, 309, 39, 374, 93, 0, 1
@@ -282,7 +280,8 @@ MyItem ends
 		INVOKE InitItem, IMG_42103, 62, 109, 319, 438, 381, 491, 0, 0
 		INVOKE InitItem, IMG_42104, 62, 109, 319, 438, 381, 491, 0, 0
 		INVOKE InitItem, IMG_422, 43, 42, 749, 547, 792, 0, 0, 0
-
+		
+		INVOKE InitItem, IMG_300, 0, 0, 0, 0, 0, 0, 0, 1
 		INVOKE InitItem, IMG_301, 93, 101, 45, 61, 138, 162, 0, 0
 		INVOKE InitItem, IMG_30201, 105, 149, 198, 41, 303, 190, 0, 0
 		INVOKE InitItem, IMG_30202, 105, 149, 222, 41, 279, 95, 0, 1
@@ -296,6 +295,7 @@ MyItem ends
 		INVOKE InitItem, IMG_30701, 111, 138, 635, 190, 690, 244, 1, 1	
 		INVOKE InitItem, IMG_30702, 111, 138, 635, 204, 690, 257, 1, 1
 		
+		INVOKE InitItem, IMG_500, 0, 0, 0, 0, 0, 0, 0, 1
 		INVOKE InitItem, IMG_501, 490, 406, 52, 78, 0, 0, 1, 0
 		INVOKE InitItem, IMG_5020101, 287, 287, 148, 151, 0, 0, 1, 0
 		INVOKE InitItem, IMG_5020102, 287, 287, 148, 151, 0, 0, 1, 0
@@ -334,6 +334,7 @@ MyItem ends
 		INVOKE InitItem, IMG_90205, 78, 95, 360, 27, 0, 0, 1, 0
 		INVOKE InitItem, IMG_90206, 49, 67, 460, 33, 0, 0, 0, 0
 		
+		INVOKE InitItem, IMG_600, 0, 0, 0, 0, 0, 0, 0, 1
 		INVOKE InitItem, IMG_601, 62, 138, 632, 404, 694, 459, 0, 1
 		INVOKE InitItem, IMG_60201, 69, 112, 478, 434, 535, 489, 0, 1
 		INVOKE InitItem, IMG_60202, 69, 112, 478, 434, 0, 0, 0, 0
@@ -369,7 +370,7 @@ MyItem ends
 		INVOKE InitItem, IMG_61402, 65, 121, 449, 427, 514, 480, 0, 1
 		INVOKE InitItem, IMG_61403, 65, 121, 449, 427, 0, 0, 0, 0
 		INVOKE InitItem, IMG_61404, 65, 121, 449, 427, 0, 0, 0, 0
-		
+
 		INVOKE LoadBitmap, hInstance, 1111
 		mov Thief_right_s_img, eax
 		INVOKE LoadBitmap, hInstance, 2222

@@ -207,6 +207,14 @@ eventResponses3 proc imageID: DWORD
 			mov pSequence[4], IMG_507
 			inc pSequenceLength
 		.ENDIF
+	.ELSEIF imageID == IMG_30402
+		INVOKE ResetpSequence
+		mov Scenario, 6
+		mov Thief_X, 136
+		mov Thief_Y, 510
+		mov Click_X, 136
+		mov Thief_Y, 510
+		mov Orientation, 0
 	.ENDIF
 _EXIT:
 	ret
