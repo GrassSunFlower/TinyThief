@@ -172,11 +172,11 @@ MyItem ends
 	cJudge						BYTE			1								;判断是否要判断接下来的碰撞事件
 	pThief						BYTE			1								;判断是否要绘制Thief
 	;数据型全局变量
-	Scenario					dd			0								;当前场景
-	Thief_X						dd			136							;Thief横坐标
-	Thief_Y						dd			500							;Thief纵坐标
-	Click_X						dd			136							;鼠标点击点的横坐标
-	Click_Y						dd			500							;鼠标点击点的纵坐标
+	Scenario					dd			6								;当前场景
+	Thief_X						dd			275							;Thief横坐标
+	Thief_Y						dd			510							;Thief纵坐标
+	Click_X						dd			275							;鼠标点击点的横坐标
+	Click_Y						dd			510							;鼠标点击点的纵坐标
 	Orientation				BYTE	0										;Thief朝向,0代表向右,1代表朝左
 	Run							BYTE	0										;Thief状态,0代表站立,1代表运动
 	PassBy						dd			-1								;路过的提示
@@ -191,14 +191,20 @@ MyItem ends
 	PPTstatus					dd			0							;需要播放PPT的状态
 	StingPos					dd				300						;刺的位置
 	Rounds						dd				IMG_5020101, IMG_5020201, IMG_5020301	;场景5三个圈
+	Light6						dd				-1						;场景6的灯
+	LightCount					dd				0						;灯亮计时
+	GhostCount					dd				0						;鬼的动画计时
+	GhostStep					dd				-1						;鬼的系列状态
 	Apple						BYTE			0						;是否收集到了苹果
 	AppleShow					BYTE			0						;是否已画出苹果
 	Banana						BYTE			0						;是否收集到了香蕉
+	BananaShow					BYTE			0						;是否已画出香蕉
 	Pear						BYTE			0						;是否收集到了梨子
 	Dog							BYTE			0						;是否收集到了狗？水獭？狐狸？
 	Triangle					BYTE			0						;当前是否拿到了三角
 	Cross						BYTE			0						;当前是否拿到了十字
 	Circle						BYTE			0						;当前是否拿到了圆
+	CircleShow					BYTE			0						;圆是否已出现
 	door3Open					BYTE			0						;场景三的上侧阻挡门是否已经打开
 	door5Open					BYTE			0						;场景五的阻挡门是否已经打开
 	Thief_right_s_img		dd			0
@@ -336,30 +342,30 @@ MyItem ends
 		
 		INVOKE InitItem, IMG_600, 0, 0, 0, 0, 0, 0, 0, 1
 		INVOKE InitItem, IMG_601, 62, 138, 632, 404, 694, 459, 0, 1
-		INVOKE InitItem, IMG_60201, 69, 112, 478, 434, 535, 489, 0, 1
-		INVOKE InitItem, IMG_60202, 69, 112, 478, 434, 0, 0, 0, 0
+		INVOKE InitItem, IMG_60201, 69, 112, 478, 434, 535, 489, 1, 1
+		INVOKE InitItem, IMG_60202, 68, 112, 478, 434, 0, 0, 1, 0
 		INVOKE InitItem, IMG_60301, 69, 112, 384, 434, 439, 488, 0, 1
 		INVOKE InitItem, IMG_60302, 69, 112, 384, 434, 0, 0, 0, 0
 		INVOKE InitItem, IMG_60401, 69, 112, 295, 438, 350, 491, 0, 1
 		INVOKE InitItem, IMG_60402, 69, 112, 295, 438, 0, 0, 0, 0
-		INVOKE InitItem, IMG_60501, 69, 112, 295, 438, 257, 491, 0, 1
-		INVOKE InitItem, IMG_60502, 69, 112, 295, 438, 0, 0, 0, 0
+		INVOKE InitItem, IMG_60501, 69, 112, 201, 438, 257, 491, 0, 1
+		INVOKE InitItem, IMG_60502, 69, 112, 201, 438, 0, 0, 0, 0
 		INVOKE InitItem, IMG_60601, 96, 92, 42, 461, 0, 0, 0, 0
 		INVOKE InitItem, IMG_60602, 96, 92, 42, 461, 0, 0, 0, 0
 		INVOKE InitItem, IMG_60603, 96, 92, 42, 461, 0, 0, 0, 0
 		INVOKE InitItem, IMG_60604, 96, 92, 42, 461, 0, 0, 0, 0
 		INVOKE InitItem, IMG_60605, 96, 92, 42, 461, 0, 0, 0, 0
 		INVOKE InitItem, IMG_60701, 345, 306, 123, 66, 0, 0, 0, 0
-		INVOKE InitItem, IMG_60702, 345, 306, 123, 66, 0, 0, 0, 0
+		INVOKE InitItem, IMG_60702, 65, 83, 153, 285, 0, 0, 0, 0
 		INVOKE InitItem, IMG_60703, 345, 306, 123, 66, 0, 0, 0, 0
 		INVOKE InitItem, IMG_60801, 210, 358, 162, 74, 0, 0, 0, 0
-		INVOKE InitItem, IMG_60802, 210, 358, 162, 74, 0, 0, 0, 0
+		INVOKE InitItem, IMG_60802, 68, 80, 285, 351, 0, 0, 0, 0
 		INVOKE InitItem, IMG_60803, 210, 358, 162, 74, 0, 0, 0, 0
 		INVOKE InitItem, IMG_60901, 252, 329, 384, 65, 0, 0, 0, 0
-		INVOKE InitItem, IMG_60902, 252, 329, 384, 65, 0, 0, 0, 0
+		INVOKE InitItem, IMG_60902, 68, 83, 415, 311, 0, 0, 0, 0
 		INVOKE InitItem, IMG_60903, 252, 329, 384, 65, 0, 0, 0, 0
 		INVOKE InitItem, IMG_61001, 329, 278, 317, 66, 0, 0, 0, 0
-		INVOKE InitItem, IMG_61002, 329, 278, 317, 66, 0, 0, 0, 0
+		INVOKE InitItem, IMG_61002, 68, 81, 553, 263, 0, 0, 0, 0
 		INVOKE InitItem, IMG_61003, 329, 278, 317, 66, 0, 0, 0, 0
 		INVOKE InitItem, IMG_61101, 53, 109, 353, 440, 0, 0, 0, 0
 		INVOKE InitItem, IMG_61102, 53, 109, 353, 440, 406, 495, 0, 1

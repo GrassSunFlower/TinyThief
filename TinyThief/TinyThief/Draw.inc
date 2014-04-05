@@ -44,7 +44,7 @@ DrawThief proc
 	local thiefX
 	mov eax, Thief_X
 	mov thiefX, eax
-	sub thiefX, 32
+	sub thiefX, 16
 	.IF Orientation == 0
 		.IF Run == 0
 			INVOKE DrawTransparentObject, 1111, Thief_right_s_img,thiefX,Thief_Y,25,32
@@ -145,6 +145,13 @@ DrawCollection proc
 		mul edx
 		INVOKE DrawObject, esi, (ItemList[eax]).img, (ItemList[eax]).x1, (ItemList[eax]).y1,(ItemList[eax]).iwidth, (ItemList[eax]).iheight
 	.ENDIF
+	.IF Circle == 1
+		mov eax, IMG_612
+		mov esi, eax
+		mov edx, TYPE MyItem
+		mul edx
+		INVOKE DrawObject, esi, (ItemList[eax]).img, (ItemList[eax]).x1, (ItemList[eax]).y1,(ItemList[eax]).iwidth, (ItemList[eax]).iheight
+	.ENDIF
 	ret
 DrawCollection endp
 
@@ -208,19 +215,106 @@ _EXIT:
 	ret
 DrawRounds endp
 
+;»æÖÆ³¡¾°6µÄµÆ
+DrawLight proc
+	.IF Light6 == -1
+		jmp _EXIT
+	.ELSEIF LightCount == 0
+		mov Light6, -1
+		jmp _EXIT
+	.ELSE
+		.IF LightCount == 5
+			mov pThief, 1
+			mov cClick, 1
+			mov cJudge, 1
+			mov PassBy, -1
+		.ENDIF
+		mov eax, Light6
+		mov esi, eax
+		mov edx, TYPE MyItem
+		mul edx
+		INVOKE DrawObject, esi, (ItemList[eax]).img, (ItemList[eax]).x1, (ItemList[eax]).y1, (ItemList[eax]).iwidth, (ItemList[eax]).iheight
+		dec LightCount
+	.ENDIF
+_EXIT:
+	ret
+DrawLight endp
+
+DrawGhost proc
+	.IF Light6 == IMG_60703 || Light6 == IMG_60803 || Light6 == IMG_60903 || Light6 == IMG_61003
+		jmp _EXIT
+	.ENDIF
+	.IF GhostStep == -1
+		jmp _EXIT
+	.ELSEIF GhostStep == 4
+		mov eax, IMG_60702
+		mov esi, eax
+		mov edx, TYPE MyItem
+		mul edx
+		INVOKE DrawObject, esi, (ItemList[eax]).img, (ItemList[eax]).x1, (ItemList[eax]).y1, (ItemList[eax]).iwidth, (ItemList[eax]).iheight
+		jmp _EXIT
+	.ELSEIF GhostStep == 5
+		mov eax, IMG_60902
+		mov esi, eax
+		mov edx, TYPE MyItem
+		mul edx
+		INVOKE DrawObject, esi, (ItemList[eax]).img, (ItemList[eax]).x1, (ItemList[eax]).y1, (ItemList[eax]).iwidth, (ItemList[eax]).iheight
+		jmp _EXIT
+	.ELSEIF GhostStep == 6
+		mov eax, IMG_60802
+		mov esi, eax
+		mov edx, TYPE MyItem
+		mul edx
+		INVOKE DrawObject, esi, (ItemList[eax]).img, (ItemList[eax]).x1, (ItemList[eax]).y1, (ItemList[eax]).iwidth, (ItemList[eax]).iheight
+		jmp _EXIT
+	.ELSEIF GhostStep == 7
+		mov eax, IMG_61002
+		mov esi, eax
+		mov edx, TYPE MyItem
+		mul edx
+		INVOKE DrawObject, esi, (ItemList[eax]).img, (ItemList[eax]).x1, (ItemList[eax]).y1, (ItemList[eax]).iwidth, (ItemList[eax]).iheight
+		jmp _EXIT
+	.ELSEIF GhostStep == 8 && CircleShow == 0
+		INVOKE addTopSequence, IMG_61101
+		mov CircleShow, 1
+	.ELSEIF GhostStep <= 3
+		mov eax, IMG_60601
+		add eax, GhostStep
+		mov esi, eax
+		mov edx, TYPE MyItem
+		mul edx
+		INVOKE DrawObject, esi, (ItemList[eax]).img, (ItemList[eax]).x1, (ItemList[eax]).y1, (ItemList[eax]).iwidth, (ItemList[eax]).iheight
+		.IF GhostCount == 0
+			inc GhostStep
+			mov GhostCount, 10
+			.IF GhostStep == 4
+				mov cClick, 1
+				INVOKE addTopSequence, IMG_60605
+				jmp _EXIT
+			.ENDIF
+		.ENDIF
+		dec GhostCount
+	.ENDIF
+_EXIT:
+	ret
+DrawGhost endp
+
 DrawProc proc
 
 	INVOKE DrawBackground
-	.IF Scenario == 4
-		INVOKE DrawIcons
-	.ENDIF
 	.IF Scenario > 2
+		.IF Scenario == 4
+			INVOKE DrawIcons
+		.ENDIF
 		INVOKE DrawItems
 		INVOKE DrawPassBy
 		INVOKE DrawCollection
 		.IF Scenario == 5
 			INVOKE DrawRounds
 			INVOKE DrawSting
+		.ELSEIF Scenario == 6
+			INVOKE DrawLight
+			INVOKE DrawGhost
 		.ENDIF
 		.IF pThief == 1
 			INVOKE DrawThief
