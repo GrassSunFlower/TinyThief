@@ -13,6 +13,8 @@ DrawObject proc bID:DWORD, img:DWORD, xDesc:DWORD, yDesc:DWORD, sWidth:DWORD, sH
 		mov xDesc, 424
 	.ELSEIF bID == IMG_50901 || bID == IMG_50902
 		mov yDesc, 404
+	.ELSEIF bID == IMG_30803 || bID == IMG_30805
+		mov xDesc, 613
 	.ENDIF
 
 	INVOKE SelectObject,hdcImage,img
