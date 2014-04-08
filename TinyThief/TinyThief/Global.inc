@@ -224,14 +224,15 @@ MyItem ends
 	cJudge						BYTE			1								;判断是否要判断接下来的碰撞事件
 	pThief						BYTE			1								;判断是否要绘制Thief
 	;数据型全局变量
-	Scenario					dd			5								;当前场景
-	Thief_X						dd			675							;Thief横坐标
-	Thief_Y						dd			510							;Thief纵坐标
+	Scenario					dd			3								;当前场景
+	Thief_X						dd			79							;Thief横坐标
+	Thief_Y						dd			128							;Thief纵坐标
 	Click_X						dd			675							;鼠标点击点的横坐标
 	Click_Y						dd			510							;鼠标点击点的纵坐标
 	Orientation				BYTE	0										;Thief朝向,0代表向右,1代表朝左
 	Run							BYTE	0										;Thief状态,0代表站立,1代表运动
 	PassBy						dd			-1								;路过的提示
+	PassBy_Old					dd			-1
 	pSequence				dd			20		DUP(-1)		;需要绘制的物体序号数组
 	pSequenceLength		dd			0
 	ItemList					MyItem	200		DUP(<>)		;物体数组
@@ -264,6 +265,8 @@ MyItem ends
 	Thief_left_s_img		dd			0
 	Thief_right_r_img		dd			0
 	Thief_left_r_img		dd			0
+	isPlayingBGM			BYTE		1
+	isStopped					BYTE			0
 	
 .const
 	szClassName			db			"TinyThiefClass", 0
@@ -383,8 +386,8 @@ MyItem ends
 		INVOKE InitItem, IMG_50906, 56, 97, 686, 404, 0, 0, 0, 0
 		INVOKE InitItem, IMG_510, 39, 39, 700, 547, 0, 0, 1, 0
 
-		INVOKE InitItem, IMG_90101, 150, 350, 0, 0, 0, 0, 1, 0
-		INVOKE InitItem, IMG_90102, 150, 350, 0, 0, 0, 0, 1, 0
+		INVOKE InitItem, IMG_90101, 150, 350, 0, 30, 0, 0, 1, 0
+		INVOKE InitItem, IMG_90102, 150, 350, 0, 30, 0, 0, 1, 0
 		INVOKE InitItem, IMG_90200, 261, 123, 270, 13, 0, 0, 1, 0
 		INVOKE InitItem, IMG_90201, 26, 26, 290, 54, 0, 0, 0, 0
 		INVOKE InitItem, IMG_90202, 26, 26, 304, 28, 0, 0, 0, 0

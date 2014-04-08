@@ -52,10 +52,12 @@ _ProcWinMain proc uses ebx edi esi, hWnd, uMsg, wParam, lParam
 			INVOKE InitItemList
 			INVOKE SetTimer, hWnd, 1001, 50, NULL
 		.ELSEIF uMsg == WM_TIMER						;计时器事件
-			.IF cJudge == 1
-				INVOKE JudgeCollisions
+			.IF isStopped == 0
+				.IF cJudge == 1
+					INVOKE JudgeCollisions
+				.ENDIF
+				INVOKE ThiefMove
 			.ENDIF
-			INVOKE ThiefMove
 			INVOKE InvalidateRect, hWnd, NULL, FALSE
 		.ELSEIF uMsg == WM_PAINT						;绘制事件
 			INVOKE BeginPaint, hWnd, addr @stPs
