@@ -51,6 +51,63 @@ removeIcon endp
 
 ; #########################################################################
 
+restartGame proc
+	mov cClick, 1
+	mov cJudge, 1
+	mov pThief, 1
+	mov isStopped, 0
+	
+	mov Orientation, 0
+	mov Run, 0
+	mov PassBy, -1
+	INVOKE ResetpSequence 
+	INVOKE resetIcon
+
+	mov ecx, 0
+	.WHILE ecx < 5
+		mov player[ecx*4], 0
+		add ecx, 1
+	.ENDW
+
+	mov step, 0
+	mov pearStep, 0
+	mov PPTstatus, 0
+	mov StingPos, 300
+
+	mov Rounds[0], IMG_5020101
+	mov Rounds[4], IMG_5020201
+	mov Rounds[8], IMG_5020301
+	mov Light6, -1
+	mov LightCount, 0
+	mov GhostCount, 0
+	mov GhostStep, -1
+	mov CollectionStep, 0
+
+	mov Apple, 0
+	mov AppleShow, 0
+	mov Banana, 0
+	mov BananaShow, 0
+	mov Pear, 0
+	mov Dog, 0
+	mov Triangle, 0
+	mov Cross, 0	
+	mov Circle, 0
+	mov CircleShow, 0
+	mov door3Open, 0
+	mov door5Open, 0
+
+	mov Scenario, 3
+	mov Thief_X, 79
+	mov Thief_Y, 128
+	mov Click_X, 79
+	mov Click_Y, 128
+	mov pSequence[0], IMG_30201
+	inc pSequenceLength
+
+restartGame endp
+
+; #########################################################################
+
 isCorrectOrder proc
 	mov eax, 1
 	mov ecx, 0
@@ -801,23 +858,77 @@ processScenario8 endp
 ; #########################################################################
 
 processMouseEvent proc currentScenario:DWORD
-	mov ebx, 0
-	.IF check_collection == 1
-		mov check_collection, 0
-		ret
-	.ENDIF
-	.IF currentScenario > 2
-		mov eax, IMG_511
-		mov edx, TYPE MyItem
-		mul edx
-		mov ebx, eax
-		INVOKE clickPosition, (ItemList[ebx]).x1, (ItemList[ebx]).y1, (ItemList[ebx]).x2, (ItemList[ebx]).y2
+	.IF isStopped == 0 && currentScenario >= 3 && currentScenario <= 6
+		; stop
+		INVOKE clickPosition, 19, 16, 55, 45
+		.IF eax == 1 
+			mov isStopped, 1
+			mov pThief, 0
+			.IF PassBy != -1
+				mov esi, PassBy
+				mov PassBy_Old, esi
+				mov PassBy, -1
+			.ENDIF
+			.IF isPlayingBGM == 1
+				mov ecx, pSequenceLength
+				mov pSequence[ecx*4], IMG_90101
+				inc pSequenceLength
+			.ELSEIF isPlayingBGM == 0
+				mov ecx, pSequenceLength
+				mov pSequence[ecx*4], IMG_90102
+				inc pSequenceLength
+			.ENDIF
+			jmp _EXIT
+		.ENDIF
+		; star
+		INVOKE clickPosition, 63, 16, 96, 45
 		.IF eax == 1
-			mov check_collection, 1
-			ret
+			jmp _EXIT
+		.ENDIF
+	.ELSEIF isStopped == 1 && currentScenario >= 3 && currentScenario <= 6
+		; continue
+		INVOKE clickPosition, 72, 88, 118, 145
+		.IF eax == 1
+			mov isStopped, 0
+			mov pThief, 1
+			dec pSequenceLength
+			mov ecx, pSequenceLength
+			mov pSequence[ecx*4], -1
+			mov esi, Thief_X 
+			mov Click_X, esi
+			mov esi, Thief_Y 
+			mov Click_Y, esi
+			.IF PassBy_Old != -1
+				mov esi, PassBy_Old
+				mov PassBy, esi
+			.ENDIF
+			jmp _EXIT
+		.ENDIF
+		; restart
+		INVOKE clickPosition, 72, 172, 118, 225
+		.IF eax == 1
+			INVOKE restartGame
+			jmp _EXIT
+		.ENDIF
+		; sound
+		INVOKE clickPosition, 72, 255, 118, 310
+		.IF eax == 1
+			.IF isPlayingBGM == 1
+				mov ecx, pSequenceLength
+				dec ecx
+				mov pSequence[ecx*4], IMG_90102
+				mov isPlayingBGM, 0
+				; stop the music
+			.ELSEIF isPlayingBGM == 0
+				mov ecx, pSequenceLength
+				dec ecx
+				mov pSequence[ecx*4], IMG_90101
+				mov isPlayingBGM, 1
+				; restart the music
+			.ENDIF
+			jmp _EXIT
 		.ENDIF
 	.ENDIF
-
 	.IF currentScenario == 0
 		INVOKE processScenario0
 	.ELSEIF currentScenario == 1
@@ -838,6 +949,7 @@ processMouseEvent proc currentScenario:DWORD
 		INVOKE processScenario8
 	.ENDIF
 
+_EXIT:
 	ret
 processMouseEvent endp
 
