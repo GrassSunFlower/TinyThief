@@ -53,6 +53,7 @@ removeIcon endp
 
 restartGame proc
 	mov cClick, 1
+	mov cJudge, 1
 	mov pThief, 1
 	mov isStopped, 0
 	
@@ -69,19 +70,31 @@ restartGame proc
 	.ENDW
 
 	mov step, 0
+	mov pearStep, 0
 	mov PPTstatus, 0
+	mov StingPos, 300
+
+	mov Rounds[0], IMG_5020101
+	mov Rounds[4], IMG_5020201
+	mov Rounds[8], IMG_5020301
+	mov Light6, -1
+	mov LightCount, 0
+	mov GhostCount, 0
+	mov GhostStep, -1
+	mov CollectionStep, 0
+
 	mov Apple, 0
 	mov AppleShow, 0
 	mov Banana, 0
+	mov BananaShow, 0
 	mov Pear, 0
 	mov Dog, 0
 	mov Triangle, 0
-	mov Cross, 0
+	mov Cross, 0	
 	mov Circle, 0
-	mov Thief_right_s_img, 0
-	mov Thief_left_s_img, 0
-	mov Thief_right_r_img, 0
-	mov Thief_left_r_img, 0
+	mov CircleShow, 0
+	mov door3Open, 0
+	mov door5Open, 0
 
 	mov Scenario, 3
 	mov Thief_X, 79
@@ -89,7 +102,6 @@ restartGame proc
 	mov Click_X, 79
 	mov Click_Y, 128
 	mov pSequence[0], IMG_30201
-	inc pSequenceLength
 	inc pSequenceLength
 
 restartGame endp
