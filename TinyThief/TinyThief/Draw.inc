@@ -138,21 +138,21 @@ DrawCollection proc
 		mov esi, eax
 		mov edx, TYPE MyItem
 		mul edx
-		INVOKE DrawObject, esi, (ItemList[eax]).img, (ItemList[eax]).x1, (ItemList[eax]).y1,(ItemList[eax]).iwidth, (ItemList[eax]).iheight
+		INVOKE DrawTransparentObject, esi, (ItemList[eax]).img, (ItemList[eax]).x1, (ItemList[eax]).y1,(ItemList[eax]).iwidth, (ItemList[eax]).iheight
 	.ENDIF
 	.IF Cross == 1
 		mov eax, IMG_510
 		mov esi, eax
 		mov edx, TYPE MyItem
 		mul edx
-		INVOKE DrawObject, esi, (ItemList[eax]).img, (ItemList[eax]).x1, (ItemList[eax]).y1,(ItemList[eax]).iwidth, (ItemList[eax]).iheight
+		INVOKE DrawTransparentObject, esi, (ItemList[eax]).img, (ItemList[eax]).x1, (ItemList[eax]).y1,(ItemList[eax]).iwidth, (ItemList[eax]).iheight
 	.ENDIF
 	.IF Circle == 1
 		mov eax, IMG_612
 		mov esi, eax
 		mov edx, TYPE MyItem
 		mul edx
-		INVOKE DrawObject, esi, (ItemList[eax]).img, (ItemList[eax]).x1, (ItemList[eax]).y1,(ItemList[eax]).iwidth, (ItemList[eax]).iheight
+		INVOKE DrawTransparentObject, esi, (ItemList[eax]).img, (ItemList[eax]).x1, (ItemList[eax]).y1,(ItemList[eax]).iwidth, (ItemList[eax]).iheight
 	.ENDIF
 	ret
 DrawCollection endp

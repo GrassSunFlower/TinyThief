@@ -170,8 +170,8 @@ ThiefMove proc
 			mov MAX_X, 735
 			mov MIN_X, 630
 		.ELSEIF Thief_Y == 451		;石像第一层
-			mov MAX_X, 195
-			mov MIN_X, 580
+			mov MAX_X, 580
+			mov MIN_X, 195
 		.ENDIF
 	.ELSEIF Scenario == 4
 		.IF Thief_Y == 510		;下

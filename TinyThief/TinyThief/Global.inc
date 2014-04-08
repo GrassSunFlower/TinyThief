@@ -237,8 +237,8 @@ MyItem ends
 	BananaShow					BYTE			0						;是否已画出香蕉
 	Pear						BYTE			0						;是否收集到了梨子
 	Dog							BYTE			0						;是否收集到了狗？水獭？狐狸？
-	Triangle					BYTE			0						;当前是否拿到了三角
-	Cross						BYTE			0						;当前是否拿到了十字
+	Triangle					BYTE			1						;当前是否拿到了三角
+	Cross						BYTE			1						;当前是否拿到了十字
 	Circle						BYTE			1						;当前是否拿到了圆
 	CircleShow					BYTE			0						;圆是否已出现
 	door3Open					BYTE			0						;场景三的上侧阻挡门是否已经打开
@@ -321,7 +321,7 @@ MyItem ends
 		INVOKE InitItem, IMG_42102, 62, 109, 319, 438, 381, 491, 0, 1
 		INVOKE InitItem, IMG_42103, 62, 109, 319, 438, 381, 491, 0, 0
 		INVOKE InitItem, IMG_42104, 62, 109, 319, 438, 381, 491, 0, 0
-		INVOKE InitItem, IMG_422, 43, 42, 749, 547, 792, 0, 0, 0
+		INVOKE InitItem, IMG_422, 39, 39, 750, 547, 0, 0, 1, 0
 		
 		INVOKE InitItem, IMG_300, 0, 0, 0, 0, 0, 0, 0, 1
 		INVOKE InitItem, IMG_301, 93, 101, 45, 61, 138, 162, 0, 0
@@ -364,7 +364,7 @@ MyItem ends
 		INVOKE InitItem, IMG_50904, 56, 97, 686, 404, 741, 459, 0, 1
 		INVOKE InitItem, IMG_50905, 56, 97, 682, 433, 0, 0, 0, 1
 		INVOKE InitItem, IMG_50906, 56, 97, 686, 404, 0, 0, 0, 0
-		INVOKE InitItem, IMG_510, 44, 40, 699, 549, 0, 0, 0, 0
+		INVOKE InitItem, IMG_510, 39, 39, 700, 547, 0, 0, 1, 0
 
 		INVOKE InitItem, IMG_90101, 150, 350, 0, 0, 0, 0, 1, 0
 		INVOKE InitItem, IMG_90102, 150, 350, 0, 0, 0, 0, 1, 0
@@ -405,7 +405,7 @@ MyItem ends
 		INVOKE InitItem, IMG_61003, 329, 278, 317, 66, 0, 0, 0, 0
 		INVOKE InitItem, IMG_61101, 53, 109, 353, 440, 0, 0, 0, 0
 		INVOKE InitItem, IMG_61102, 53, 109, 353, 440, 406, 495, 0, 1
-		INVOKE InitItem, IMG_612, 45, 44, 645, 547, 0, 0, 0, 0
+		INVOKE InitItem, IMG_612, 39, 39, 650, 547, 0, 0, 1, 0
 		INVOKE InitItem, IMG_61301, 58, 91, 44, 438, 102, 490, 0, 1
 		INVOKE InitItem, IMG_61302, 58, 91, 44, 438, 0, 0, 0, 0
 		INVOKE InitItem, IMG_61401, 65, 121, 449, 427, 0, 0, 0, 0
