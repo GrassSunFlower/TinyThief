@@ -208,9 +208,9 @@ MyItem ends
 	pThief						BYTE			1								;判断是否要绘制Thief
 	;数据型全局变量
 	Scenario					dd			6								;当前场景
-	Thief_X						dd			275							;Thief横坐标
+	Thief_X						dd			675							;Thief横坐标
 	Thief_Y						dd			510							;Thief纵坐标
-	Click_X						dd			275							;鼠标点击点的横坐标
+	Click_X						dd			675							;鼠标点击点的横坐标
 	Click_Y						dd			510							;鼠标点击点的纵坐标
 	Orientation				BYTE	0										;Thief朝向,0代表向右,1代表朝左
 	Run							BYTE	0										;Thief状态,0代表站立,1代表运动
@@ -230,6 +230,7 @@ MyItem ends
 	LightCount					dd				0						;灯亮计时
 	GhostCount					dd				0						;鬼的动画计时
 	GhostStep					dd				-1						;鬼的系列状态
+	CollectionStep				dd				0						;收集品放入的步骤
 	Apple						BYTE			0						;是否收集到了苹果
 	AppleShow					BYTE			0						;是否已画出苹果
 	Banana						BYTE			0						;是否收集到了香蕉
@@ -238,7 +239,7 @@ MyItem ends
 	Dog							BYTE			0						;是否收集到了狗？水獭？狐狸？
 	Triangle					BYTE			0						;当前是否拿到了三角
 	Cross						BYTE			0						;当前是否拿到了十字
-	Circle						BYTE			0						;当前是否拿到了圆
+	Circle						BYTE			1						;当前是否拿到了圆
 	CircleShow					BYTE			0						;圆是否已出现
 	door3Open					BYTE			0						;场景三的上侧阻挡门是否已经打开
 	door5Open					BYTE			0						;场景五的阻挡门是否已经打开
@@ -332,7 +333,7 @@ MyItem ends
 		INVOKE InitItem, IMG_30402, 105, 149, 444, 34, 508, 90, 0, 1
 		INVOKE InitItem, IMG_305, 45, 133, 543, 46, 587, 179, 0, 0
 		INVOKE InitItem, IMG_30601, 148, 451, 610, 40, 677, 94, 1, 1	
-		INVOKE InitItem, IMG_30602, 105, 149, 685, 354, 746, 407, 1, 1
+		INVOKE InitItem, IMG_30602, 148, 451, 685, 354, 746, 407, 1, 1
 		INVOKE InitItem, IMG_30701, 111, 138, 635, 190, 690, 244, 1, 1	
 		INVOKE InitItem, IMG_30702, 111, 138, 635, 204, 690, 257, 1, 1
 		
@@ -378,7 +379,7 @@ MyItem ends
 		INVOKE InitItem, IMG_600, 0, 0, 0, 0, 0, 0, 0, 1
 		INVOKE InitItem, IMG_601, 62, 138, 632, 404, 694, 459, 0, 1
 		INVOKE InitItem, IMG_60201, 69, 112, 478, 434, 535, 489, 1, 1
-		INVOKE InitItem, IMG_60202, 68, 112, 478, 434, 0, 0, 1, 0
+		INVOKE InitItem, IMG_60202, 69, 112, 478, 434, 0, 0, 1, 0
 		INVOKE InitItem, IMG_60301, 69, 112, 384, 434, 439, 488, 0, 1
 		INVOKE InitItem, IMG_60302, 69, 112, 384, 434, 0, 0, 0, 0
 		INVOKE InitItem, IMG_60401, 69, 112, 295, 438, 350, 491, 0, 1

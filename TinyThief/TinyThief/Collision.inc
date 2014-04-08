@@ -1,5 +1,10 @@
 .code
 
+;函数原型
+CalculateThiefY3 PROTO
+
+
+
 ;判断碰撞
 JudgeCollision proc ID:DWORD
 	mov eax, ID
@@ -20,8 +25,40 @@ JudgeCollision endp
 JudgeCollisions proc
 	mov PassBy, -1
 	.IF Scenario == 3
+		.IF CollectionStep == 0
+			mov eax, IMG_30801
+		.ELSEIF CollectionStep == 1
+			mov eax, IMG_30803
+		.ELSEIF CollectionStep == 2
+			mov eax, IMG_30805
+		.ELSEIF CollectionStep == 3
+			mov eax, IMG_310
+		.ELSE
+			jmp _FinishStep
+		.ENDIF
+		INVOKE JudgeCollision, eax
 		.IF PassBy != -1
 			jmp	_EXIT
+		.ENDIF
+		_FinishStep:
+		.IF Thief_Y < 150
+			INVOKE JudgeCollision, IMG_30601
+			.IF PassBy != -1
+				jmp	_EXIT
+			.ENDIF
+			.IF Thief_X > 710 && Thief_X < 740
+				mov PassBy, IMG_30701
+				jmp	_EXIT
+			.ENDIF
+		.ELSE
+			INVOKE JudgeCollision, IMG_30602
+			.IF PassBy != -1
+				jmp	_EXIT
+			.ENDIF
+			.IF Thief_X > 710 && Thief_X < 740
+				mov PassBy, IMG_30702
+				jmp	_EXIT
+			.ENDIF
 		.ENDIF
 	.ELSEIF Scenario == 4
 		mov ecx, IMG_401
@@ -129,6 +166,12 @@ ThiefMove proc
 		.IF Thief_Y >= 128 && Thief_Y <= 148 && door3Open == 0	;门未开的上
 			mov MAX_X, 545
 			mov MIN_X, 55
+		.ELSEIF Thief_Y == 265		;右中部
+			mov MAX_X, 735
+			mov MIN_X, 630
+		.ELSEIF Thief_Y == 451		;石像第一层
+			mov MAX_X, 195
+			mov MIN_X, 580
 		.ENDIF
 	.ELSEIF Scenario == 4
 		.IF Thief_Y == 510		;下
@@ -173,10 +216,6 @@ ThiefMove proc
 	;普通移动处理
 	mov ebx, Click_X
 	.IF ebx > Thief_X
-		;特殊移动处理1：场景3下楼梯
-		.IF Scenario == 3 && Thief_Y >= 128 && Thief_Y <= 144 && Thief_X >= 170 && Thief_X <= 190
-			add Thief_Y, 4
-		.ENDIF
 		add Thief_X, 5
 		.IF ebx > Thief_X
 			mov Run, 1
@@ -186,10 +225,6 @@ ThiefMove proc
 			mov Click_X, ebx
 		.ENDIF
 	.ELSEIF ebx < Thief_X
-		;特殊移动处理1：场景3下楼梯
-		.IF Scenario == 3 && Thief_Y >= 132 && Thief_Y <= 148 && Thief_X >= 170 && Thief_X <= 190
-			sub Thief_Y, 4
-		.ENDIF
 		sub Thief_X, 5
 		.IF ebx < Thief_X
 			mov Run, 1
@@ -198,13 +233,10 @@ ThiefMove proc
 			mov ebx, Thief_X
 			mov Click_X, ebx
 		.ENDIF
-	.ELSE
 		mov Run, 0
 	.ENDIF
-	.IF Scenario == 3 && Thief_Y == 128 && Thief_X > 165 && Thief_X < 170
-		mov Thief_X, 170
-	.ELSEIF Scenario == 3 && Thief_Y == 144 && Thief_X > 190 && Thief_X < 195
-		mov Thief_X, 190
+	.IF Scenario == 3
+		INVOKE CalculateThiefY3
 	.ENDIF
 	ret
 ThiefMove endp
@@ -232,6 +264,20 @@ addTopSequence proc, imgID
 addTopSequence endp
 
 ; #########################################################################
+;将pSequence序列中的某个值des修改为src
+ChangepSequence proc, des, src
+	mov ecx, 0
+	mov edx, src
+	.WHILE ecx < pSequenceLength
+		mov ebx, pSequence[ecx * 4]
+		.IF ebx == des
+			mov pSequence[ecx * 4], edx
+		.ENDIF
+		inc ecx
+	.ENDW	
+	ret
+ChangepSequence endp
+; #########################################################################
 ;播放逃跑ppt
 RunForYouLife proc
 	
@@ -245,10 +291,53 @@ RunForYouLife proc
 		INVOKE ResetpSequence
 		mov pSequence[0], IMG_30301
 		mov pSequenceLength, 1
-		mov Thief_Y, 148
 		mov Thief_X, 333
-		mov Click_Y, 148
+		mov Thief_Y, 148
+		INVOKE CalculateThiefY3
 		mov Click_X, 333
+		mov eax, Thief_Y
+		mov Click_Y, eax
 	.ENDIF
 	ret
 RunForYouLife endp
+
+;场景3的非水平移动
+CalculateThiefY3 proc 
+	;左上的楼梯
+	.IF Thief_Y >= 128 && Thief_Y <= 148 && Thief_X >= 170 && Thief_X <= 195
+		mov eax, Thief_X
+		mov edx, 0
+		sub eax, 170
+		mov ebx, 5
+		div ebx
+		mov ebx, 4
+		mul ebx
+		add eax, 128
+		mov Thief_Y, eax
+	;上的斜坡
+	.ELSEIF Thief_Y < 150 && Thief_X > 195
+		mov eax, Thief_X
+		mov edx, 0
+		sub eax, 195
+		mov ebx, 50
+		div ebx
+		mov ebx, 1
+		mul ebx
+		mov ebx, 148
+		sub ebx, eax
+		mov Thief_Y, ebx
+	;右下的楼梯
+	.ELSEIF Thief_Y >= 452 && Thief_Y <= 516 && Thief_X <= 680 && Thief_X >= 600
+		mov eax, Thief_X
+		mov edx, 0
+		sub eax, 600
+		mov ebx, 5
+		div ebx
+		mov ebx, 4
+		mul ebx
+		mov ebx, 516
+		sub ebx, eax
+		mov Thief_Y, ebx
+	.ENDIF
+	ret
+CalculateThiefY3 endp

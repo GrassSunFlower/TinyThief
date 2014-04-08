@@ -126,6 +126,10 @@ doorTransition proc imageID: DWORD
 	.ELSEIF imageID == IMG_410	;切换回场景3
 		mov Thief_X, 270
 		mov Thief_Y, 148
+		INVOKE CalculateThiefY3
+		mov Click_X, 270
+		mov eax, Thief_Y
+		mov Click_Y, eax
 		mov Scenario, 3
 		INVOKE ResetpSequence
 		.IF Triangle == 1
@@ -163,13 +167,14 @@ doorTransition endp
 eventResponses3 proc imageID: DWORD
 	mov ecx, 0
 	mov Run, 0
+	;到场景4的门
 	.IF imageID == IMG_30202
 		INVOKE ResetpSequence
 		mov Scenario, 4
 		mov Thief_X, 120
 		mov Thief_Y, 510
 		mov Click_X, 120
-		mov Thief_Y, 510
+		mov Click_Y, 510
 		mov Orientation, 0
 		.IF step == 5 && Apple == 0 && AppleShow == 0
 			INVOKE isCorrectOrder
@@ -180,13 +185,14 @@ eventResponses3 proc imageID: DWORD
 				add pSequenceLength, 1
 			.ENDIF
 		.ENDIF
+	;到场景5的门
 	.ELSEIF imageID == IMG_30302
 		INVOKE ResetpSequence
 		mov Scenario, 5
 		mov Thief_X, 120
 		mov Thief_Y, 500
 		mov Click_X, 120
-		mov Thief_Y, 500
+		mov Click_Y, 500
 		mov Orientation, 0
 		.IF pearStep == 0
 			mov eax, IMG_50901
@@ -205,15 +211,60 @@ eventResponses3 proc imageID: DWORD
 			mov pSequence[4], IMG_507
 			inc pSequenceLength
 		.ENDIF
+	;到场景6的门
 	.ELSEIF imageID == IMG_30402
 		INVOKE ResetpSequence
 		mov Scenario, 6
 		mov Thief_X, 675
 		mov Thief_Y, 510
-		mov Click_X, 675
-		mov Thief_Y, 510
 		mov Orientation, 1
+	;上下的门之上
+	.ELSEIF imageID == IMG_30601
+		mov Thief_X, 720
+		mov Thief_Y, 452
+		mov Orientation, 1
+	;上下的门之下
+	.ELSEIF imageID == IMG_30602
+		mov Thief_X, 640
+		mov Thief_Y, 148
+		INVOKE CalculateThiefY3
+		mov Orientation, 1
+	;上下的楼梯之上
+	.ELSEIF imageID == IMG_30701
+		mov Thief_X, 720
+		mov Thief_Y, 265
+		mov Orientation, 1
+	;上下的楼梯之下
+	.ELSEIF imageID == IMG_30702
+		mov Thief_X, 720
+		mov Thief_Y, 148
+		INVOKE CalculateThiefY3
+		mov Orientation, 1
+	;放三个collection
+	.ELSEIF imageID == IMG_30801
+		mov Triangle, 2
+		INVOKE addTopSequence, IMG_30802
+		mov CollectionStep, 1
+	.ELSEIF imageID == IMG_30803
+		mov Cross, 2
+		mov CollectionStep, 2
+		INVOKE ChangepSequence, IMG_30802, IMG_30804
+	.ELSEIF imageID == IMG_30805
+		mov Circle, 2
+		mov CollectionStep, 3
+		INVOKE ChangepSequence, IMG_30804, IMG_30806
+		INVOKE addTopSequence, IMG_30901
+	.ELSEIF imageID == IMG_310
+		INVOKE ChangepSequence, IMG_30901, IMG_30902
+		mov Thief_Y, 451
+		mov CollectionStep, 4
+	.ELSE
+		jmp _EXIT
 	.ENDIF
+	mov eax, Thief_X
+	mov Click_X, eax
+	mov eax, Thief_Y
+	mov Click_Y, eax
 _EXIT:
 	ret
 eventResponses3 endp
@@ -232,18 +283,9 @@ eventResponses4 proc imageID: DWORD
 		mov ebx, imageID
 		mov player[eax*4], ebx
 		add step, 1
-		mov edx, Thief_X
-		mov Click_X, edx
-		mov edx, Thief_Y
-		mov Click_Y, edx
 	;点击了门
 	.ELSEIF imageID >= IMG_401 && imageID <=IMG_414
 		INVOKE doorTransition, imageID
-		mov edx, Thief_X
-		mov Click_X, edx
-		mov edx, Thief_Y
-		mov Click_Y, edx
-		jmp _EXIT
 	;点击了拿起三角
 	.ELSEIF imageID == IMG_42001
 		mov Triangle, 1
@@ -252,17 +294,10 @@ eventResponses4 proc imageID: DWORD
 	;点击了拿起苹果
 	.ELSEIF imageID == IMG_42102
 		mov Apple, 1
-		mov ecx, 0
-		.WHILE ecx < pSequenceLength
-			mov ebx, pSequence[ecx * 4]
-			.IF ebx == IMG_42101
-				mov pSequence[ecx * 4], IMG_42104
-				mov pThief, 0
-				mov PPTstatus, 1
-				jmp _EXIT
-			.ENDIF
-			inc ecx
-		.ENDW
+		INVOKE ChangepSequence, IMG_42101, IMG_42104
+		mov pThief, 0
+		mov PPTstatus, 1
+		jmp _EXIT
 	.ENDIF
 	.IF step == 5 && Apple == 0 && AppleShow == 0
 		INVOKE isCorrectOrder
@@ -275,7 +310,13 @@ eventResponses4 proc imageID: DWORD
 			INVOKE resetIcon
 			mov step, 0
 		.ENDIF
+	.ELSE
+		jmp _EXIT
 	.ENDIF
+	mov eax, Thief_X
+	mov Click_X, eax
+	mov eax, Thief_Y
+	mov Click_Y, eax
 _EXIT:
 	ret
 eventResponses4 endp
@@ -296,8 +337,7 @@ eventResponses5 proc imageID: DWORD
 		mov pSequenceLength, 1
 		mov Thief_Y, 148
 		mov Thief_X, 353
-		mov Click_Y, 148
-		mov Click_X, 353
+		INVOKE CalculateThiefY3
 		mov StingPos, 300
 		mov Orientation, 0
 	.ELSEIF imageID == IMG_504	;外圈
@@ -336,10 +376,132 @@ eventResponses5 proc imageID: DWORD
 		mov pSequence[0], IMG_50905
 		mov pThief, 0
 		jmp _EXIT
+	.ELSE
+		jmp _EXIT
 	.ENDIF
+	mov eax, Thief_X
+	mov Click_X, eax
+	mov eax, Thief_Y
+	mov Click_Y, eax
 _EXIT:
 	ret
 eventResponses5 endp
+
+; #########################################################################
+
+;针对场景6的事件响应
+eventResponses6 proc imageID: DWORD
+	mov ecx, 0
+	mov Run, 0
+	;门
+	.IF imageID == IMG_601
+		mov Scenario, 3
+		INVOKE ResetpSequence
+		.IF Circle == 1
+			mov door3Open, 1
+			mov pSequence[0], IMG_305
+		.ELSE
+			mov pSequence[0], IMG_30401
+		.ENDIF
+		mov pSequenceLength, 1
+		mov Thief_Y, 148
+		mov Thief_X, 470
+		INVOKE CalculateThiefY3
+		mov Click_X, 470
+		mov eax, Thief_Y
+		mov Click_Y, eax
+		mov Orientation, 0
+	;四个控制灯的把手
+	.ELSEIF imageID == IMG_60201
+		mov PassBy, IMG_60202
+		mov pThief, 0
+		mov cClick, 0
+		mov cJudge, 0
+		.IF GhostStep == 5
+			mov Light6, IMG_60903
+			mov LightCount, 15
+			inc GhostStep
+		.ELSE
+			mov Light6, IMG_60901
+			mov LightCount, 15
+		.ENDIF
+	.ELSEIF imageID == IMG_60301
+		mov PassBy, IMG_60302
+		mov pThief, 0
+		mov cClick, 0
+		mov cJudge, 0
+		.IF GhostStep == 4
+			mov Light6, IMG_60703
+			mov LightCount, 15
+			inc GhostStep
+		.ELSE
+			mov Light6, IMG_60701
+			mov LightCount, 15
+		.ENDIF
+	.ELSEIF imageID == IMG_60401
+		mov PassBy, IMG_60402
+		mov pThief, 0
+		mov cClick, 0
+		mov cJudge, 0
+		.IF GhostStep == 7
+			mov Light6, IMG_61003
+			mov LightCount, 15
+			inc GhostStep
+		.ELSE
+			mov Light6, IMG_61001
+			mov LightCount, 15
+		.ENDIF
+	.ELSEIF imageID == IMG_60501
+		mov PassBy, IMG_60502
+		mov pThief, 0
+		mov cClick, 0
+		mov cJudge, 0
+		.IF GhostStep == 6
+			mov Light6, IMG_60803
+			mov LightCount, 15
+			inc GhostStep
+		.ELSE
+			mov Light6, IMG_60801
+			mov LightCount, 15
+		.ENDIF
+	;拿圆
+	.ELSEIF imageID == IMG_61102
+		mov Circle, 1
+		mov ecx, 0
+		.WHILE ecx < pSequenceLength
+			mov ebx, pSequence[ecx * 4]
+			.IF ebx == IMG_61101
+				mov ebx, ecx
+				inc ebx
+				mov eax, pSequence[ebx * 4]
+				mov pSequence[ecx * 4], eax
+				mov pSequence[ecx * 4+4], -1
+				dec pSequenceLength
+				jmp _EXIT
+			.ENDIF
+			inc ecx
+		.ENDW
+	;香蕉机关
+	.ELSEIF imageID == IMG_61301
+		INVOKE addTopSequence, IMG_61401
+		mov BananaShow, 1
+	;香蕉
+	.ELSEIF imageID == IMG_61402
+		;INVOKE addTopSequence, IMG_61404
+		mov pThief, 0
+		mov PPTstatus, 3
+		INVOKE ChangepSequence, IMG_61401, IMG_61403
+		jmp _EXIT
+	.ELSE
+		jmp _EXIT
+	.ENDIF
+	mov eax, Thief_X
+	mov Click_X, eax
+	mov eax, Thief_Y
+	mov Click_Y, eax
+_EXIT:
+	ret
+eventResponses6 endp
 
 ; #########################################################################
 
@@ -428,20 +590,13 @@ processScenario4 proc
 	LOCAL imgID: DWORD, count: DWORD
 	;拿苹果时的ppt
 	.IF PPTstatus == 1
-		mov ecx, 0
-		.WHILE ecx < pSequenceLength
-			mov ebx, pSequence[ecx * 4]
-			.IF ebx == IMG_42104
-				mov pSequence[ecx * 4], IMG_42103
-				mov pThief, 1
-				mov Thief_X, 380
-				mov Click_X, 380
-				mov Orientation, 1
-				mov PPTstatus, 0
-				jmp ending
-			.ENDIF
-			inc ecx
-		.ENDW
+		INVOKE ChangepSequence, IMG_42104, IMG_42103
+		mov pThief, 1
+		mov Thief_X, 380
+		mov Click_X, 380
+		mov Orientation, 1
+		mov PPTstatus, 0
+		jmp ending
 	.ENDIF
 	;提示
 	mov ebx, PassBy
@@ -570,140 +725,21 @@ processScenario5 endp
 
 ; #########################################################################
 
-;针对场景6的事件响应
-eventResponses6 proc imageID: DWORD
-	mov ecx, 0
-	mov Run, 0
-	;门
-	.IF imageID == IMG_601
-		mov Scenario, 3
-		INVOKE ResetpSequence
-		.IF Circle == 1
-			mov door3Open, 1
-			mov pSequence[0], IMG_305
-		.ELSE
-			mov pSequence[0], IMG_30401
-		.ENDIF
-		mov pSequenceLength, 1
-		mov Thief_Y, 148
-		mov Thief_X, 470
-		mov Orientation, 0
-	;四个控制灯的把手
-	.ELSEIF imageID == IMG_60201
-		mov PassBy, IMG_60202
-		mov pThief, 0
-		mov cClick, 0
-		mov cJudge, 0
-		.IF GhostStep == 5
-			mov Light6, IMG_60903
-			mov LightCount, 15
-			inc GhostStep
-		.ELSE
-			mov Light6, IMG_60901
-			mov LightCount, 15
-		.ENDIF
-	.ELSEIF imageID == IMG_60301
-		mov PassBy, IMG_60302
-		mov pThief, 0
-		mov cClick, 0
-		mov cJudge, 0
-		.IF GhostStep == 4
-			mov Light6, IMG_60703
-			mov LightCount, 15
-			inc GhostStep
-		.ELSE
-			mov Light6, IMG_60701
-			mov LightCount, 15
-		.ENDIF
-	.ELSEIF imageID == IMG_60401
-		mov PassBy, IMG_60402
-		mov pThief, 0
-		mov cClick, 0
-		mov cJudge, 0
-		.IF GhostStep == 7
-			mov Light6, IMG_61003
-			mov LightCount, 15
-			inc GhostStep
-		.ELSE
-			mov Light6, IMG_61001
-			mov LightCount, 15
-		.ENDIF
-	.ELSEIF imageID == IMG_60501
-		mov PassBy, IMG_60502
-		mov pThief, 0
-		mov cClick, 0
-		mov cJudge, 0
-		.IF GhostStep == 6
-			mov Light6, IMG_60803
-			mov LightCount, 15
-			inc GhostStep
-		.ELSE
-			mov Light6, IMG_60801
-			mov LightCount, 15
-		.ENDIF
-	;拿圆
-	.ELSEIF imageID == IMG_61102
-		mov Circle, 1
-		mov ecx, 0
-		.WHILE ecx < pSequenceLength
-			mov ebx, pSequence[ecx * 4]
-			.IF ebx == IMG_61101
-				mov ebx, ecx
-				inc ebx
-				mov eax, pSequence[ebx * 4]
-				mov pSequence[ecx * 4], eax
-				mov pSequence[ecx * 4+4], -1
-				dec pSequenceLength
-				jmp _EXIT
-			.ENDIF
-			inc ecx
-		.ENDW
-	;香蕉机关
-	.ELSEIF imageID == IMG_61301
-		INVOKE addTopSequence, IMG_61401
-		mov BananaShow, 1
-	;香蕉
-	.ELSEIF imageID == IMG_61402
-		;INVOKE addTopSequence, IMG_61404
-		mov pThief, 0
-		mov PPTstatus, 3
-		mov ecx, 0
-		.WHILE ecx < pSequenceLength
-			mov ebx, pSequence[ecx * 4]
-			.IF ebx == IMG_61401
-				mov pSequence[ecx * 4], IMG_61403
-				jmp _EXIT
-			.ENDIF
-			inc ecx
-		.ENDW
-	.ENDIF
-_EXIT:
-	ret
-eventResponses6 endp
-; #########################################################################
-
 processScenario6 proc
 	LOCAL imgID: DWORD, count: DWORD
 	;
 	.IF PPTstatus == 3
-		mov ecx, 0
-		.WHILE ecx < pSequenceLength
-			mov ebx, pSequence[ecx * 4]
-			.IF ebx == IMG_61403
-				mov pSequence[ecx * 4], IMG_61404
-				mov PPTstatus, 0
-				mov pThief, 1
-				mov Thief_X, 485
-				mov Thief_Y, 510
-				mov Click_X, 485
-				mov Click_Y, 510
-				mov Orientation, 0
-				mov Banana, 1
-				mov BananaShow, 0
-				jmp ending
-			.ENDIF
-			inc ecx
-		.ENDW
+		INVOKE ChangepSequence, IMG_61403, IMG_61404
+		mov PPTstatus, 0
+		mov pThief, 1
+		mov Thief_X, 485
+		mov Thief_Y, 510
+		mov Click_X, 485
+		mov Click_Y, 510
+		mov Orientation, 0
+		mov Banana, 1
+		mov BananaShow, 0
+		jmp ending
 	.ENDIF
 	;提示
 	mov ebx, PassBy
@@ -737,7 +773,7 @@ processScenario6 proc
 		.ENDIF
 		INVOKE clickPosition, (ItemList[esi]).x1, (ItemList[esi]).y1, (ItemList[esi]).x2, (ItemList[esi]).y2
 		.IF eax == 1
-			INVOKE eventResponses5, imgID
+			INVOKE eventResponses6, imgID
 			mov ebx, Thief_X
 			mov Click_X, ebx
 			ret
