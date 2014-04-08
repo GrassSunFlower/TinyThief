@@ -161,6 +161,23 @@ IMG_31801			equ		148
 IMG_31802			equ		149
 IMG_319				equ		150
 
+IMG_700				equ		151
+IMG_701				equ		152
+IMG_702				equ		153
+IMG_703				equ		154
+IMG_704				equ		155
+IMG_705				equ		156
+IMG_706				equ		157
+
+IMG_801				equ		158
+IMG_802				equ		159
+IMG_803				equ		160
+IMG_804				equ		161
+IMG_805				equ		162
+IMG_806				equ		163
+IMG_807				equ		164
+IMG_808				equ		165
+
 ;窗体大小
 SCREEN_X EQU 820
 SCREEN_Y EQU 642
@@ -207,7 +224,7 @@ MyItem ends
 	cJudge						BYTE			1								;判断是否要判断接下来的碰撞事件
 	pThief						BYTE			1								;判断是否要绘制Thief
 	;数据型全局变量
-	Scenario					dd			6								;当前场景
+	Scenario					dd			5								;当前场景
 	Thief_X						dd			675							;Thief横坐标
 	Thief_Y						dd			510							;Thief纵坐标
 	Click_X						dd			675							;鼠标点击点的横坐标
@@ -447,6 +464,23 @@ MyItem ends
 		INVOKE InitItem, IMG_31801, 60, 109, 358, 183, 418, 292, 0, 1
 		INVOKE InitItem, IMG_31802, 60, 109, 358, 183, 0, 0, 0, 0
 		INVOKE InitItem, IMG_319, 47, 48, 95, 501, 142, 549, 0, 0
+
+		INVOKE InitItem, IMG_700, 297, 377, 250, 111, 0, 0, 1, 0
+		INVOKE InitItem, IMG_701, 25, 25, 299, 157, 0, 0, 0, 0
+		INVOKE InitItem, IMG_702, 25, 25, 312, 132, 0, 0, 0, 0
+		INVOKE InitItem, IMG_703, 25, 25, 327, 158, 0, 0, 0, 0
+		INVOKE InitItem, IMG_704, 53, 45, 448, 137, 0, 0, 0, 0
+		INVOKE InitItem, IMG_705, 80, 82, 275, 210, 0, 0, 1, 0
+		INVOKE InitItem, IMG_706, 80, 82, 444, 208, 0, 0, 1, 0
+		
+		;INVOKE InitItem, IMG_801, 608, 396, 94, 90, 0, 0, 1, 0
+		;INVOKE InitItem, IMG_802, 608, 396, 94, 90, 0, 0, 1, 0
+		;INVOKE InitItem, IMG_803, 608, 396, 94, 90, 0, 0, 1, 0
+		;INVOKE InitItem, IMG_804, 608, 396, 94, 90, 0, 0, 1, 0
+		;INVOKE InitItem, IMG_805, 608, 396, 94, 90, 0, 0, 1, 0
+		;INVOKE InitItem, IMG_806, 608, 396, 94, 90, 0, 0, 1, 0
+		;INVOKE InitItem, IMG_807, 608, 396, 94, 90, 0, 0, 1, 0
+		;INVOKE InitItem, IMG_808, 608, 396, 94, 90, 0, 0, 1, 0
 
 		INVOKE LoadBitmap, hInstance, 1111
 		mov Thief_right_s_img, eax
