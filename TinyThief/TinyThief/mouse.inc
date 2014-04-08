@@ -802,6 +802,22 @@ processScenario8 endp
 
 processMouseEvent proc currentScenario:DWORD
 	mov ebx, 0
+	.IF check_collection == 1
+		mov check_collection, 0
+		ret
+	.ENDIF
+	.IF currentScenario > 2
+		mov eax, IMG_511
+		mov edx, TYPE MyItem
+		mul edx
+		mov ebx, eax
+		INVOKE clickPosition, (ItemList[ebx]).x1, (ItemList[ebx]).y1, (ItemList[ebx]).x2, (ItemList[ebx]).y2
+		.IF eax == 1
+			mov check_collection, 1
+			ret
+		.ENDIF
+	.ENDIF
+
 	.IF currentScenario == 0
 		INVOKE processScenario0
 	.ELSEIF currentScenario == 1

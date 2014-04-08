@@ -178,6 +178,8 @@ IMG_806				equ		163
 IMG_807				equ		164
 IMG_808				equ		165
 
+IMG_511				equ		166
+
 ;窗体大小
 SCREEN_X EQU 820
 SCREEN_Y EQU 642
@@ -224,7 +226,7 @@ MyItem ends
 	cJudge						BYTE			1								;判断是否要判断接下来的碰撞事件
 	pThief						BYTE			1								;判断是否要绘制Thief
 	;数据型全局变量
-	Scenario					dd			5								;当前场景
+	Scenario					dd			3								;当前场景
 	Thief_X						dd			675							;Thief横坐标
 	Thief_Y						dd			510							;Thief纵坐标
 	Click_X						dd			675							;鼠标点击点的横坐标
@@ -260,6 +262,7 @@ MyItem ends
 	CircleShow					BYTE			0						;圆是否已出现
 	door3Open					BYTE			0						;场景三的上侧阻挡门是否已经打开
 	door5Open					BYTE			0						;场景五的阻挡门是否已经打开
+	check_collection						BYTE			0							;点击star，查看收藏物品
 	Thief_right_s_img		dd			0
 	Thief_left_s_img		dd			0
 	Thief_right_r_img		dd			0
@@ -382,6 +385,7 @@ MyItem ends
 		INVOKE InitItem, IMG_50905, 56, 97, 682, 433, 0, 0, 0, 1
 		INVOKE InitItem, IMG_50906, 56, 97, 686, 404, 0, 0, 0, 0
 		INVOKE InitItem, IMG_510, 39, 39, 700, 547, 0, 0, 1, 0
+		INVOKE InitItem, IMG_511, 34, 34, 63, 13, 97, 47, 0, 1
 
 		INVOKE InitItem, IMG_90101, 150, 350, 0, 0, 0, 0, 1, 0
 		INVOKE InitItem, IMG_90102, 150, 350, 0, 0, 0, 0, 1, 0
@@ -473,14 +477,14 @@ MyItem ends
 		INVOKE InitItem, IMG_705, 80, 82, 275, 210, 0, 0, 1, 0
 		INVOKE InitItem, IMG_706, 80, 82, 444, 208, 0, 0, 1, 0
 		
-		;INVOKE InitItem, IMG_801, 608, 396, 94, 90, 0, 0, 1, 0
-		;INVOKE InitItem, IMG_802, 608, 396, 94, 90, 0, 0, 1, 0
-		;INVOKE InitItem, IMG_803, 608, 396, 94, 90, 0, 0, 1, 0
-		;INVOKE InitItem, IMG_804, 608, 396, 94, 90, 0, 0, 1, 0
-		;INVOKE InitItem, IMG_805, 608, 396, 94, 90, 0, 0, 1, 0
-		;INVOKE InitItem, IMG_806, 608, 396, 94, 90, 0, 0, 1, 0
-		;INVOKE InitItem, IMG_807, 608, 396, 94, 90, 0, 0, 1, 0
-		;INVOKE InitItem, IMG_808, 608, 396, 94, 90, 0, 0, 1, 0
+		INVOKE InitItem, IMG_801, 608, 396, 94, 90, 0, 0, 1, 0
+		INVOKE InitItem, IMG_802, 608, 396, 94, 90, 0, 0, 1, 0
+		INVOKE InitItem, IMG_803, 608, 396, 94, 90, 0, 0, 1, 0
+		INVOKE InitItem, IMG_804, 608, 396, 94, 90, 0, 0, 1, 0
+		INVOKE InitItem, IMG_805, 608, 396, 94, 90, 0, 0, 1, 0
+		INVOKE InitItem, IMG_806, 608, 396, 94, 90, 0, 0, 1, 0
+		INVOKE InitItem, IMG_807, 608, 396, 94, 90, 0, 0, 1, 0
+		INVOKE InitItem, IMG_808, 608, 396, 94, 90, 0, 0, 1, 0
 
 		INVOKE LoadBitmap, hInstance, 1111
 		mov Thief_right_s_img, eax

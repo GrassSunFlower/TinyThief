@@ -301,6 +301,17 @@ _EXIT:
 	ret
 DrawGhost endp
 
+DrawStar proc
+	
+	mov eax, IMG_90200
+	mov esi, eax
+	mov edx, TYPE MyItem
+	mul edx
+	INVOKE DrawTransparentObject, esi, (ItemList[eax]).img, (ItemList[eax]).x1, (ItemList[eax]).y1,(ItemList[eax]).iwidth, (ItemList[eax]).iheight
+
+	ret
+DrawStar endp
+
 DrawProc proc
 
 	INVOKE DrawBackground
@@ -314,6 +325,11 @@ DrawProc proc
 		.IF Scenario == 5
 			INVOKE DrawRounds
 			INVOKE DrawSting
+			mov eax, IMG_511
+			mov esi, eax
+			mov edx, TYPE MyItem
+			mul edx
+			INVOKE DrawObject, esi, (ItemList[eax]).img, (ItemList[eax]).x1, (ItemList[eax]).y1, (ItemList[eax]).iwidth, (ItemList[eax]).iheight
 		.ELSEIF Scenario == 6
 			INVOKE DrawLight
 			INVOKE DrawGhost
@@ -321,6 +337,9 @@ DrawProc proc
 		.IF pThief == 1
 			INVOKE DrawThief
 		.ENDIF
+	.ENDIF
+	.IF check_collection == 1
+		INVOKE DrawStar
 	.ENDIF
     ret
 
