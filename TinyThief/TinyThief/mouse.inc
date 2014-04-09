@@ -845,55 +845,45 @@ processScenario6 endp
 
 ; #########################################################################
 
-processScenario7 proc
-	ret
-processScenario7 endp
-
-; #########################################################################
-
-processScenario8 proc
-	ret
-processScenario8 endp
-
-; #########################################################################
-
 processMouseEvent proc currentScenario:DWORD
-	.IF isStopped == 0 && currentScenario >= 3 && currentScenario <= 6
-		; stop
-		INVOKE clickPosition, 19, 16, 55, 45
-		.IF eax == 1 
-			mov isStopped, 1
-			mov pThief, 0
-			.IF PassBy != -1
-				mov esi, PassBy
-				mov PassBy_Old, esi
-				mov PassBy, -1
+	.IF currentScenario > 2
+		.IF isStopped == 1
+			; continue
+			INVOKE clickPosition, 72, 88, 118, 145
+			.IF eax == 1
+				mov isStopped, 0
+				mov pThief, 1
+				mov esi, Thief_X 
+				mov Click_X, esi
+				mov esi, Thief_Y 
+				mov Click_Y, esi
+				.IF PassBy_Old != -1
+					mov esi, PassBy_Old
+					mov PassBy, esi
+				.ENDIF
+				jmp _EXIT
 			.ENDIF
-			.IF isPlayingBGM == 1
-				mov ecx, pSequenceLength
-				mov pSequence[ecx*4], IMG_90101
-				inc pSequenceLength
-			.ELSEIF isPlayingBGM == 0
-				mov ecx, pSequenceLength
-				mov pSequence[ecx*4], IMG_90102
-				inc pSequenceLength
+			; restart
+			INVOKE clickPosition, 72, 172, 118, 225
+			.IF eax == 1
+				INVOKE restartGame
+				jmp _EXIT
 			.ENDIF
-			jmp _EXIT
-		.ENDIF
-		; star
-		INVOKE clickPosition, 63, 16, 96, 45
-		.IF eax == 1
-			jmp _EXIT
-		.ENDIF
-	.ELSEIF isStopped == 1 && currentScenario >= 3 && currentScenario <= 6
-		; continue
-		INVOKE clickPosition, 72, 88, 118, 145
-		.IF eax == 1
-			mov isStopped, 0
+			; sound
+			INVOKE clickPosition, 72, 255, 118, 310
+			.IF eax == 1
+				.IF isPlayingBGM == 1
+					mov isPlayingBGM, 0
+					; stop the music
+				.ELSEIF isPlayingBGM == 0
+					mov isPlayingBGM, 1
+					; restart the music
+				.ENDIF
+				jmp _EXIT
+			.ENDIF
+		.ELSEIF check_collection == 1
+			mov check_collection, 0
 			mov pThief, 1
-			dec pSequenceLength
-			mov ecx, pSequenceLength
-			mov pSequence[ecx*4], -1
 			mov esi, Thief_X 
 			mov Click_X, esi
 			mov esi, Thief_Y 
@@ -903,30 +893,33 @@ processMouseEvent proc currentScenario:DWORD
 				mov PassBy, esi
 			.ENDIF
 			jmp _EXIT
-		.ENDIF
-		; restart
-		INVOKE clickPosition, 72, 172, 118, 225
-		.IF eax == 1
-			INVOKE restartGame
-			jmp _EXIT
-		.ENDIF
-		; sound
-		INVOKE clickPosition, 72, 255, 118, 310
-		.IF eax == 1
-			.IF isPlayingBGM == 1
-				mov ecx, pSequenceLength
-				dec ecx
-				mov pSequence[ecx*4], IMG_90102
-				mov isPlayingBGM, 0
-				; stop the music
-			.ELSEIF isPlayingBGM == 0
-				mov ecx, pSequenceLength
-				dec ecx
-				mov pSequence[ecx*4], IMG_90101
-				mov isPlayingBGM, 1
-				; restart the music
+		.ELSEIF isStopped == 0
+			; stop
+			INVOKE clickPosition, 19, 16, 55, 45
+			.IF eax == 1 
+				mov isStopped, 1
+				mov pThief, 0
+				.IF PassBy != -1
+					mov esi, PassBy
+					mov PassBy_Old, esi
+					mov PassBy, -1
+				.ENDIF
+				jmp _EXIT
 			.ENDIF
-			jmp _EXIT
+			; star
+			.IF check_collection == 0
+				INVOKE clickPosition, 63, 16, 96, 45
+				.IF eax == 1
+					mov check_collection, 1
+					mov pThief, 0
+					.IF PassBy != -1
+						mov esi, PassBy
+						mov PassBy_Old, esi
+						mov PassBy, -1
+					.ENDIF
+					jmp _EXIT
+				.ENDIF
+			.ENDIF
 		.ENDIF
 	.ENDIF
 	.IF currentScenario == 0
@@ -943,10 +936,6 @@ processMouseEvent proc currentScenario:DWORD
 		INVOKE processScenario5
 	.ELSEIF currentScenario == 6
 		INVOKE processScenario6
-	.ELSEIF currentScenario == 7
-		INVOKE processScenario7
-	.ELSEIF currentScenario == 8
-		INVOKE processScenario8
 	.ENDIF
 
 _EXIT:

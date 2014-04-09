@@ -301,6 +301,83 @@ _EXIT:
 	ret
 DrawGhost endp
 
+DrawStopFlag proc
+	
+	.IF isPlayingBGM == 1
+		mov eax, IMG_90101
+	.ELSE
+		mov eax, IMG_90102
+	.ENDIF
+	mov esi, eax
+	mov edx, TYPE MyItem
+	mul edx
+	INVOKE DrawTransparentObject, esi, (ItemList[eax]).img, (ItemList[eax]).x1, (ItemList[eax]).y1,(ItemList[eax]).iwidth, (ItemList[eax]).iheight
+
+	ret
+DrawStopFlag endp
+
+DrawStar proc
+	LOCAL count:DWORD
+
+	mov count, 0
+	mov eax, IMG_90200
+	mov esi, eax
+	mov edx, TYPE MyItem
+	mul edx
+	INVOKE DrawTransparentObject, esi, (ItemList[eax]).img, (ItemList[eax]).x1, (ItemList[eax]).y1,(ItemList[eax]).iwidth, (ItemList[eax]).iheight
+
+	.IF Pear == 1
+		inc count
+		mov eax, IMG_90201
+		mov esi, eax
+		mov edx, TYPE MyItem
+		mul edx
+		INVOKE DrawObject, esi, (ItemList[eax]).img, (ItemList[eax]).x1, (ItemList[eax]).y1,(ItemList[eax]).iwidth, (ItemList[eax]).iheight
+	.ENDIF
+	.IF Apple == 1
+		inc count
+		mov eax, IMG_90202
+		mov esi, eax
+		mov edx, TYPE MyItem
+		mul edx
+		INVOKE DrawObject, esi, (ItemList[eax]).img, (ItemList[eax]).x1, (ItemList[eax]).y1,(ItemList[eax]).iwidth, (ItemList[eax]).iheight
+	.ENDIF
+	.IF Banana == 1
+		inc count
+		mov eax, IMG_90203
+		mov esi, eax
+		mov edx, TYPE MyItem
+		mul edx
+		INVOKE DrawObject, esi, (ItemList[eax]).img, (ItemList[eax]).x1, (ItemList[eax]).y1,(ItemList[eax]).iwidth, (ItemList[eax]).iheight
+	.ENDIF
+
+	.IF count == 3
+		mov eax, IMG_90204
+		mov esi, eax
+		mov edx, TYPE MyItem
+		mul edx
+		INVOKE DrawObject, esi, (ItemList[eax]).img, (ItemList[eax]).x1, (ItemList[eax]).y1,(ItemList[eax]).iwidth, (ItemList[eax]).iheight
+	.ENDIF
+
+	.IF Dog == 1
+		mov eax, IMG_90206
+		mov esi, eax
+		mov edx, TYPE MyItem
+		mul edx
+		INVOKE DrawObject, esi, (ItemList[eax]).img, (ItemList[eax]).x1, (ItemList[eax]).y1,(ItemList[eax]).iwidth, (ItemList[eax]).iheight
+	.ENDIF
+
+	;.IF  == 1
+		mov eax, IMG_90205
+		mov esi, eax
+		mov edx, TYPE MyItem
+		mul edx
+		INVOKE DrawTransparentObject, esi, (ItemList[eax]).img, (ItemList[eax]).x1, (ItemList[eax]).y1,(ItemList[eax]).iwidth, (ItemList[eax]).iheight
+	;.ENDIF
+
+	ret
+DrawStar endp
+
 DrawProc proc
 
 	INVOKE DrawBackground
@@ -314,6 +391,11 @@ DrawProc proc
 		.IF Scenario == 5
 			INVOKE DrawRounds
 			INVOKE DrawSting
+			mov eax, IMG_511
+			mov esi, eax
+			mov edx, TYPE MyItem
+			mul edx
+			INVOKE DrawObject, esi, (ItemList[eax]).img, (ItemList[eax]).x1, (ItemList[eax]).y1, (ItemList[eax]).iwidth, (ItemList[eax]).iheight
 		.ELSEIF Scenario == 6
 			INVOKE DrawLight
 			INVOKE DrawGhost
@@ -321,6 +403,11 @@ DrawProc proc
 		.IF pThief == 1
 			INVOKE DrawThief
 		.ENDIF
+	.ENDIF
+	.IF isStopped == 1
+		INVOKE DrawStopFlag
+	.ELSEIF check_collection == 1
+		INVOKE DrawStar
 	.ENDIF
     ret
 
