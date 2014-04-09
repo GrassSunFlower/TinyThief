@@ -33,8 +33,6 @@ JudgeCollisions proc
 			mov eax, IMG_30805
 		.ELSEIF CollectionStep == 3
 			mov eax, IMG_310
-		.ELSEIF CollectionStep == 7
-			mov eax, IMG_31801
 		.ELSE
 			jmp _FinishStep
 		.ENDIF

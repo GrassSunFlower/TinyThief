@@ -419,23 +419,33 @@ eventResponses3 proc imageID: DWORD
 		mov eax, imageID
 		sub eax, IMG_31401
 		INVOKE  MoveHoles, eax
+	;点击了水獭
+	.ELSEIF CollectionStep > 5 && imageID == IMG_31404 && Dog == 0
+		mov Dog, 1
+		mov Holes[12], IMG_31404
+		INVOKE addTopSequence, IMG_316
+		mov PPTstatus, 5
 	;第三层
 	.ELSEIF CollectionStep == 6 && imageID >= IMG_31701 && imageID <= IMG_31704
 		.IF imageID == IMG_31701
-			mov EyesCount[0], 60
+			mov EyesCount[0], 45
 		.ELSEIF imageID == IMG_31702
-			mov EyesCount[4], 20
+			mov EyesCount[4], 15
 		.ELSEIF imageID == IMG_31703
-			mov EyesCount[8], 80
+			mov EyesCount[8], 60
 		.ELSEIF imageID == IMG_31704
-			mov EyesCount[12], 40
+			mov EyesCount[12], 30
 		.ENDIF
 	;拿虫子
 	.ELSEIF CollectionStep == 7 && imageID == IMG_31801
+		mov cJudge, 0
+		mov PassBy, -1
 		mov pThief, 0
 		mov PPTstatus, 4
 		mov CollectionStep, 8
 		INVOKE addTopSequence, IMG_31802
+	.ELSEIF CollectionStep == 9 && imageID == IMG_319
+		INVOKE MessageBox, NULL, OFFSET szText,OFFSET szCaption, MB_OK
 	.ELSE
 		jmp _EXIT
 	.ENDIF
@@ -735,6 +745,25 @@ processScenario3 proc
 		mov pThief, 1
 		mov Orientation, 1
 		jmp ending
+	.ELSEIF PPTstatus == 5
+		INVOKE ChangepSequence, IMG_316, -1
+		dec pSequenceLength
+		mov PPTstatus, 0
+		mov eax, Thief_X
+		mov Click_X, eax
+		mov eax, Thief_Y
+		mov Click_Y, eax
+	.ENDIF
+	;判断是否点击出口
+	.IF CollectionStep == 9
+		mov edx, TYPE MyItem
+		mov eax, IMG_319
+		mul edx
+		mov ebx, eax
+		INVOKE clickPosition, (ItemList[ebx]).x1, (ItemList[ebx]).y1, (ItemList[ebx]).x2, (ItemList[ebx]).y2
+		.IF eax == 1
+			INVOKE eventResponses3, IMG_319
+		.ENDIF
 	.ENDIF
 	;提示
 	mov ebx, PassBy

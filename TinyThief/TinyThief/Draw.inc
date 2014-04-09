@@ -322,17 +322,19 @@ DrawHoles endp
 DrawEyes proc
 	LOCAL count:DWORD
 	mov ecx, 0
-	.IF EyesCount[0] > 0 && EyesCount[4] > 0 && EyesCount[8] > 0 && EyesCount[12] > 0
+	.IF EyesCount[0] > 0 && EyesCount[4] > 0 && EyesCount[8] > 0 && EyesCount[12] > 0 && CollectionStep == 6
 		INVOKE ChangepSequence, IMG_30904, IMG_30905
 		mov CollectionStep, 7
 		mov Thief_Y, 258
+		mov cJudge, 0
+		mov PassBy, IMG_31801
 	.ENDIF
 	mov count, 0
 	.WHILE count < 4
 		mov ecx, count
 		.IF EyesCount[ecx*4] == 0
 			jmp _NEXT
-		.ELSE
+		.ELSEIF CollectionStep == 6
 			dec EyesCount[ecx*4]
 		.ENDIF
 		mov eax, IMG_31701

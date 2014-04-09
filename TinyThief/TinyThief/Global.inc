@@ -279,9 +279,9 @@ MyItem ends
 .const
 	szClassName			db			"TinyThiefClass", 0
 	szCaptionMain			db			"TinyThief", 0
-	szText						db			"这是一个有趣的游戏!", 0
+	szText						db			"通关了哈哈哈哈哈哈哈!", 0
 	szMenuHelp				db			"帮助", 0
-	szCaption					db			"Hello", 0
+	szCaption					db			"Mission Complete", 0
 
 .code
 
