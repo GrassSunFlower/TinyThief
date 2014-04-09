@@ -140,45 +140,48 @@ IMG_30905			equ		127
 IMG_310				equ		128
 IMG_31101			equ		129
 IMG_31102			equ		130
-IMG_31201			equ		131
-IMG_31202			equ		132
-IMG_31301			equ		133
-IMG_31302			equ		134
-IMG_31401			equ		135
-IMG_31402			equ		136
-IMG_31403			equ		137
-IMG_31404			equ		138
-IMG_31405			equ		139
-IMG_31406			equ		140
-IMG_31407			equ		141
-IMG_315				equ		142
-IMG_316				equ		143
-IMG_31701			equ		144
-IMG_31702			equ		145
-IMG_31703			equ		146
-IMG_31704			equ		147
-IMG_31801			equ		148
-IMG_31802			equ		149
-IMG_319				equ		150
+IMG_31103			equ		131
+IMG_31201			equ		132
+IMG_31202			equ		133
+IMG_31203			equ		134
+IMG_31301			equ		135
+IMG_31302			equ		136
+IMG_31303			equ		137
+IMG_31401			equ		138
+IMG_31402			equ		139
+IMG_31403			equ		140
+IMG_31404			equ		141
+IMG_31405			equ		142
+IMG_31406			equ		143
+IMG_31407			equ		144
+IMG_315				equ		145
+IMG_316				equ		146
+IMG_31701			equ		147
+IMG_31702			equ		148
+IMG_31703			equ		149
+IMG_31704			equ		150
+IMG_31801			equ		151
+IMG_31802			equ		152
+IMG_319				equ		153
 
-IMG_700				equ		151
-IMG_701				equ		152
-IMG_702				equ		153
-IMG_703				equ		154
-IMG_704				equ		155
-IMG_705				equ		156
-IMG_706				equ		157
+IMG_700				equ		154
+IMG_701				equ		155
+IMG_702				equ		156
+IMG_703				equ		157
+IMG_704				equ		158
+IMG_705				equ		159
+IMG_706				equ		160
 
-IMG_801				equ		158
-IMG_802				equ		159
-IMG_803				equ		160
-IMG_804				equ		161
-IMG_805				equ		162
-IMG_806				equ		163
-IMG_807				equ		164
-IMG_808				equ		165
+IMG_801				equ		161
+IMG_802				equ		162
+IMG_803				equ		163
+IMG_804				equ		164
+IMG_805				equ		165
+IMG_806				equ		166
+IMG_807				equ		167
+IMG_808				equ		168
 
-IMG_511				equ		166
+IMG_511				equ		169
 
 ;窗体大小
 SCREEN_X EQU 820
@@ -225,10 +228,11 @@ MyItem ends
 	cClick						BYTE			1								;判断是否要响应接下来的鼠标事件
 	cJudge						BYTE			1								;判断是否要判断接下来的碰撞事件
 	pThief						BYTE			1								;判断是否要绘制Thief
+	pThiefOld					BYTE			1
 	;数据型全局变量
-	Scenario					dd			3								;当前场景
-	Thief_X						dd			79							;Thief横坐标
-	Thief_Y						dd			128							;Thief纵坐标
+	Scenario					dd			6								;当前场景
+	Thief_X						dd			675							;Thief横坐标
+	Thief_Y						dd			510							;Thief纵坐标
 	Click_X						dd			675							;鼠标点击点的横坐标
 	Click_Y						dd			510							;鼠标点击点的纵坐标
 	Orientation				BYTE	0										;Thief朝向,0代表向右,1代表朝左
@@ -251,32 +255,39 @@ MyItem ends
 	GhostCount					dd				0						;鬼的动画计时
 	GhostStep					dd				-1						;鬼的系列状态
 	CollectionStep				dd				0						;收集品放入的步骤
-	Apple						BYTE			1						;是否收集到了苹果
+	Holes						dd		IMG_31401,IMG_31402,IMG_31403,IMG_31404,IMG_31405,IMG_31406,IMG_31407	;场景三第二层的孔
+	CorrectHoles				dd		IMG_31407,IMG_31405,IMG_31406,IMG_31404,IMG_31403,IMG_31401,IMG_31402	;孔的正确顺序
+	HolesX1						dd		247,287,326,371,415,455,495		;场景三第二层的孔的x1值数组
+	EyesCount					dd			0,0,0,0						;场景三第三层的眼睛倒计时
+	Apple						BYTE			0						;是否收集到了苹果
 	AppleShow					BYTE			0						;是否已画出苹果
 	Banana						BYTE			1						;是否收集到了香蕉
 	BananaShow					BYTE			0						;是否已画出香蕉
 	Pear						BYTE			1						;是否收集到了梨子
-	Dog							BYTE			1						;是否收集到了狗？水獭？狐狸？
-	Triangle					BYTE			1						;当前是否拿到了三角
-	Cross						BYTE			1						;当前是否拿到了十字
+	Dog							BYTE			0						;是否收集到了狗？水獭？狐狸？
+	Bug							BYTE			0						;是否收集到了虫子
+	Triangle					BYTE			0						;当前是否拿到了三角
+	Cross						BYTE			0						;当前是否拿到了十字
 	Circle						BYTE			1						;当前是否拿到了圆
 	CircleShow					BYTE			0						;圆是否已出现
 	door3Open					BYTE			0						;场景三的上侧阻挡门是否已经打开
 	door5Open					BYTE			0						;场景五的阻挡门是否已经打开
+	isPlayingBGM			BYTE		1
+	isStopped					BYTE			0
+	check_collection						BYTE			0							;点击star，查看收藏物品
+	check_solution							BYTE			0
+	book_page				dd			IMG_801
 	Thief_right_s_img		dd			0
 	Thief_left_s_img		dd			0
 	Thief_right_r_img		dd			0
 	Thief_left_r_img		dd			0
-	isPlayingBGM			BYTE		1
-	isStopped					BYTE			0
-	check_collection						BYTE			0							;点击star，查看收藏物品
 	
 .const
 	szClassName			db			"TinyThiefClass", 0
 	szCaptionMain			db			"TinyThief", 0
-	szText						db			"这是一个有趣的游戏!", 0
+	szText						db			"通关了哈哈哈哈哈哈哈!", 0
 	szMenuHelp				db			"帮助", 0
-	szCaption					db			"Hello", 0
+	szCaption					db			"Mission Complete", 0
 
 .code
 
@@ -450,10 +461,13 @@ MyItem ends
 		INVOKE InitItem, IMG_310, 59, 102, 358, 446, 417, 499, 0, 1
 		INVOKE InitItem, IMG_31101, 40, 38, 234, 502, 274, 540, 0, 1
 		INVOKE InitItem, IMG_31102, 40, 38, 234, 502, 274, 540, 0, 1
+		INVOKE InitItem, IMG_31103, 40, 38, 234, 502, 274, 540, 0, 1
 		INVOKE InitItem, IMG_31201, 40, 38, 369, 502, 409, 540, 0, 1
 		INVOKE InitItem, IMG_31202, 40, 38, 369, 502, 409, 540, 0, 1
+		INVOKE InitItem, IMG_31203, 40, 38, 369, 502, 409, 540, 0, 1
 		INVOKE InitItem, IMG_31301, 40, 38, 501, 502, 541, 540, 0, 1
 		INVOKE InitItem, IMG_31302, 40, 38, 501, 502, 541, 540, 0, 1
+		INVOKE InitItem, IMG_31303, 40, 38, 501, 502, 541, 540, 0, 1
 		INVOKE InitItem, IMG_31401, 31, 32, 247, 441, 278, 473, 0, 1
 		INVOKE InitItem, IMG_31402, 31, 32, 287, 441, 318, 473, 0, 1
 		INVOKE InitItem, IMG_31403, 31, 32, 326, 441, 357, 473, 0, 1
@@ -479,15 +493,17 @@ MyItem ends
 		INVOKE InitItem, IMG_705, 80, 82, 275, 210, 0, 0, 1, 0
 		INVOKE InitItem, IMG_706, 80, 82, 444, 208, 0, 0, 1, 0
 		
-		;INVOKE InitItem, IMG_801, 608, 396, 94, 90, 0, 0, 1, 0
-		;INVOKE InitItem, IMG_802, 608, 396, 94, 90, 0, 0, 1, 0
-		;INVOKE InitItem, IMG_803, 608, 396, 94, 90, 0, 0, 1, 0
-		;INVOKE InitItem, IMG_804, 608, 396, 94, 90, 0, 0, 1, 0
-		;INVOKE InitItem, IMG_805, 608, 396, 94, 90, 0, 0, 1, 0
-		;INVOKE InitItem, IMG_806, 608, 396, 94, 90, 0, 0, 1, 0
-		;INVOKE InitItem, IMG_807, 608, 396, 94, 90, 0, 0, 1, 0
-		;INVOKE InitItem, IMG_808, 608, 396, 94, 90, 0, 0, 1, 0
-
+		INVOKE InitItem, IMG_801, 608, 396, 94, 90, 0, 0, 1, 0
+		INVOKE InitItem, IMG_802, 608, 396, 94, 90, 0, 0, 1, 0
+		INVOKE InitItem, IMG_803, 608, 396, 94, 90, 0, 0, 1, 0
+		INVOKE InitItem, IMG_804, 608, 396, 94, 90, 0, 0, 1, 0
+		INVOKE InitItem, IMG_805, 608, 396, 94, 90, 0, 0, 1, 0
+		INVOKE InitItem, IMG_806, 608, 396, 94, 90, 0, 0, 1, 0
+		INVOKE InitItem, IMG_807, 608, 396, 94, 90, 0, 0, 1, 0
+		INVOKE InitItem, IMG_808, 608, 396, 94, 90, 0, 0, 1, 0
+		
+		INVOKE InitItem, IMG_511, 34, 34, 63, 13, 47, 97, 0, 1
+		
 		INVOKE LoadBitmap, hInstance, 1111
 		mov Thief_right_s_img, eax
 		INVOKE LoadBitmap, hInstance, 2222

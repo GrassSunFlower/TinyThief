@@ -188,12 +188,12 @@ DrawSting proc
 		mov PassBy, -1
 		mov cJudge, 0
 		mov cClick, 0
-		mov Click_X, 110
+		mov Click_X, 105
 		mov Orientation, 1
-		INVOKE RunForYouLife
+		INVOKE RunForYourLife
 		jmp _EXIT
 	.ENDIF
-	.IF door5Open == 0
+	.IF door5Open == 0 && isStopped == 0 && check_collection == 0 && check_solution == 0
 		sub StingPos, 1
 	.ENDIF
 _EXIT:
@@ -367,16 +367,74 @@ DrawStar proc
 		INVOKE DrawObject, esi, (ItemList[eax]).img, (ItemList[eax]).x1, (ItemList[eax]).y1,(ItemList[eax]).iwidth, (ItemList[eax]).iheight
 	.ENDIF
 
-	;.IF  == 1
+	.IF Bug == 1
 		mov eax, IMG_90205
 		mov esi, eax
 		mov edx, TYPE MyItem
 		mul edx
 		INVOKE DrawTransparentObject, esi, (ItemList[eax]).img, (ItemList[eax]).x1, (ItemList[eax]).y1,(ItemList[eax]).iwidth, (ItemList[eax]).iheight
-	;.ENDIF
+	.ENDIF
 
 	ret
 DrawStar endp
+
+DrawBook proc
+	mov eax, book_page
+	mov esi, eax
+	mov edx, TYPE MyItem
+	mul edx
+	INVOKE DrawTransparentObject, esi, (ItemList[eax]).img, (ItemList[eax]).x1, (ItemList[eax]).y1,(ItemList[eax]).iwidth, (ItemList[eax]).iheight
+	ret
+DrawBook endp
+
+;绘制场景三第二层的孔
+DrawHoles proc
+	LOCAL count:DWORD
+	mov count, 0
+	.WHILE count < 7
+		mov ecx, count
+		mov eax, Holes[ecx*4]
+		mov esi, eax
+		mov edx, TYPE MyItem
+		mul edx
+		INVOKE DrawObject, esi, (ItemList[eax]).img, HolesX1[ecx*4], 441, (ItemList[eax]).iwidth, (ItemList[eax]).iheight
+		inc count
+	.ENDW
+_EXIT:
+	ret
+DrawHoles endp
+
+;绘制场景三第三层的眼睛
+DrawEyes proc
+	LOCAL count:DWORD
+	mov ecx, 0
+	.IF EyesCount[0] > 0 && EyesCount[4] > 0 && EyesCount[8] > 0 && EyesCount[12] > 0 && CollectionStep == 6
+		INVOKE ChangepSequence, IMG_30904, IMG_30905
+		mov CollectionStep, 7
+		mov Thief_Y, 258
+		mov cJudge, 0
+		mov PassBy, IMG_31801
+	.ENDIF
+	mov count, 0
+	.WHILE count < 4
+		mov ecx, count
+		.IF EyesCount[ecx*4] == 0
+			jmp _NEXT
+		.ELSEIF CollectionStep == 6
+			dec EyesCount[ecx*4]
+		.ENDIF
+		mov eax, IMG_31701
+		add eax, count
+		mov esi, eax
+		mov edx, TYPE MyItem
+		mul edx
+		INVOKE DrawObject, esi, (ItemList[eax]).img, (ItemList[eax]).x1, (ItemList[eax]).y1, (ItemList[eax]).iwidth, (ItemList[eax]).iheight
+	_NEXT:
+		inc count
+	.ENDW
+_EXIT:
+	ret
+DrawEyes endp
 
 DrawProc proc
 
@@ -386,9 +444,13 @@ DrawProc proc
 			INVOKE DrawIcons
 		.ENDIF
 		INVOKE DrawItems
-		INVOKE DrawPassBy
 		INVOKE DrawCollection
-		.IF Scenario == 5
+		.IF Scenario == 3 && CollectionStep >= 5
+			INVOKE DrawHoles
+			.IF CollectionStep >= 6
+				INVOKE DrawEyes
+			.ENDIF
+		.ELSEIF Scenario == 5
 			INVOKE DrawRounds
 			INVOKE DrawSting
 			mov eax, IMG_511
@@ -400,6 +462,7 @@ DrawProc proc
 			INVOKE DrawLight
 			INVOKE DrawGhost
 		.ENDIF
+		INVOKE DrawPassBy
 		.IF pThief == 1
 			INVOKE DrawThief
 		.ENDIF
@@ -408,6 +471,8 @@ DrawProc proc
 		INVOKE DrawStopFlag
 	.ELSEIF check_collection == 1
 		INVOKE DrawStar
+	.ELSEIF check_solution == 1
+		INVOKE DrawBook
 	.ENDIF
     ret
 
