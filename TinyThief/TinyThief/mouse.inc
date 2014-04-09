@@ -220,6 +220,43 @@ doorTransition proc imageID: DWORD
 doorTransition endp
 
 ; #########################################################################
+
+CheckHoles proc
+	mov ecx, 0
+	.WHILE ecx < 7
+		mov ebx, Holes[ecx*4]
+		.IF CorrectHoles[ecx*4] != ebx
+			ret
+		.ENDIF
+		add ecx, 1
+	.ENDW
+	mov CollectionStep, 6
+	INVOKE ChangepSequence, IMG_30903, IMG_30904
+	mov Thief_Y, 313
+	mov Holes[12], IMG_315
+	ret
+CheckHoles endp
+
+; #########################################################################
+
+MoveHoles proc ID: DWORD
+	mov ebx, ID
+	.IF Holes[ebx*4] != IMG_31404
+		mov eax, Holes[ebx*4]
+		mov ecx, 0
+		.WHILE ecx < 7
+			.IF Holes[ecx*4] == IMG_31404
+				mov Holes[ecx*4], eax
+				mov Holes[ebx*4], IMG_31404
+			.ENDIF
+			inc ecx
+		.ENDW
+	.ENDIF
+	INVOKE CheckHoles
+	ret
+MoveHoles endp
+
+; #########################################################################
 ;针对场景3的事件响应
 eventResponses3 proc imageID: DWORD
 	mov ecx, 0
@@ -311,10 +348,104 @@ eventResponses3 proc imageID: DWORD
 		mov CollectionStep, 3
 		INVOKE ChangepSequence, IMG_30804, IMG_30806
 		INVOKE addTopSequence, IMG_30901
+	;开启第一层
 	.ELSEIF imageID == IMG_310
 		INVOKE ChangepSequence, IMG_30901, IMG_30902
-		mov Thief_Y, 451
+		mov Thief_Y, 420
 		mov CollectionStep, 4
+		INVOKE addTopSequence, IMG_31103
+		INVOKE addTopSequence, IMG_31203
+		INVOKE addTopSequence, IMG_31303
+	;第一层的图标
+	.ELSEIF imageID == IMG_31101 && CollectionStep == 4
+		INVOKE ChangepSequence, IMG_31101, IMG_31102
+	.ELSEIF imageID == IMG_31102 && CollectionStep == 4
+		INVOKE ChangepSequence, IMG_31102, IMG_31103
+		INVOKE FindpSequence, IMG_31201
+		.IF eax == 1
+			INVOKE FindpSequence, IMG_31302
+		.ELSE
+			jmp _EXIT
+		.ENDIF
+		.IF eax == 1
+			INVOKE ChangepSequence, IMG_30902, IMG_30903
+			mov CollectionStep, 5
+			mov Thief_Y, 368
+		.ELSE
+			jmp _EXIT
+		.ENDIF
+	.ELSEIF imageID == IMG_31103 && CollectionStep == 4
+		INVOKE ChangepSequence, IMG_31103, IMG_31101
+	.ELSEIF imageID == IMG_31201 && CollectionStep == 4
+		INVOKE ChangepSequence, IMG_31201, IMG_31202
+	.ELSEIF imageID == IMG_31202 && CollectionStep == 4
+		INVOKE ChangepSequence, IMG_31202, IMG_31203
+	.ELSEIF imageID == IMG_31203
+		INVOKE ChangepSequence, IMG_31203, IMG_31201
+		INVOKE FindpSequence, IMG_31103
+		.IF eax == 1
+			INVOKE FindpSequence, IMG_31302
+		.ELSE
+			jmp _EXIT
+		.ENDIF
+		.IF eax == 1
+			INVOKE ChangepSequence, IMG_30902, IMG_30903
+			mov CollectionStep, 5
+			mov Thief_Y, 368
+		.ELSE
+			jmp _EXIT
+		.ENDIF
+	.ELSEIF imageID == IMG_31301 && CollectionStep == 4
+		INVOKE ChangepSequence, IMG_31301, IMG_31302
+		INVOKE FindpSequence, IMG_31103
+		.IF eax == 1
+			INVOKE FindpSequence, IMG_31201
+		.ELSE
+			jmp _EXIT
+		.ENDIF
+		.IF eax == 1
+			INVOKE ChangepSequence, IMG_30902, IMG_30903
+			mov CollectionStep, 5
+			mov Thief_Y, 368
+		.ELSE
+			jmp _EXIT
+		.ENDIF
+	.ELSEIF imageID == IMG_31302 && CollectionStep == 4
+		INVOKE ChangepSequence, IMG_31302, IMG_31303
+	.ELSEIF imageID == IMG_31303 && CollectionStep == 4
+		INVOKE ChangepSequence, IMG_31303, IMG_31301
+	;第二层
+	.ELSEIF CollectionStep == 5 && imageID >= IMG_31401 && imageID <= IMG_31407
+		mov eax, imageID
+		sub eax, IMG_31401
+		INVOKE  MoveHoles, eax
+	;点击了水獭
+	.ELSEIF CollectionStep > 5 && imageID == IMG_31404 && Dog == 0
+		mov Dog, 1
+		mov Holes[12], IMG_31404
+		INVOKE addTopSequence, IMG_316
+		mov PPTstatus, 5
+	;第三层
+	.ELSEIF CollectionStep == 6 && imageID >= IMG_31701 && imageID <= IMG_31704
+		.IF imageID == IMG_31701
+			mov EyesCount[0], 24
+		.ELSEIF imageID == IMG_31702
+			mov EyesCount[4], 8
+		.ELSEIF imageID == IMG_31703
+			mov EyesCount[8], 32
+		.ELSEIF imageID == IMG_31704
+			mov EyesCount[12], 16
+		.ENDIF
+	;拿虫子
+	.ELSEIF CollectionStep == 7 && imageID == IMG_31801
+		mov cJudge, 0
+		mov PassBy, -1
+		mov pThief, 0
+		mov PPTstatus, 4
+		mov CollectionStep, 8
+		INVOKE addTopSequence, IMG_31802
+	.ELSEIF CollectionStep == 9 && imageID == IMG_319
+		INVOKE MessageBox, NULL, OFFSET szText,OFFSET szCaption, MB_OK
 	.ELSE
 		jmp _EXIT
 	.ENDIF
@@ -340,9 +471,17 @@ eventResponses4 proc imageID: DWORD
 		mov ebx, imageID
 		mov player[eax*4], ebx
 		add step, 1
+		mov esi, Thief_X 
+		mov Click_X, esi
+		mov esi, Thief_Y 
+		mov Click_Y, esi
 	;点击了门
 	.ELSEIF imageID >= IMG_401 && imageID <=IMG_414
 		INVOKE doorTransition, imageID
+		mov eax, Thief_X
+		mov Click_X, eax
+		mov eax, Thief_Y
+		mov Click_Y, eax
 	;点击了拿起三角
 	.ELSEIF imageID == IMG_42001
 		mov Triangle, 1
@@ -356,7 +495,7 @@ eventResponses4 proc imageID: DWORD
 		mov PPTstatus, 1
 		jmp _EXIT
 	.ENDIF
-	.IF step == 5 && Apple == 0 && AppleShow == 0
+	.IF step == 5 && Apple == 0 && AppleShow == 0 && Scenario == 4
 		INVOKE isCorrectOrder
 		.IF eax == 1
 			mov AppleShow, 1
@@ -370,10 +509,6 @@ eventResponses4 proc imageID: DWORD
 	.ELSE
 		jmp _EXIT
 	.ENDIF
-	mov eax, Thief_X
-	mov Click_X, eax
-	mov eax, Thief_Y
-	mov Click_Y, eax
 _EXIT:
 	ret
 eventResponses4 endp
@@ -600,6 +735,40 @@ processScenario2 endp
 
 processScenario3 proc
 	LOCAL imgID: DWORD, count: DWORD
+	;拿虫子时的ppt
+	.IF PPTstatus == 4
+		INVOKE ChangepSequence, IMG_31802, -1
+		dec pSequenceLength
+		mov PPTstatus, 0
+		mov Bug, 1
+		mov Thief_X, 380
+		mov Click_X, 380
+		mov Thief_Y, 516
+		INVOKE addTopSequence, IMG_319
+		mov CollectionStep, 9
+		mov pThief, 1
+		mov Orientation, 1
+		jmp ending
+	.ELSEIF PPTstatus == 5
+		INVOKE ChangepSequence, IMG_316, -1
+		dec pSequenceLength
+		mov PPTstatus, 0
+		mov eax, Thief_X
+		mov Click_X, eax
+		mov eax, Thief_Y
+		mov Click_Y, eax
+	.ENDIF
+	;判断是否点击出口
+	.IF CollectionStep == 9
+		mov edx, TYPE MyItem
+		mov eax, IMG_319
+		mul edx
+		mov ebx, eax
+		INVOKE clickPosition, (ItemList[ebx]).x1, (ItemList[ebx]).y1, (ItemList[ebx]).x2, (ItemList[ebx]).y2
+		.IF eax == 1
+			INVOKE eventResponses3, IMG_319
+		.ENDIF
+	.ENDIF
 	;提示
 	mov ebx, PassBy
 	.IF ebx != -1
@@ -612,6 +781,37 @@ processScenario3 proc
 			INVOKE eventResponses3, PassBy
 		.ENDIF
 	.ENDIF
+	;判断是否点击四个眼睛
+	mov count, IMG_31701
+	mov ecx, count
+	.WHILE count <= IMG_31704
+		mov ecx, count
+		mov esi, ecx
+		mov edx, TYPE MyItem
+		mov eax, ecx
+		mul edx
+		mov ebx, eax
+		INVOKE clickPosition, (ItemList[ebx]).x1, (ItemList[ebx]).y1, (ItemList[ebx]).x2, (ItemList[ebx]).y2
+		.IF eax == 1
+			INVOKE eventResponses3, esi
+		.ENDIF
+		inc count
+	.ENDW
+	;判断是否点击七个孔
+	mov count, IMG_31401
+	.WHILE count <= IMG_31407
+		mov ecx, count
+		mov esi, ecx
+		mov edx, TYPE MyItem
+		mov eax, ecx
+		mul edx
+		mov ebx, eax
+		INVOKE clickPosition, (ItemList[ebx]).x1, (ItemList[ebx]).y1, (ItemList[ebx]).x2, (ItemList[ebx]).y2
+		.IF eax == 1
+			INVOKE eventResponses3, esi
+		.ENDIF
+		inc count
+	.ENDW
 	;其余
 	mov ecx, 0
 	mov count, 0
@@ -852,7 +1052,8 @@ processMouseEvent proc currentScenario:DWORD
 			INVOKE clickPosition, 72, 88, 118, 145
 			.IF eax == 1
 				mov isStopped, 0
-				mov pThief, 1
+				mov cl, pThiefOld
+				mov pThief, cl
 				mov esi, Thief_X 
 				mov Click_X, esi
 				mov esi, Thief_Y 
@@ -881,9 +1082,11 @@ processMouseEvent proc currentScenario:DWORD
 				.ENDIF
 				jmp _EXIT
 			.ENDIF
+			jmp _EXIT
 		.ELSEIF check_collection == 1
 			mov check_collection, 0
-			mov pThief, 1
+			mov cl, pThiefOld
+			mov pThief, cl
 			mov esi, Thief_X 
 			mov Click_X, esi
 			mov esi, Thief_Y 
@@ -892,12 +1095,18 @@ processMouseEvent proc currentScenario:DWORD
 				mov esi, PassBy_Old
 				mov PassBy, esi
 			.ENDIF
+			mov cJudge, 1
+			jmp _EXIT
+		.ELSEIF check_solution == 1
+			INVOKE clickPosition, 623, 100, 664, 142
 			jmp _EXIT
 		.ELSEIF isStopped == 0
 			; stop
 			INVOKE clickPosition, 19, 16, 55, 45
 			.IF eax == 1 
 				mov isStopped, 1
+				mov cl, pThief
+				mov pThiefOld, cl
 				mov pThief, 0
 				.IF PassBy != -1
 					mov esi, PassBy
@@ -911,13 +1120,40 @@ processMouseEvent proc currentScenario:DWORD
 				INVOKE clickPosition, 63, 16, 96, 45
 				.IF eax == 1
 					mov check_collection, 1
+					mov cl, pThief
+					mov pThiefOld, cl
 					mov pThief, 0
+					mov esi, Thief_X 
+					mov Click_X, esi
+					mov esi, Thief_Y 
+					mov Click_Y, esi
 					.IF PassBy != -1
 						mov esi, PassBy
 						mov PassBy_Old, esi
 						mov PassBy, -1
 					.ENDIF
+					mov cJudge, 0
 					jmp _EXIT
+				.ENDIF
+				.IF check_solution == 0
+					INVOKE clickPosition, 740, 13, 788, 50
+					.IF eax == 1
+						mov check_solution, 1
+						mov cl, pThief
+						mov pThiefOld, cl
+						mov pThief, 0
+						mov esi, Thief_X 
+						mov Click_X, esi
+						mov esi, Thief_Y 
+						mov Click_Y, esi
+						.IF PassBy != -1
+							mov esi, PassBy
+							mov PassBy_Old, esi
+							mov PassBy, -1
+						.ENDIF
+						mov cJudge, 0
+						jmp _EXIT
+					.ENDIF
 				.ENDIF
 			.ENDIF
 		.ENDIF
