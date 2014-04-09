@@ -1057,6 +1057,53 @@ processScenario6 endp
 
 ; #########################################################################
 
+eventResponsesBook proc
+	; 关闭
+	INVOKE clickPosition, 623, 100, 664, 142
+	.IF eax == 1
+		mov check_solution, 0
+		mov cl, pThiefOld
+		mov pThief, cl
+		mov esi, Thief_X 
+		mov Click_X, esi
+		mov esi, Thief_Y 
+		mov Click_Y, esi
+		.IF PassBy_Old != -1
+			mov esi, PassBy_Old
+			mov PassBy, esi
+		.ENDIF
+		mov cJudge, 1
+	.ENDIF
+	; 下一页
+	INVOKE clickPosition, 579, 420, 635, 463
+	.IF eax == 1 && book_page != IMG_808
+		inc book_page
+	.ENDIF
+	; 上一页
+	INVOKE clickPosition, 121, 420, 175, 463
+	.IF eax == 1 && book_page != IMG_801
+		dec book_page
+	.ENDIF
+	; bug
+	INVOKE clickPosition, 631, 157, 682, 212
+	.IF eax == 1 && book_page > IMG_805
+		mov book_page, IMG_801
+	.ENDIF
+	; ?
+	INVOKE clickPosition, 631, 225, 682, 281
+	.IF eax == 1 && book_page != IMG_806 && book_page != IMG_807
+		mov book_page, IMG_806
+	.ENDIF
+	; dog
+	INVOKE clickPosition, 631, 295, 682, 350
+	.IF eax == 1 && book_page != IMG_808
+		mov book_page, IMG_808
+	.ENDIF
+	ret
+eventResponsesBook endp
+
+; #########################################################################
+
 processMouseEvent proc currentScenario:DWORD
 
 	local mciPlayParms:MCI_PLAY_PARMS
@@ -1122,7 +1169,9 @@ processMouseEvent proc currentScenario:DWORD
 			mov cJudge, 1
 			jmp _EXIT
 		.ELSEIF check_solution == 1
-			INVOKE clickPosition, 623, 100, 664, 142
+			.IF eax == 1
+				INVOKE eventResponsesBook
+			.ENDIF
 			jmp _EXIT
 		.ELSEIF isStopped == 0
 			; stop
@@ -1163,6 +1212,7 @@ processMouseEvent proc currentScenario:DWORD
 					INVOKE clickPosition, 740, 13, 788, 50
 					.IF eax == 1
 						mov check_solution, 1
+						mov book_page, IMG_801
 						mov cl, pThief
 						mov pThiefOld, cl
 						mov pThief, 0

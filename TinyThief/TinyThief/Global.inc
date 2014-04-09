@@ -237,6 +237,8 @@ MyItem ends
 	Click_Y						dd			510							;鼠标点击点的纵坐标
 	Orientation				BYTE	0										;Thief朝向,0代表向右,1代表朝左
 	Run							BYTE	0										;Thief状态,0代表站立,1代表运动
+	Fly							BYTE	0										;Thief是否在跳，1代表跳
+	FlyCount					dd	0
 	PassBy						dd			-1								;路过的提示
 	PassBy_Old					dd			-1
 	pSequence				dd			20		DUP(-1)		;需要绘制的物体序号数组
@@ -261,14 +263,14 @@ MyItem ends
 	EyesCount					dd			0,0,0,0						;场景三第三层的眼睛倒计时
 	Apple						BYTE			0						;是否收集到了苹果
 	AppleShow					BYTE			0						;是否已画出苹果
-	Banana						BYTE			1						;是否收集到了香蕉
+	Banana						BYTE			0						;是否收集到了香蕉
 	BananaShow					BYTE			0						;是否已画出香蕉
-	Pear						BYTE			1						;是否收集到了梨子
+	Pear						BYTE			0						;是否收集到了梨子
 	Dog							BYTE			0						;是否收集到了狗？水獭？狐狸？
 	Bug							BYTE			0						;是否收集到了虫子
 	Triangle					BYTE			0						;当前是否拿到了三角
 	Cross						BYTE			0						;当前是否拿到了十字
-	Circle						BYTE			1						;当前是否拿到了圆
+	Circle						BYTE			0						;当前是否拿到了圆
 	CircleShow					BYTE			0						;圆是否已出现
 	door3Open					BYTE			0						;场景三的上侧阻挡门是否已经打开
 	door5Open					BYTE			0						;场景五的阻挡门是否已经打开
