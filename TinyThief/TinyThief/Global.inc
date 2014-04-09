@@ -237,8 +237,6 @@ MyItem ends
 	Click_Y						dd			510							;鼠标点击点的纵坐标
 	Orientation				BYTE	0										;Thief朝向,0代表向右,1代表朝左
 	Run							BYTE	0										;Thief状态,0代表站立,1代表运动
-	Fly							BYTE	0										;Thief是否在跳，1代表跳
-	FlyCount					dd	0
 	PassBy						dd			-1								;路过的提示
 	PassBy_Old					dd			-1
 	pSequence				dd			20		DUP(-1)		;需要绘制的物体序号数组
