@@ -169,18 +169,9 @@ ThiefMove proc
 		.ELSEIF Thief_Y == 265		;右中部
 			mov MAX_X, 735
 			mov MIN_X, 630
-		.ELSEIF Thief_Y == 420		;石像第一层
-			mov MAX_X, 430
-			mov MIN_X, 345
-		.ELSEIF Thief_Y == 368		;石像第二层
-			mov MAX_X, 430
-			mov MIN_X, 345
-		.ELSEIF Thief_Y == 313		;石像第三层
-			mov MAX_X, 430
-			mov MIN_X, 345
-		.ELSEIF Thief_Y == 258		;石像第三层
-			mov MAX_X, 430
-			mov MIN_X, 345
+		.ELSEIF Thief_Y == 451		;石像第一层
+			mov MAX_X, 580
+			mov MIN_X, 195
 		.ENDIF
 	.ELSEIF Scenario == 4
 		.IF Thief_Y == 510		;下
@@ -247,15 +238,10 @@ ThiefMove proc
 	.IF Scenario == 3
 		INVOKE CalculateThiefY3
 	.ENDIF
-	mov eax, Thief_X
-	.IF eax != Click_X
-		mov Run, 1
-	.ENDIF
 	ret
 ThiefMove endp
 
 ; #########################################################################
-
 ;将pSequence数组全部重置为-1
 ResetpSequence proc
 	mov ecx, 0
@@ -268,7 +254,6 @@ ResetpSequence proc
 ResetpSequence endp
 
 ; #########################################################################
-
 ;将某个图添加到pSequence序列尾
 addTopSequence proc, imgID
 	mov ebx, imgID
@@ -279,23 +264,6 @@ addTopSequence proc, imgID
 addTopSequence endp
 
 ; #########################################################################
-
-;在pSequence序列中查找图
-FindpSequence proc, imgID
-	mov eax, 0
-	mov ecx, 0
-	.WHILE ecx < pSequenceLength
-		mov ebx, pSequence[ecx * 4]
-		.IF ebx == imgID
-			mov eax, 1
-		.ENDIF
-		inc ecx
-	.ENDW	
-	ret
-FindpSequence endp
-
-; #########################################################################
-
 ;将pSequence序列中的某个值des修改为src
 ChangepSequence proc, des, src
 	mov ecx, 0
@@ -304,17 +272,14 @@ ChangepSequence proc, des, src
 		mov ebx, pSequence[ecx * 4]
 		.IF ebx == des
 			mov pSequence[ecx * 4], edx
-			mov eax, 1
 		.ENDIF
 		inc ecx
 	.ENDW	
 	ret
 ChangepSequence endp
-
 ; #########################################################################
-
 ;播放逃跑ppt
-RunForYourLife proc
+RunForYouLife proc
 	
 	.IF Thief_X > 105 
 		sub Thief_X, 5
@@ -334,9 +299,7 @@ RunForYourLife proc
 		mov Click_Y, eax
 	.ENDIF
 	ret
-RunForYourLife endp
-
-; #########################################################################
+RunForYouLife endp
 
 ;场景3的非水平移动
 CalculateThiefY3 proc 

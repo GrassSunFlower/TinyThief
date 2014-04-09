@@ -80,7 +80,6 @@ _ProcWinMain proc uses ebx edi esi, hWnd, uMsg, wParam, lParam
 			INVOKE DeleteDC,hdcMem
 			INVOKE EndPaint, hWnd, addr @stPs
 		.ELSEIF uMsg == WM_KEYDOWN						;键盘事件
-			;INVOKE MessageBox, NULL, OFFSET szText,OFFSET szCaption, MB_OK
 			;INVOKE InvalidateRect, hWnd, NULL, FALSE
 		.ELSEIF uMsg == WM_LBUTTONDOWN					;鼠标事件
 			.IF cClick == 0
