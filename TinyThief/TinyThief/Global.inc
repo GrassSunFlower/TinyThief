@@ -178,6 +178,8 @@ IMG_806				equ		163
 IMG_807				equ		164
 IMG_808				equ		165
 
+IMG_511				equ		166
+
 ;窗体大小
 SCREEN_X EQU 820
 SCREEN_Y EQU 642
@@ -249,12 +251,12 @@ MyItem ends
 	GhostCount					dd				0						;鬼的动画计时
 	GhostStep					dd				-1						;鬼的系列状态
 	CollectionStep				dd				0						;收集品放入的步骤
-	Apple						BYTE			0						;是否收集到了苹果
+	Apple						BYTE			1						;是否收集到了苹果
 	AppleShow					BYTE			0						;是否已画出苹果
-	Banana						BYTE			0						;是否收集到了香蕉
+	Banana						BYTE			1						;是否收集到了香蕉
 	BananaShow					BYTE			0						;是否已画出香蕉
-	Pear						BYTE			0						;是否收集到了梨子
-	Dog							BYTE			0						;是否收集到了狗？水獭？狐狸？
+	Pear						BYTE			1						;是否收集到了梨子
+	Dog							BYTE			1						;是否收集到了狗？水獭？狐狸？
 	Triangle					BYTE			1						;当前是否拿到了三角
 	Cross						BYTE			1						;当前是否拿到了十字
 	Circle						BYTE			1						;当前是否拿到了圆
@@ -267,6 +269,7 @@ MyItem ends
 	Thief_left_r_img		dd			0
 	isPlayingBGM			BYTE		1
 	isStopped					BYTE			0
+	check_collection						BYTE			0							;点击star，查看收藏物品
 	
 .const
 	szClassName			db			"TinyThiefClass", 0
