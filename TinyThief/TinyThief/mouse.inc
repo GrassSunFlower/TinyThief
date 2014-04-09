@@ -1046,6 +1046,9 @@ processScenario6 endp
 ; #########################################################################
 
 processMouseEvent proc currentScenario:DWORD
+
+	local mciPlayParms:MCI_PLAY_PARMS
+
 	.IF currentScenario > 2
 		.IF isStopped == 1
 			; continue
@@ -1076,9 +1079,11 @@ processMouseEvent proc currentScenario:DWORD
 				.IF isPlayingBGM == 1
 					mov isPlayingBGM, 0
 					; stop the music
+					invoke mciSendCommand, Mp3DeviceID, MCI_PAUSE, MCI_NOTIFY, ADDR mciPlayParms
 				.ELSEIF isPlayingBGM == 0
 					mov isPlayingBGM, 1
 					; restart the music
+					invoke mciSendCommand, Mp3DeviceID, MCI_RESUME, MCI_NOTIFY, ADDR mciPlayParms
 				.ENDIF
 				jmp _EXIT
 			.ENDIF
