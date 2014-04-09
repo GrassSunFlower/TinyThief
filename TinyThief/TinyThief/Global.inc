@@ -230,7 +230,7 @@ MyItem ends
 	pThief						BYTE			1								;判断是否要绘制Thief
 	pThiefOld					BYTE			1
 	;数据型全局变量
-	Scenario					dd			6								;当前场景
+	Scenario					dd			5								;当前场景
 	Thief_X						dd			675							;Thief横坐标
 	Thief_Y						dd			510							;Thief纵坐标
 	Click_X						dd			675							;鼠标点击点的横坐标
@@ -373,18 +373,18 @@ MyItem ends
 		
 		INVOKE InitItem, IMG_500, 0, 0, 0, 0, 0, 0, 0, 1
 		INVOKE InitItem, IMG_501, 490, 406, 52, 78, 0, 0, 1, 0
-		INVOKE InitItem, IMG_5020101, 287, 287, 148, 151, 0, 0, 1, 0
-		INVOKE InitItem, IMG_5020102, 287, 287, 148, 151, 0, 0, 1, 0
-		INVOKE InitItem, IMG_5020103, 287, 287, 148, 151, 0, 0, 1, 0
-		INVOKE InitItem, IMG_5020104, 287, 287, 148, 151, 0, 0, 1, 0
-		INVOKE InitItem, IMG_5020201, 287, 287, 148, 151, 0, 0, 1, 0
-		INVOKE InitItem, IMG_5020202, 287, 287, 148, 151, 0, 0, 1, 0
-		INVOKE InitItem, IMG_5020203, 287, 287, 148, 151, 0, 0, 1, 0
-		INVOKE InitItem, IMG_5020204, 287, 287, 148, 151, 0, 0, 1, 0
-		INVOKE InitItem, IMG_5020301, 287, 287, 148, 151, 0, 0, 1, 0
-		INVOKE InitItem, IMG_5020302, 287, 287, 148, 151, 0, 0, 1, 0
-		INVOKE InitItem, IMG_5020303, 287, 287, 148, 151, 0, 0, 1, 0
-		INVOKE InitItem, IMG_5020304, 287, 287, 148, 151, 0, 0, 1, 0
+		INVOKE InitItem, IMG_5020101, 305, 305, 138, 140, 0, 0, 0, 0
+		INVOKE InitItem, IMG_5020102, 305, 305, 138, 140, 0, 0, 0, 0
+		INVOKE InitItem, IMG_5020103, 305, 305, 138, 140, 0, 0, 0, 0
+		INVOKE InitItem, IMG_5020104, 305, 305, 138, 140, 0, 0, 0, 0
+		INVOKE InitItem, IMG_5020201, 305, 305, 138, 140, 0, 0, 1, 0
+		INVOKE InitItem, IMG_5020202, 305, 305, 138, 140, 0, 0, 1, 0
+		INVOKE InitItem, IMG_5020203, 305, 305, 138, 140, 0, 0, 1, 0
+		INVOKE InitItem, IMG_5020204, 305, 305, 138, 140, 0, 0, 1, 0
+		INVOKE InitItem, IMG_5020301, 305, 305, 138, 140, 0, 0, 1, 0
+		INVOKE InitItem, IMG_5020302, 305, 305, 138, 140, 0, 0, 1, 0
+		INVOKE InitItem, IMG_5020303, 305, 305, 138, 140, 0, 0, 1, 0
+		INVOKE InitItem, IMG_5020304, 305, 305, 138, 140, 0, 0, 1, 0
 		INVOKE InitItem, IMG_503, 62, 140, 89, 397, 151, 450, 0, 1
 		INVOKE InitItem, IMG_504, 56, 110, 214, 427, 270, 480, 1, 1
 		INVOKE InitItem, IMG_505, 56, 110, 297, 426, 353, 478, 1, 1

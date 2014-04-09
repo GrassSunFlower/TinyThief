@@ -203,7 +203,13 @@ DrawSting endp
 ;绘制场景五的圈
 DrawRounds proc
 	LOCAL count:DWORD
-	mov count, 0
+	mov ecx, 0
+	mov eax, Rounds[ecx*4]
+	mov esi, eax
+	mov edx, TYPE MyItem
+	mul edx
+	INVOKE DrawObject, esi, (ItemList[eax]).img, (ItemList[eax]).x1, (ItemList[eax]).y1, (ItemList[eax]).iwidth, (ItemList[eax]).iheight
+	mov count, 1
 	.WHILE count < 3
 		mov ecx, count
 		mov eax, Rounds[ecx*4]
