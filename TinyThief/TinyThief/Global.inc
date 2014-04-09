@@ -267,6 +267,7 @@ MyItem ends
 	Thief_left_r_img		dd			0
 	isPlayingBGM			BYTE		1
 	isStopped					BYTE			0
+	isRestarted					BYTE			0
 	
 .const
 	szClassName			db			"TinyThiefClass", 0
