@@ -230,7 +230,7 @@ MyItem ends
 	pThief						BYTE			1								;判断是否要绘制Thief
 	pThiefOld					BYTE			1
 	;数据型全局变量
-	Scenario					dd			5								;当前场景
+	Scenario					dd			0								;当前场景
 	Thief_X						dd			675							;Thief横坐标
 	Thief_Y						dd			510							;Thief纵坐标
 	Click_X						dd			675							;鼠标点击点的横坐标
@@ -276,6 +276,7 @@ MyItem ends
 	isStopped					BYTE			0
 	check_collection						BYTE			0							;点击star，查看收藏物品
 	check_solution							BYTE			0
+	isFinished					BYTE			0						;是否已结束
 	book_page				dd			IMG_801
 	Thief_right_s_img		dd			0
 	Thief_left_s_img		dd			0

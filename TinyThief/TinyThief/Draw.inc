@@ -307,6 +307,7 @@ _EXIT:
 	ret
 DrawGhost endp
 
+;绘制暂停
 DrawStopFlag proc
 	
 	.IF isPlayingBGM == 1
@@ -322,6 +323,7 @@ DrawStopFlag proc
 	ret
 DrawStopFlag endp
 
+;绘制所得星星
 DrawStar proc
 	LOCAL count:DWORD
 
@@ -384,6 +386,7 @@ DrawStar proc
 	ret
 DrawStar endp
 
+;绘制提示书
 DrawBook proc
 	mov eax, book_page
 	mov esi, eax
@@ -392,6 +395,66 @@ DrawBook proc
 	INVOKE DrawTransparentObject, esi, (ItemList[eax]).img, (ItemList[eax]).x1, (ItemList[eax]).y1,(ItemList[eax]).iwidth, (ItemList[eax]).iheight
 	ret
 DrawBook endp
+
+;绘制结束图
+DrawFinish proc
+	local count:DWORD
+	mov eax, IMG_700
+	mov esi, eax
+	mov edx, TYPE MyItem
+	mul edx
+	INVOKE DrawTransparentObject, esi, (ItemList[eax]).img, (ItemList[eax]).x1, (ItemList[eax]).y1,(ItemList[eax]).iwidth, (ItemList[eax]).iheight
+	mov pThief, 0
+	mov cClick, 1
+	
+	.IF Pear == 1
+		inc count
+		mov eax, IMG_701
+		mov esi, eax
+		mov edx, TYPE MyItem
+		mul edx
+		INVOKE DrawObject, esi, (ItemList[eax]).img, (ItemList[eax]).x1, (ItemList[eax]).y1,(ItemList[eax]).iwidth, (ItemList[eax]).iheight
+	.ENDIF
+	.IF Apple == 1
+		inc count
+		mov eax, IMG_702
+		mov esi, eax
+		mov edx, TYPE MyItem
+		mul edx
+		INVOKE DrawObject, esi, (ItemList[eax]).img, (ItemList[eax]).x1, (ItemList[eax]).y1,(ItemList[eax]).iwidth, (ItemList[eax]).iheight
+	.ENDIF
+	.IF Banana == 1
+		inc count
+		mov eax, IMG_703
+		mov esi, eax
+		mov edx, TYPE MyItem
+		mul edx
+		INVOKE DrawObject, esi, (ItemList[eax]).img, (ItemList[eax]).x1, (ItemList[eax]).y1,(ItemList[eax]).iwidth, (ItemList[eax]).iheight
+	.ENDIF
+
+	.IF count == 3
+		mov eax, IMG_705
+		mov esi, eax
+		mov edx, TYPE MyItem
+		mul edx
+		INVOKE DrawTransparentObject, esi, (ItemList[eax]).img, (ItemList[eax]).x1, (ItemList[eax]).y1,(ItemList[eax]).iwidth, (ItemList[eax]).iheight
+	.ENDIF
+
+	.IF Dog == 1
+		mov eax, IMG_704
+		mov esi, eax
+		mov edx, TYPE MyItem
+		mul edx
+		INVOKE DrawObject, esi, (ItemList[eax]).img, (ItemList[eax]).x1, (ItemList[eax]).y1,(ItemList[eax]).iwidth, (ItemList[eax]).iheight
+		mov eax, IMG_706
+		mov esi, eax
+		mov edx, TYPE MyItem
+		mul edx
+		INVOKE DrawTransparentObject, esi, (ItemList[eax]).img, (ItemList[eax]).x1, (ItemList[eax]).y1,(ItemList[eax]).iwidth, (ItemList[eax]).iheight
+	.ENDIF
+
+	ret
+DrawFinish endp
 
 ;绘制场景三第二层的孔
 DrawHoles proc
@@ -450,14 +513,22 @@ DrawProc proc
 			INVOKE DrawIcons
 		.ENDIF
 		INVOKE DrawItems
+		.IF Scenario == 5
+			INVOKE DrawRounds
+		.ENDIF
+		INVOKE DrawPassBy
 		INVOKE DrawCollection
 		.IF Scenario == 3 && CollectionStep >= 5
-			INVOKE DrawHoles
-			.IF CollectionStep >= 6
-				INVOKE DrawEyes
+			.IF CollectionStep <= 8
+				INVOKE DrawHoles
+				.IF CollectionStep >= 6
+					INVOKE DrawEyes
+				.ENDIF
+			.ENDIF
+			.IF CollectionStep == 10 && Thief_X < 105
+				mov isFinished, 1
 			.ENDIF
 		.ELSEIF Scenario == 5
-			INVOKE DrawRounds
 			INVOKE DrawSting
 			mov eax, IMG_511
 			mov esi, eax
@@ -468,7 +539,6 @@ DrawProc proc
 			INVOKE DrawLight
 			INVOKE DrawGhost
 		.ENDIF
-		INVOKE DrawPassBy
 		.IF pThief == 1
 			INVOKE DrawThief
 		.ENDIF
@@ -479,6 +549,8 @@ DrawProc proc
 		INVOKE DrawStar
 	.ELSEIF check_solution == 1
 		INVOKE DrawBook
+	.ELSEIF isFinished == 1
+		INVOKE DrawFinish
 	.ENDIF
     ret
 

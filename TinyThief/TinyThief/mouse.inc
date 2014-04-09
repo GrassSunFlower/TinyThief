@@ -56,7 +56,8 @@ restartGame proc
 	mov cJudge, 1
 	mov pThief, 1
 	mov isStopped, 0
-	
+	mov isFinished, 0
+
 	mov Orientation, 0
 	mov Run, 0
 	mov PassBy, -1
@@ -89,6 +90,7 @@ restartGame proc
 	mov BananaShow, 0
 	mov Pear, 0
 	mov Dog, 0
+	mov Bug, 0
 	mov Triangle, 0
 	mov Cross, 0	
 	mov Circle, 0
@@ -428,13 +430,13 @@ eventResponses3 proc imageID: DWORD
 	;第三层
 	.ELSEIF CollectionStep == 6 && imageID >= IMG_31701 && imageID <= IMG_31704
 		.IF imageID == IMG_31701
-			mov EyesCount[0], 24
+			mov EyesCount[0], 8
 		.ELSEIF imageID == IMG_31702
-			mov EyesCount[4], 8
+			mov EyesCount[4], 24
 		.ELSEIF imageID == IMG_31703
-			mov EyesCount[8], 32
+			mov EyesCount[8], 16
 		.ELSEIF imageID == IMG_31704
-			mov EyesCount[12], 16
+			mov EyesCount[12], 32
 		.ENDIF
 	;拿虫子
 	.ELSEIF CollectionStep == 7 && imageID == IMG_31801
@@ -445,7 +447,13 @@ eventResponses3 proc imageID: DWORD
 		mov CollectionStep, 8
 		INVOKE addTopSequence, IMG_31802
 	.ELSEIF CollectionStep == 9 && imageID == IMG_319
-		INVOKE MessageBox, NULL, OFFSET szText,OFFSET szCaption, MB_OK
+		mov cClick, 0
+		mov cJudge, 0
+		mov CollectionStep, 10
+		mov Click_X, 100
+		jmp _EXIT
+		
+		;INVOKE MessageBox, NULL, OFFSET szText,OFFSET szCaption, MB_OK
 	.ELSE
 		jmp _EXIT
 	.ENDIF
@@ -744,11 +752,15 @@ processScenario3 proc
 		mov Thief_X, 380
 		mov Click_X, 380
 		mov Thief_Y, 516
+		INVOKE ResetpSequence
+		INVOKE addTopSequence, IMG_305
+		INVOKE addTopSequence, IMG_30806
 		INVOKE addTopSequence, IMG_319
 		mov CollectionStep, 9
 		mov pThief, 1
 		mov Orientation, 1
 		jmp ending
+	;水獭移动ppt
 	.ELSEIF PPTstatus == 5
 		INVOKE ChangepSequence, IMG_316, -1
 		dec pSequenceLength
@@ -1048,7 +1060,14 @@ processScenario6 endp
 processMouseEvent proc currentScenario:DWORD
 
 	local mciPlayParms:MCI_PLAY_PARMS
-
+	;已结束
+	.IF isFinished == 1
+		INVOKE clickPosition, 296, 407, 508, 472
+		.IF eax == 1
+			INVOKE restartGame
+			jmp _EXIT
+		.ENDIF
+	.ENDIF
 	.IF currentScenario > 2
 		.IF isStopped == 1
 			; continue
