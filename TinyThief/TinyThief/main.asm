@@ -15,31 +15,13 @@ INCLUDE TinyThief.inc
 
 
 
-;播放mp3文件
-PlayMp3File proc hWin:DWORD,NameOfFile:DWORD
-
-      local mciOpenParms:MCI_OPEN_PARMS,mciPlayParms:MCI_PLAY_PARMS
-
-            mov eax,hWin        
-            mov mciPlayParms.dwCallback,eax
-            mov eax,OFFSET Mp3Device
-            mov mciOpenParms.lpstrDeviceType,eax
-            mov eax,NameOfFile
-            mov mciOpenParms.lpstrElementName,eax
-            INVOKE mciSendCommand,0,MCI_OPEN,MCI_OPEN_TYPE or MCI_OPEN_ELEMENT,ADDR mciOpenParms
-            mov eax,mciOpenParms.wDeviceID
-            mov Mp3DeviceID,eax
-            INVOKE mciSendCommand,Mp3DeviceID,MCI_PLAY,MCI_NOTIFY,ADDR mciPlayParms
-            ret  
-
-PlayMp3File endp
-
 ;窗口过程
 _ProcWinMain proc uses ebx edi esi, hWnd, uMsg, wParam, lParam
 		local @stPs:PAINTSTRUCT
 		local @stRect:RECT
 		local @stPos:POINT
 		local @hSysMenu
+		local mciPlayParms:MCI_PLAY_PARMS
 
 		.IF uMsg == WM_CREATE
 			
@@ -82,6 +64,16 @@ _ProcWinMain proc uses ebx edi esi, hWnd, uMsg, wParam, lParam
 		.ELSEIF uMsg == WM_KEYDOWN						;键盘事件
 			;INVOKE MessageBox, NULL, OFFSET szText,OFFSET szCaption, MB_OK
 			;INVOKE InvalidateRect, hWnd, NULL, FALSE
+			;INVOKE mciSendCommand,VolumeID,MCI_STOP,0,0
+			;INVOKE PlayVolume,hWinMain,ADDR Volume1
+			;INVOKE mciSendString,ADDR szText, NULL, 0, NULL
+			;INVOKE mciSendString,ADDR szText1, NULL, 0, NULL
+		.ELSEIF uMsg == MM_MCINOTIFY					;循环播放
+			.IF wParam == MCI_NOTIFY_SUCCESSFUL
+			;mov mciPlayParms.dwFrom, 0
+				INVOKE mciSendCommand,BGMID,MCI_SEEK,MCI_SEEK_TO_START,0
+				INVOKE mciSendCommand,BGMID,MCI_PLAY,MCI_NOTIFY,ADDR mciPlayParms
+			.ENDIF
 		.ELSEIF uMsg == WM_LBUTTONDOWN					;鼠标事件
 			.IF cClick == 0
 				ret
@@ -159,7 +151,8 @@ _WinMain proc
 		INVOKE ShowWindow, hWinMain, SW_SHOWNORMAL
 		INVOKE UpdateWindow, hWinMain
                                 
-		INVOKE PlayMp3File,hWinMain,ADDR MusicName
+		INVOKE mciSendString,ADDR BGMName1, NULL, 0, NULL
+		INVOKE mciSendString,ADDR playTextBGM, NULL, 0, NULL
 
 		;消息循环
 		.WHILE TRUE

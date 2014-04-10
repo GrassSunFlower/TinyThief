@@ -182,6 +182,7 @@ IMG_807				equ		167
 IMG_808				equ		168
 
 IMG_511				equ		169
+IMG_320				equ		170
 
 ;窗体大小
 SCREEN_X EQU 820
@@ -222,8 +223,32 @@ MyItem ends
 
 	;播放音乐所需的参数
     Mp3Device				db			"MPEGVideo",0
-    Mp3DeviceID			dd			0
-	MusicName				db			"he is a pirate.mp3",0
+    BGMID				dd			0
+	VolumeID			dd			0
+	playTextBGM			db			"play bgm repeat", 0
+	closeTextBGM		db			"close bgm",0
+	pauseTextBGM		db			"pause bgm",0
+	BGMName1			db			"open AssetMusic_Theme.mp3 alias bgm",0
+	BGMName2			db			"open AssetSound_Campfire.mp3 alias bgm", 0
+	BGMName3			db			"open AssetSound_Cave.mp3 alias bgm", 0
+	Volume12			db			"open AssetSound_PirateTemple_SpikedWall.mp3 alias bgm", 0
+	Volume1				db			"AssetSound_Commons_CameraOut.mp3", 0
+	Volume2				db			"AssetSound_Commons_Extra.mp3", 0
+	Volume3				db			"AssetSound_Commons_HandTap.mp3", 0
+	Volume4				db			"AssetSound_Commons_PickUp.mp3", 0
+	Volume5				db			"AssetSound_Commons_Star.mp3", 0
+	Volume6				db			"AssetSound_Commons_WinLevel.mp3", 0
+	Volume7				db			"AssetSound_PirateTemple_Eye.mp3", 0
+	Volume8				db			"AssetSound_PirateTemple_InsertStoneItems.mp3", 0
+	Volume9				db			"AssetSound_PirateTemple_LightLever.mp3", 0
+	Volume10			db			"AssetSound_PirateTemple_LightSigns.mp3", 0
+	Volume11			db			"AssetSound_PirateTemple_SignFood.mp3", 0
+	Volume13			db			"AssetSound_PirateTemple_SpiritBurned.mp3", 0
+	Volume14			db			"AssetSound_PirateTemple_SpiritEffect.mp3", 0
+	Volume15			db			"AssetSound_PirateTemple_StoneFloorDestroy.mp3", 0
+	Volume16			db			"AssetSound_PirateTemple_StoneFloorUp.mp3", 0
+	Volume17			db			"AssetSound_PirateTemple_StoneMiniDoor.mp3", 0
+	Volume18			db			"AssetSound_PirateTemple_StoneOpen.mp3", 0
 	;控制型全局变量
 	cClick						BYTE			1								;判断是否要响应接下来的鼠标事件
 	cJudge						BYTE			1								;判断是否要判断接下来的碰撞事件
@@ -274,8 +299,9 @@ MyItem ends
 	door5Open					BYTE			0						;场景五的阻挡门是否已经打开
 	isPlayingBGM			BYTE		1
 	isStopped					BYTE			0
-	check_collection						BYTE			0							;点击star，查看收藏物品
-	check_solution							BYTE			0
+	check_collection						BYTE			0			;点击star，查看收藏物品
+	check_solution							BYTE			0			;点击书，查看线索
+	get_collection							BYTE			0			;获得物品
 	isFinished					BYTE			0						;是否已结束
 	book_page				dd			IMG_801
 	Thief_right_s_img		dd			0
@@ -286,7 +312,8 @@ MyItem ends
 .const
 	szClassName			db			"TinyThiefClass", 0
 	szCaptionMain			db			"TinyThief", 0
-	szText						db			"通关了哈哈哈哈哈哈哈!", 0
+	szText						db			"open AssetSound_Campfire.mp3 alias mp3", 0
+	szText1					db				"play mp3 repeat", 0
 	szMenuHelp				db			"帮助", 0
 	szCaption					db			"Mission Complete", 0
 
@@ -504,6 +531,7 @@ MyItem ends
 		INVOKE InitItem, IMG_808, 608, 396, 94, 90, 0, 0, 1, 0
 		
 		INVOKE InitItem, IMG_511, 34, 34, 63, 13, 47, 97, 0, 1
+		INVOKE InitItem, IMG_320, 44, 40, 367, 242, 411, 282, 0, 0
 		
 		INVOKE LoadBitmap, hInstance, 1111
 		mov Thief_right_s_img, eax

@@ -2,7 +2,8 @@
 
 ;函数原型
 CalculateThiefY3 PROTO
-
+PlayBGM PROTO hWin:DWORD,NameOfFile:DWORD
+PlayVolume PROTO hWin:DWORD,NameOfFile:DWORD
 
 
 ;判断碰撞
@@ -332,6 +333,9 @@ RunForYourLife proc
 		mov Click_X, 333
 		mov eax, Thief_Y
 		mov Click_Y, eax
+		INVOKE mciSendString,ADDR closeTextBGM, NULL, 0, NULL
+		INVOKE mciSendString,ADDR BGMName2, NULL, 0, NULL
+		INVOKE mciSendString,ADDR playTextBGM, NULL, 0, NULL
 	.ENDIF
 	ret
 RunForYourLife endp
@@ -378,3 +382,45 @@ CalculateThiefY3 proc
 	.ENDIF
 	ret
 CalculateThiefY3 endp
+
+; #########################################################################
+
+;播放BGM
+PlayBGM proc hWin:DWORD,NameOfFile:DWORD
+
+      local mciOpenParms:MCI_OPEN_PARMS,mciPlayParms:MCI_PLAY_PARMS
+
+            mov eax,hWin        
+            mov mciPlayParms.dwCallback,eax
+            mov eax,OFFSET Mp3Device
+            mov mciOpenParms.lpstrDeviceType,eax
+            mov eax,NameOfFile
+            mov mciOpenParms.lpstrElementName,eax
+            INVOKE mciSendCommand,0,MCI_OPEN,MCI_OPEN_TYPE or MCI_OPEN_ELEMENT,ADDR mciOpenParms
+            mov eax,mciOpenParms.wDeviceID
+            mov BGMID,eax
+            INVOKE mciSendCommand,BGMID,MCI_PLAY,MCI_NOTIFY,ADDR mciPlayParms
+            ret  
+
+PlayBGM endp
+
+; #########################################################################
+
+;播放音效
+PlayVolume proc hWin:DWORD,NameOfFile:DWORD
+
+      local mciOpenParms:MCI_OPEN_PARMS,mciPlayParms:MCI_PLAY_PARMS
+
+            mov eax,hWin        
+            mov mciPlayParms.dwCallback,eax
+            mov eax,OFFSET Mp3Device
+            mov mciOpenParms.lpstrDeviceType,eax
+            mov eax,NameOfFile
+            mov mciOpenParms.lpstrElementName,eax
+            INVOKE mciSendCommand,0,MCI_OPEN,MCI_OPEN_TYPE or MCI_OPEN_ELEMENT,ADDR mciOpenParms
+            mov eax,mciOpenParms.wDeviceID
+            mov VolumeID,eax
+            INVOKE mciSendCommand,VolumeID,MCI_PLAY,0,ADDR mciPlayParms
+            ret  
+
+PlayVolume endp

@@ -99,6 +99,11 @@ restartGame proc
 	mov door5Open, 0
 
 	mov Scenario, 3
+	INVOKE mciSendString,ADDR closeTextBGM, NULL, 0, NULL
+	INVOKE mciSendString,ADDR BGMName2, NULL, 0, NULL
+	INVOKE mciSendString,ADDR playTextBGM, NULL, 0, NULL
+    INVOKE mciSendCommand,VolumeID,MCI_CLOSE,0,0
+	INVOKE PlayVolume,hWinMain,ADDR Volume1
 	mov Thief_X, 79
 	mov Thief_Y, 128
 	mov Click_X, 79
@@ -130,6 +135,9 @@ CheckRounds proc
 	.IF Rounds[0] == IMG_5020102 && Rounds[4] == IMG_5020203 && Rounds[8] == IMG_5020304
 		mov door5Open, 1
 		INVOKE addTopSequence, IMG_507
+		INVOKE mciSendString,ADDR closeTextBGM, NULL, 0, NULL
+		INVOKE ChangepSequence, IMG_30903, IMG_30904
+		INVOKE PlayVolume,hWinMain,ADDR Volume17
 	.ENDIF
 	ret
 CheckRounds endp
@@ -183,6 +191,9 @@ doorTransition proc imageID: DWORD
 		mov PassBy, -1
 		mov Orientation, 1
 	.ELSEIF imageID == IMG_410	;切换回场景3
+		INVOKE mciSendString,ADDR closeTextBGM, NULL, 0, NULL
+		INVOKE mciSendString,ADDR BGMName2, NULL, 0, NULL
+		INVOKE mciSendString,ADDR playTextBGM, NULL, 0, NULL
 		mov Thief_X, 270
 		mov Thief_Y, 148
 		INVOKE CalculateThiefY3
@@ -234,6 +245,8 @@ CheckHoles proc
 	.ENDW
 	mov CollectionStep, 6
 	INVOKE ChangepSequence, IMG_30903, IMG_30904
+	INVOKE mciSendCommand,VolumeID,MCI_CLOSE,0,0
+	INVOKE PlayVolume,hWinMain,ADDR Volume16
 	mov Thief_Y, 313
 	mov Holes[12], IMG_315
 	ret
@@ -265,6 +278,9 @@ eventResponses3 proc imageID: DWORD
 	mov Run, 0
 	;到场景4的门
 	.IF imageID == IMG_30202
+		INVOKE mciSendString,ADDR closeTextBGM, NULL, 0, NULL
+		INVOKE mciSendString,ADDR BGMName3, NULL, 0, NULL
+		INVOKE mciSendString,ADDR playTextBGM, NULL, 0, NULL
 		INVOKE ResetpSequence
 		mov Scenario, 4
 		mov Thief_X, 120
@@ -281,6 +297,8 @@ eventResponses3 proc imageID: DWORD
 				add pSequenceLength, 1
 			.ENDIF
 		.ENDIF
+		INVOKE mciSendCommand,VolumeID,MCI_CLOSE,0,0
+		INVOKE PlayVolume,hWinMain,ADDR Volume3
 	;到场景5的门
 	.ELSEIF imageID == IMG_30302
 		INVOKE ResetpSequence
@@ -303,10 +321,16 @@ eventResponses3 proc imageID: DWORD
 		.ENDIF
 		mov pSequence[0], eax
 		mov pSequenceLength, 1
+		INVOKE mciSendString,ADDR closeTextBGM, NULL, 0, NULL
 		.IF door5Open == 1
 			mov pSequence[4], IMG_507
 			inc pSequenceLength
+		.ELSE
+			INVOKE mciSendString,ADDR Volume12, NULL, 0, NULL
+			INVOKE mciSendString,ADDR playTextBGM, NULL, 0, NULL
 		.ENDIF
+		INVOKE mciSendCommand,VolumeID,MCI_CLOSE,0,0
+		INVOKE PlayVolume,hWinMain,ADDR Volume3
 	;到场景6的门
 	.ELSEIF imageID == IMG_30402
 		INVOKE ResetpSequence
@@ -314,42 +338,59 @@ eventResponses3 proc imageID: DWORD
 		mov Thief_X, 675
 		mov Thief_Y, 510
 		mov Orientation, 1
+		INVOKE mciSendString,ADDR closeTextBGM, NULL, 0, NULL
+		INVOKE mciSendCommand,VolumeID,MCI_CLOSE,0,0
+		INVOKE PlayVolume,hWinMain,ADDR Volume3
 	;上下的门之上
 	.ELSEIF imageID == IMG_30601
 		mov Thief_X, 720
 		mov Thief_Y, 452
 		mov Orientation, 1
+		INVOKE mciSendCommand,VolumeID,MCI_CLOSE,0,0
+		INVOKE PlayVolume,hWinMain,ADDR Volume3
 	;上下的门之下
 	.ELSEIF imageID == IMG_30602
 		mov Thief_X, 640
 		mov Thief_Y, 148
 		INVOKE CalculateThiefY3
 		mov Orientation, 1
+		INVOKE mciSendCommand,VolumeID,MCI_CLOSE,0,0
+		INVOKE PlayVolume,hWinMain,ADDR Volume3
 	;上下的楼梯之上
 	.ELSEIF imageID == IMG_30701
 		mov Thief_X, 720
 		mov Thief_Y, 265
 		mov Orientation, 1
+		INVOKE mciSendCommand,VolumeID,MCI_CLOSE,0,0
+		INVOKE PlayVolume,hWinMain,ADDR Volume3
 	;上下的楼梯之下
 	.ELSEIF imageID == IMG_30702
 		mov Thief_X, 720
 		mov Thief_Y, 148
 		INVOKE CalculateThiefY3
 		mov Orientation, 1
+		INVOKE mciSendCommand,VolumeID,MCI_CLOSE,0,0
+		INVOKE PlayVolume,hWinMain,ADDR Volume3
 	;放三个collection
 	.ELSEIF imageID == IMG_30801
 		mov Triangle, 2
 		INVOKE addTopSequence, IMG_30802
 		mov CollectionStep, 1
+		INVOKE mciSendCommand,VolumeID,MCI_CLOSE,0,0
+		INVOKE PlayVolume,hWinMain,ADDR Volume8
 	.ELSEIF imageID == IMG_30803
 		mov Cross, 2
 		mov CollectionStep, 2
 		INVOKE ChangepSequence, IMG_30802, IMG_30804
+		INVOKE mciSendCommand,VolumeID,MCI_CLOSE,0,0
+		INVOKE PlayVolume,hWinMain,ADDR Volume8
 	.ELSEIF imageID == IMG_30805
 		mov Circle, 2
 		mov CollectionStep, 3
 		INVOKE ChangepSequence, IMG_30804, IMG_30806
 		INVOKE addTopSequence, IMG_30901
+		INVOKE mciSendCommand,VolumeID,MCI_CLOSE,0,0
+		INVOKE PlayVolume,hWinMain,ADDR Volume8
 	;开启第一层
 	.ELSEIF imageID == IMG_310
 		INVOKE ChangepSequence, IMG_30901, IMG_30902
@@ -358,6 +399,8 @@ eventResponses3 proc imageID: DWORD
 		INVOKE addTopSequence, IMG_31103
 		INVOKE addTopSequence, IMG_31203
 		INVOKE addTopSequence, IMG_31303
+		INVOKE mciSendCommand,VolumeID,MCI_CLOSE,0,0
+		INVOKE PlayVolume,hWinMain,ADDR Volume16
 	;第一层的图标
 	.ELSEIF imageID == IMG_31101 && CollectionStep == 4
 		INVOKE ChangepSequence, IMG_31101, IMG_31102
@@ -373,6 +416,8 @@ eventResponses3 proc imageID: DWORD
 			INVOKE ChangepSequence, IMG_30902, IMG_30903
 			mov CollectionStep, 5
 			mov Thief_Y, 368
+			INVOKE mciSendCommand,VolumeID,MCI_CLOSE,0,0
+			INVOKE PlayVolume,hWinMain,ADDR Volume16
 		.ELSE
 			jmp _EXIT
 		.ENDIF
@@ -394,6 +439,8 @@ eventResponses3 proc imageID: DWORD
 			INVOKE ChangepSequence, IMG_30902, IMG_30903
 			mov CollectionStep, 5
 			mov Thief_Y, 368
+			INVOKE mciSendCommand,VolumeID,MCI_CLOSE,0,0
+			INVOKE PlayVolume,hWinMain,ADDR Volume16
 		.ELSE
 			jmp _EXIT
 		.ENDIF
@@ -409,6 +456,8 @@ eventResponses3 proc imageID: DWORD
 			INVOKE ChangepSequence, IMG_30902, IMG_30903
 			mov CollectionStep, 5
 			mov Thief_Y, 368
+			INVOKE mciSendCommand,VolumeID,MCI_CLOSE,0,0
+			INVOKE PlayVolume,hWinMain,ADDR Volume16
 		.ELSE
 			jmp _EXIT
 		.ENDIF
@@ -427,30 +476,47 @@ eventResponses3 proc imageID: DWORD
 		mov Holes[12], IMG_31404
 		INVOKE addTopSequence, IMG_316
 		mov PPTstatus, 5
+		mov get_collection, 1
+		INVOKE mciSendCommand,VolumeID,MCI_CLOSE,0,0
+		INVOKE PlayVolume,hWinMain,ADDR Volume5
 	;第三层
 	.ELSEIF CollectionStep == 6 && imageID >= IMG_31701 && imageID <= IMG_31704
 		.IF imageID == IMG_31701
 			mov EyesCount[0], 8
+			INVOKE mciSendCommand,VolumeID,MCI_CLOSE,0,0
+			INVOKE PlayVolume,hWinMain,ADDR Volume7
 		.ELSEIF imageID == IMG_31702
 			mov EyesCount[4], 24
+			INVOKE mciSendCommand,VolumeID,MCI_CLOSE,0,0
+			INVOKE PlayVolume,hWinMain,ADDR Volume7
 		.ELSEIF imageID == IMG_31703
 			mov EyesCount[8], 16
+			INVOKE mciSendCommand,VolumeID,MCI_CLOSE,0,0
+			INVOKE PlayVolume,hWinMain,ADDR Volume7
 		.ELSEIF imageID == IMG_31704
 			mov EyesCount[12], 32
+			INVOKE mciSendCommand,VolumeID,MCI_CLOSE,0,0
+			INVOKE PlayVolume,hWinMain,ADDR Volume7
 		.ENDIF
 	;拿虫子
 	.ELSEIF CollectionStep == 7 && imageID == IMG_31801
 		mov cJudge, 0
 		mov PassBy, -1
 		mov pThief, 0
+		mov Bug, 1
 		mov PPTstatus, 4
+		mov get_collection, 1
 		mov CollectionStep, 8
 		INVOKE addTopSequence, IMG_31802
+		INVOKE mciSendCommand,VolumeID,MCI_CLOSE,0,0
+		INVOKE PlayVolume,hWinMain,ADDR Volume5
 	.ELSEIF CollectionStep == 9 && imageID == IMG_319
 		mov cClick, 0
 		mov cJudge, 0
 		mov CollectionStep, 10
 		mov Click_X, 100
+		INVOKE mciSendCommand,VolumeID,MCI_CLOSE,0,0
+		INVOKE PlayVolume,hWinMain,ADDR Volume6
 		jmp _EXIT
 		
 		;INVOKE MessageBox, NULL, OFFSET szText,OFFSET szCaption, MB_OK
@@ -483,6 +549,8 @@ eventResponses4 proc imageID: DWORD
 		mov Click_X, esi
 		mov esi, Thief_Y 
 		mov Click_Y, esi
+		INVOKE mciSendCommand,VolumeID,MCI_CLOSE,0,0
+		INVOKE PlayVolume,hWinMain,ADDR Volume10
 	;点击了门
 	.ELSEIF imageID >= IMG_401 && imageID <=IMG_414
 		INVOKE doorTransition, imageID
@@ -490,17 +558,24 @@ eventResponses4 proc imageID: DWORD
 		mov Click_X, eax
 		mov eax, Thief_Y
 		mov Click_Y, eax
+		INVOKE mciSendCommand,VolumeID,MCI_CLOSE,0,0
+		INVOKE PlayVolume,hWinMain,ADDR Volume3
 	;点击了拿起三角
 	.ELSEIF imageID == IMG_42001
 		mov Triangle, 1
+		INVOKE mciSendCommand,VolumeID,MCI_CLOSE,0,0
+		INVOKE PlayVolume,hWinMain,ADDR Volume4
 		INVOKE addTopSequence, IMG_42002
 		inc ecx
 	;点击了拿起苹果
 	.ELSEIF imageID == IMG_42102
 		mov Apple, 1
+		mov get_collection, 1
 		INVOKE ChangepSequence, IMG_42101, IMG_42104
 		mov pThief, 0
 		mov PPTstatus, 1
+		INVOKE mciSendCommand,VolumeID,MCI_CLOSE,0,0
+		INVOKE PlayVolume,hWinMain,ADDR Volume2
 		jmp _EXIT
 	.ENDIF
 	.IF step == 5 && Apple == 0 && AppleShow == 0 && Scenario == 4
@@ -510,6 +585,8 @@ eventResponses4 proc imageID: DWORD
 			mov ebx, pSequenceLength
 			mov pSequence[ebx * 4], IMG_42101
 			add pSequenceLength, 1
+			INVOKE mciSendCommand,VolumeID,MCI_CLOSE,0,0
+			INVOKE PlayVolume,hWinMain,ADDR Volume17
 		.ELSE
 			INVOKE resetIcon
 			mov step, 0
@@ -526,7 +603,11 @@ eventResponses4 endp
 eventResponses5 proc imageID: DWORD
 	mov ecx, 0
 	mov Run, 0
+	;切换回场景3
 	.IF imageID == IMG_503
+		INVOKE mciSendString,ADDR closeTextBGM, NULL, 0, NULL
+		INVOKE mciSendString,ADDR BGMName2, NULL, 0, NULL
+		INVOKE mciSendString,ADDR playTextBGM, NULL, 0, NULL
 		mov Scenario, 3
 		INVOKE ResetpSequence
 		.IF Cross == 1
@@ -540,12 +621,16 @@ eventResponses5 proc imageID: DWORD
 		INVOKE CalculateThiefY3
 		mov StingPos, 300
 		mov Orientation, 0
+		INVOKE mciSendCommand,VolumeID,MCI_CLOSE,0,0
+		INVOKE PlayVolume,hWinMain,ADDR Volume3
 	.ELSEIF imageID == IMG_504	;外圈
 		.IF Rounds[0] == IMG_5020104
 			mov Rounds[0], IMG_5020101
 		.ELSE
 			inc Rounds[0]
 		.ENDIF
+		INVOKE mciSendCommand,VolumeID,MCI_CLOSE,0,0
+		INVOKE PlayVolume,hWinMain,ADDR Volume18
 		INVOKE CheckRounds
 	.ELSEIF imageID == IMG_505	;中圈
 		.IF Rounds[4] == IMG_5020204
@@ -553,6 +638,8 @@ eventResponses5 proc imageID: DWORD
 		.ELSE
 			inc Rounds[4]
 		.ENDIF
+		INVOKE mciSendCommand,VolumeID,MCI_CLOSE,0,0
+		INVOKE PlayVolume,hWinMain,ADDR Volume18
 		INVOKE CheckRounds
 	.ELSEIF imageID == IMG_506	;内圈
 		.IF Rounds[8] == IMG_5020304
@@ -560,21 +647,33 @@ eventResponses5 proc imageID: DWORD
 		.ELSE
 			inc Rounds[8]
 		.ENDIF
+		INVOKE mciSendCommand,VolumeID,MCI_CLOSE,0,0
+		INVOKE PlayVolume,hWinMain,ADDR Volume18
 		INVOKE CheckRounds
 	.ELSEIF imageID == IMG_50801
 		mov Cross, 1
 		INVOKE addTopSequence, IMG_50802
+		INVOKE mciSendCommand,VolumeID,MCI_CLOSE,0,0
+		INVOKE PlayVolume,hWinMain,ADDR Volume4
 	.ELSEIF imageID == IMG_50901
 		mov pearStep, 1
 		mov pSequence[0], IMG_50902
+		INVOKE mciSendCommand,VolumeID,MCI_CLOSE,0,0
+		INVOKE PlayVolume,hWinMain,ADDR Volume11
 	.ELSEIF imageID == IMG_50902
 		mov pearStep, 2
 		mov pSequence[0], IMG_50903
+		INVOKE mciSendCommand,VolumeID,MCI_CLOSE,0,0
+		INVOKE PlayVolume,hWinMain,ADDR Volume11
 	.ELSEIF imageID == IMG_50904
 		mov pearStep, 3
 		mov PPTstatus, 2
+		mov Pear, 1
+		mov get_collection, 1
 		mov pSequence[0], IMG_50905
 		mov pThief, 0
+		INVOKE mciSendCommand,VolumeID,MCI_CLOSE,0,0
+		INVOKE PlayVolume,hWinMain,ADDR Volume2
 		jmp _EXIT
 	.ELSE
 		jmp _EXIT
@@ -595,11 +694,16 @@ eventResponses6 proc imageID: DWORD
 	mov Run, 0
 	;门
 	.IF imageID == IMG_601
+		INVOKE mciSendString,ADDR closeTextBGM, NULL, 0, NULL
+		INVOKE mciSendString,ADDR BGMName2, NULL, 0, NULL
+		INVOKE mciSendString,ADDR playTextBGM, NULL, 0, NULL
 		mov Scenario, 3
 		INVOKE ResetpSequence
 		.IF Circle == 1
 			mov door3Open, 1
 			mov pSequence[0], IMG_305
+			INVOKE mciSendCommand,VolumeID,MCI_CLOSE,0,0
+			INVOKE PlayVolume,hWinMain,ADDR Volume17
 		.ELSE
 			mov pSequence[0], IMG_30401
 		.ENDIF
@@ -611,16 +715,22 @@ eventResponses6 proc imageID: DWORD
 		mov eax, Thief_Y
 		mov Click_Y, eax
 		mov Orientation, 0
+		INVOKE mciSendCommand,VolumeID,MCI_CLOSE,0,0
+		INVOKE PlayVolume,hWinMain,ADDR Volume3
 	;四个控制灯的把手
 	.ELSEIF imageID == IMG_60201
 		mov PassBy, IMG_60202
 		mov pThief, 0
 		mov cClick, 0
 		mov cJudge, 0
+		INVOKE mciSendCommand,VolumeID,MCI_CLOSE,0,0
+		INVOKE PlayVolume,hWinMain,ADDR Volume9
 		.IF GhostStep == 5
 			mov Light6, IMG_60903
 			mov LightCount, 15
 			inc GhostStep
+			;INVOKE mciSendCommand,VolumeID,MCI_CLOSE,0,0
+			INVOKE PlayVolume,hWinMain,ADDR Volume14
 		.ELSE
 			mov Light6, IMG_60901
 			mov LightCount, 15
@@ -630,10 +740,14 @@ eventResponses6 proc imageID: DWORD
 		mov pThief, 0
 		mov cClick, 0
 		mov cJudge, 0
+		INVOKE mciSendCommand,VolumeID,MCI_CLOSE,0,0
+		INVOKE PlayVolume,hWinMain,ADDR Volume9
 		.IF GhostStep == 4
 			mov Light6, IMG_60703
 			mov LightCount, 15
 			inc GhostStep
+			;INVOKE mciSendCommand,VolumeID,MCI_CLOSE,0,0
+			INVOKE PlayVolume,hWinMain,ADDR Volume14
 		.ELSE
 			mov Light6, IMG_60701
 			mov LightCount, 15
@@ -643,10 +757,14 @@ eventResponses6 proc imageID: DWORD
 		mov pThief, 0
 		mov cClick, 0
 		mov cJudge, 0
+		INVOKE mciSendCommand,VolumeID,MCI_CLOSE,0,0
+		INVOKE PlayVolume,hWinMain,ADDR Volume9
 		.IF GhostStep == 7
 			mov Light6, IMG_61003
 			mov LightCount, 15
 			inc GhostStep
+			;INVOKE mciSendCommand,VolumeID,MCI_CLOSE,0,0
+			INVOKE PlayVolume,hWinMain,ADDR Volume13
 		.ELSE
 			mov Light6, IMG_61001
 			mov LightCount, 15
@@ -656,10 +774,14 @@ eventResponses6 proc imageID: DWORD
 		mov pThief, 0
 		mov cClick, 0
 		mov cJudge, 0
+		INVOKE mciSendCommand,VolumeID,MCI_CLOSE,0,0
+		INVOKE PlayVolume,hWinMain,ADDR Volume9
 		.IF GhostStep == 6
 			mov Light6, IMG_60803
 			mov LightCount, 15
 			inc GhostStep
+			;INVOKE mciSendCommand,VolumeID,MCI_CLOSE,0,0
+			INVOKE PlayVolume,hWinMain,ADDR Volume14
 		.ELSE
 			mov Light6, IMG_60801
 			mov LightCount, 15
@@ -681,16 +803,27 @@ eventResponses6 proc imageID: DWORD
 			.ENDIF
 			inc ecx
 		.ENDW
+		INVOKE mciSendCommand,VolumeID,MCI_CLOSE,0,0
+		INVOKE PlayVolume,hWinMain,ADDR Volume4
 	;香蕉机关
 	.ELSEIF imageID == IMG_61301
 		INVOKE addTopSequence, IMG_61401
 		mov BananaShow, 1
+		INVOKE mciSendCommand,VolumeID,MCI_CLOSE,0,0
+		INVOKE PlayVolume,hWinMain,ADDR Volume17
 	;香蕉
 	.ELSEIF imageID == IMG_61402
 		;INVOKE addTopSequence, IMG_61404
 		mov pThief, 0
 		mov PPTstatus, 3
+		mov Banana, 1
+		INVOKE mciSendCommand,VolumeID,MCI_CLOSE,0,0
+		INVOKE PlayVolume,hWinMain,ADDR Volume2
+		mov get_collection, 1
 		INVOKE ChangepSequence, IMG_61401, IMG_61403
+		.IF Apple == 1 && Pear == 1
+			INVOKE PlayVolume,hWinMain,ADDR Volume5
+		.ENDIF
 		jmp _EXIT
 	.ELSE
 		jmp _EXIT
@@ -735,6 +868,12 @@ processScenario2 proc
 		mov Click_Y, 128
 		mov pSequence[0], IMG_30201
 		inc pSequenceLength
+		
+		INVOKE mciSendString,ADDR closeTextBGM, NULL, 0, NULL
+		INVOKE mciSendString,ADDR BGMName2, NULL, 0, NULL
+		INVOKE mciSendString,ADDR playTextBGM, NULL, 0, NULL
+        INVOKE mciSendCommand,VolumeID,MCI_CLOSE,0,0
+		INVOKE PlayVolume,hWinMain,ADDR Volume1
 	.ENDIF
 	ret
 processScenario2 endp
@@ -748,7 +887,7 @@ processScenario3 proc
 		INVOKE ChangepSequence, IMG_31802, -1
 		dec pSequenceLength
 		mov PPTstatus, 0
-		mov Bug, 1
+		mov get_collection, 0
 		mov Thief_X, 380
 		mov Click_X, 380
 		mov Thief_Y, 516
@@ -756,15 +895,19 @@ processScenario3 proc
 		INVOKE addTopSequence, IMG_305
 		INVOKE addTopSequence, IMG_30806
 		INVOKE addTopSequence, IMG_319
+		INVOKE addTopSequence, IMG_320
 		mov CollectionStep, 9
 		mov pThief, 1
 		mov Orientation, 1
+		INVOKE mciSendCommand,VolumeID,MCI_CLOSE,0,0
+		INVOKE PlayVolume,hWinMain,ADDR Volume15
 		jmp ending
 	;水獭移动ppt
 	.ELSEIF PPTstatus == 5
 		INVOKE ChangepSequence, IMG_316, -1
 		dec pSequenceLength
 		mov PPTstatus, 0
+		mov get_collection, 0
 		mov eax, Thief_X
 		mov Click_X, eax
 		mov eax, Thief_Y
@@ -865,6 +1008,7 @@ processScenario4 proc
 		mov Click_X, 380
 		mov Orientation, 1
 		mov PPTstatus, 0
+		mov get_collection, 0
 		jmp ending
 	.ENDIF
 	;提示
@@ -947,7 +1091,7 @@ processScenario5 proc
 		mov Click_X, 720
 		mov Orientation, 0
 		mov PPTstatus, 0
-		mov Pear, 1
+		mov get_collection, 0
 		mov pearStep, 4
 		jmp ending
 	.ENDIF
@@ -1000,13 +1144,13 @@ processScenario6 proc
 	.IF PPTstatus == 3
 		INVOKE ChangepSequence, IMG_61403, IMG_61404
 		mov PPTstatus, 0
+		mov get_collection, 0
 		mov pThief, 1
 		mov Thief_X, 485
 		mov Thief_Y, 510
 		mov Click_X, 485
 		mov Click_Y, 510
 		mov Orientation, 0
-		mov Banana, 1
 		mov BananaShow, 0
 		jmp ending
 	.ENDIF
@@ -1106,7 +1250,6 @@ eventResponsesBook endp
 
 processMouseEvent proc currentScenario:DWORD
 
-	local mciPlayParms:MCI_PLAY_PARMS
 	;已结束
 	.IF isFinished == 1
 		INVOKE clickPosition, 296, 407, 508, 472
@@ -1145,11 +1288,11 @@ processMouseEvent proc currentScenario:DWORD
 				.IF isPlayingBGM == 1
 					mov isPlayingBGM, 0
 					; stop the music
-					invoke mciSendCommand, Mp3DeviceID, MCI_PAUSE, MCI_NOTIFY, ADDR mciPlayParms
+					INVOKE mciSendString,ADDR pauseTextBGM, NULL, 0, NULL
 				.ELSEIF isPlayingBGM == 0
 					mov isPlayingBGM, 1
 					; restart the music
-					invoke mciSendCommand, Mp3DeviceID, MCI_RESUME, MCI_NOTIFY, ADDR mciPlayParms
+					INVOKE mciSendString,ADDR playTextBGM, NULL, 0, NULL
 				.ENDIF
 				jmp _EXIT
 			.ENDIF
@@ -1212,7 +1355,6 @@ processMouseEvent proc currentScenario:DWORD
 					INVOKE clickPosition, 740, 13, 788, 50
 					.IF eax == 1
 						mov check_solution, 1
-						mov book_page, IMG_801
 						mov cl, pThief
 						mov pThiefOld, cl
 						mov pThief, 0

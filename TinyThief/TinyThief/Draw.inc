@@ -298,6 +298,8 @@ DrawGhost proc
 			.IF GhostStep == 4
 				mov cClick, 1
 				INVOKE addTopSequence, IMG_60605
+				INVOKE mciSendCommand,VolumeID,MCI_CLOSE,0,0
+				INVOKE PlayVolume,hWinMain,ADDR Volume14
 				jmp _EXIT
 			.ENDIF
 		.ENDIF
@@ -398,7 +400,6 @@ DrawBook endp
 
 ;ªÊ÷∆Ω· ¯Õº
 DrawFinish proc
-	local count:DWORD
 	mov eax, IMG_700
 	mov esi, eax
 	mov edx, TYPE MyItem
@@ -408,7 +409,6 @@ DrawFinish proc
 	mov cClick, 1
 	
 	.IF Pear == 1
-		inc count
 		mov eax, IMG_701
 		mov esi, eax
 		mov edx, TYPE MyItem
@@ -416,7 +416,6 @@ DrawFinish proc
 		INVOKE DrawObject, esi, (ItemList[eax]).img, (ItemList[eax]).x1, (ItemList[eax]).y1,(ItemList[eax]).iwidth, (ItemList[eax]).iheight
 	.ENDIF
 	.IF Apple == 1
-		inc count
 		mov eax, IMG_702
 		mov esi, eax
 		mov edx, TYPE MyItem
@@ -424,7 +423,6 @@ DrawFinish proc
 		INVOKE DrawObject, esi, (ItemList[eax]).img, (ItemList[eax]).x1, (ItemList[eax]).y1,(ItemList[eax]).iwidth, (ItemList[eax]).iheight
 	.ENDIF
 	.IF Banana == 1
-		inc count
 		mov eax, IMG_703
 		mov esi, eax
 		mov edx, TYPE MyItem
@@ -432,7 +430,7 @@ DrawFinish proc
 		INVOKE DrawObject, esi, (ItemList[eax]).img, (ItemList[eax]).x1, (ItemList[eax]).y1,(ItemList[eax]).iwidth, (ItemList[eax]).iheight
 	.ENDIF
 
-	.IF count == 3
+	.IF Pear == 1 && Apple == 1 && Banana == 1
 		mov eax, IMG_705
 		mov esi, eax
 		mov edx, TYPE MyItem
@@ -483,6 +481,8 @@ DrawEyes proc
 		mov Thief_Y, 258
 		mov cJudge, 0
 		mov PassBy, IMG_31801
+		INVOKE mciSendCommand,VolumeID,MCI_CLOSE,0,0
+		INVOKE PlayVolume,hWinMain,ADDR Volume16
 	.ENDIF
 	mov count, 0
 	.WHILE count < 4
@@ -545,7 +545,7 @@ DrawProc proc
 	.ENDIF
 	.IF isStopped == 1
 		INVOKE DrawStopFlag
-	.ELSEIF check_collection == 1
+	.ELSEIF check_collection == 1 || get_collection == 1
 		INVOKE DrawStar
 	.ELSEIF check_solution == 1
 		INVOKE DrawBook
