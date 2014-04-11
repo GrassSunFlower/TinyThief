@@ -1,11 +1,10 @@
+;-----------------------------------------------------------|
+;															|
+;			本文件用于判断thief移动过程中的碰撞				|
+;															|
+;___________________________________________________________|
+
 .code
-
-;函数原型
-CalculateThiefY3 PROTO
-PlayBGM PROTO hWin:DWORD,NameOfFile:DWORD
-PlayVolume PROTO hWin:DWORD,NameOfFile:DWORD
-
-
 ;判断碰撞
 JudgeCollision proc ID:DWORD
 	mov eax, ID
@@ -26,7 +25,7 @@ JudgeCollision endp
 JudgeCollisions proc
 	mov PassBy, -1
 	.IF Scenario == 3
-		.IF CollectionStep == 0
+		.IF CollectionStep == 0	
 			mov eax, IMG_30801
 		.ELSEIF CollectionStep == 1
 			mov eax, IMG_30803
@@ -42,6 +41,7 @@ JudgeCollisions proc
 			jmp	_EXIT
 		.ENDIF
 		_FinishStep:
+		;上下楼梯
 		.IF Thief_Y < 150
 			INVOKE JudgeCollision, IMG_30601
 			.IF PassBy != -1
@@ -70,7 +70,7 @@ JudgeCollisions proc
 			.ENDIF
 			inc ecx
 		.ENDW
-		.IF Triangle == 0	;如果三角已捡起来了则不再判断
+		.IF Triangle == 0			;如果三角已捡起来了则不再判断
 			INVOKE JudgeCollision, IMG_42001
 			.IF PassBy != -1
 				jmp	_EXIT
@@ -92,15 +92,15 @@ JudgeCollisions proc
 			.ENDIF
 			inc ecx
 		.ENDW
-		;处理梨子拾取过程
+
+		;梨子拾取
 		.IF pearStep == 2
 			INVOKE JudgeCollision, IMG_50904
-
 		.ENDIF
 		.IF PassBy != -1
 			jmp	_EXIT
 		.ENDIF
-		.IF Cross == 0	;如果十字已捡起来了则不再判断
+		.IF Cross == 0				;如果十字已捡起来了则不再判断
 		INVOKE JudgeCollision, IMG_50801
 			.IF PassBy != -1
 				jmp	_EXIT
@@ -137,6 +137,7 @@ JudgeCollisions proc
 			add ecx, 2
 		.ENDW
 	.ENDIF
+	;对pSequence中的物体进行检测
 	mov ecx, 0
 	.WHILE ecx < pSequenceLength
 		mov ebx, pSequence[ecx * 4]
@@ -155,272 +156,3 @@ JudgeCollisions proc
 _EXIT:
 	ret
 JudgeCollisions endp
-
-ThiefMove proc
-	local MAX_X:DWORD
-	local MIN_X:DWORD
-	mov MAX_X, 735
-	mov MIN_X, 35
-	.IF Scenario == 1
-	.ELSEIF Scenario == 2
-	.ELSEIF Scenario == 3
-		.IF Thief_Y >= 128 && Thief_Y <= 148 && door3Open == 0	;门未开的上
-			mov MAX_X, 545
-			mov MIN_X, 55
-		.ELSEIF Thief_Y == 265		;右中部
-			mov MAX_X, 735
-			mov MIN_X, 630
-		.ELSEIF Thief_Y == 420		;石像第一层
-			mov MAX_X, 430
-			mov MIN_X, 345
-		.ELSEIF Thief_Y == 368		;石像第二层
-			mov MAX_X, 430
-			mov MIN_X, 345
-		.ELSEIF Thief_Y == 313		;石像第三层
-			mov MAX_X, 430
-			mov MIN_X, 345
-		.ELSEIF Thief_Y == 258		;石像第三层
-			mov MAX_X, 430
-			mov MIN_X, 345
-		.ENDIF
-	.ELSEIF Scenario == 4
-		.IF Thief_Y == 510		;下
-			mov MAX_X, 755
-			mov MIN_X, 70
-		.ELSEIF Thief_Y == 293	;左中
-			mov MAX_X, 290
-			mov MIN_X, 70
-		.ELSEIF Thief_Y == 290	;右中
-			mov MAX_X, 755
-			mov MIN_X, 535
-		.ELSEIF Thief_Y == 340	;中
-			mov MAX_X, 452
-			mov MIN_X, 370
-		.ELSEIF Thief_Y == 151	;左上
-			mov MAX_X, 398
-			mov MIN_X, 70
-		.ELSEIF Thief_Y == 146	;右上
-			mov MAX_X, 755
-			mov MIN_X, 484
-		.ENDIF
-	.ELSEIF Scenario == 5
-		.IF door5Open == 0	;门未开的上
-			mov MAX_X, 545
-			mov MIN_X, 55
-		.ELSE
-			mov MAX_X, 745
-			mov MIN_X, 55
-		.ENDIF
-	.ELSEIF Scenario == 6
-		mov MAX_X, 745
-		mov MIN_X, 55
-	.ENDIF
-	mov ebx, MAX_X
-	.IF Click_X > ebx
-		mov Click_X, ebx
-	.ENDIF
-	mov ebx, MIN_X
-	.IF Click_X < ebx
-		mov Click_X, ebx
-	.ENDIF
-	;普通移动处理
-	mov ebx, Click_X
-	.IF ebx > Thief_X
-		add Thief_X, 5
-		.IF ebx > Thief_X
-			mov Run, 1
-		.ELSE
-			mov Run, 0
-			mov ebx, Thief_X
-			mov Click_X, ebx
-		.ENDIF
-	.ELSEIF ebx < Thief_X
-		sub Thief_X, 5
-		.IF ebx < Thief_X
-			mov Run, 1
-		.ELSE
-			mov Run, 0
-			mov ebx, Thief_X
-			mov Click_X, ebx
-		.ENDIF
-		mov Run, 0
-	.ENDIF
-	.IF Scenario == 3
-		INVOKE CalculateThiefY3
-	.ENDIF
-	mov eax, Thief_X
-	.IF eax != Click_X
-		mov Run, 1
-	.ENDIF
-	ret
-ThiefMove endp
-
-; #########################################################################
-
-;将pSequence数组全部重置为-1
-ResetpSequence proc
-	mov ecx, 0
-	.WHILE ecx < pSequenceLength
-		mov pSequence[ecx*4], -1
-		inc ecx
-	.ENDW
-	mov pSequenceLength, 0
-	ret
-ResetpSequence endp
-
-; #########################################################################
-
-;将某个图添加到pSequence序列尾
-addTopSequence proc, imgID
-	mov ebx, imgID
-	mov ecx, pSequenceLength
-	mov pSequence[ecx*4], ebx
-	inc pSequenceLength
-	ret
-addTopSequence endp
-
-; #########################################################################
-
-;在pSequence序列中查找图
-FindpSequence proc, imgID
-	mov eax, 0
-	mov ecx, 0
-	.WHILE ecx < pSequenceLength
-		mov ebx, pSequence[ecx * 4]
-		.IF ebx == imgID
-			mov eax, 1
-		.ENDIF
-		inc ecx
-	.ENDW	
-	ret
-FindpSequence endp
-
-; #########################################################################
-
-;将pSequence序列中的某个值des修改为src
-ChangepSequence proc, des, src
-	mov ecx, 0
-	mov edx, src
-	.WHILE ecx < pSequenceLength
-		mov ebx, pSequence[ecx * 4]
-		.IF ebx == des
-			mov pSequence[ecx * 4], edx
-			mov eax, 1
-		.ENDIF
-		inc ecx
-	.ENDW	
-	ret
-ChangepSequence endp
-
-; #########################################################################
-
-;播放逃跑ppt
-RunForYourLife proc
-	
-	.IF Thief_X > 105 
-		sub Thief_X, 5
-	.ELSE
-		mov StingPos, 300
-		mov cClick, 1
-		mov cJudge, 1
-		mov Scenario, 3
-		INVOKE ResetpSequence
-		mov pSequence[0], IMG_30301
-		mov pSequenceLength, 1
-		mov Thief_X, 333
-		mov Thief_Y, 148
-		INVOKE CalculateThiefY3
-		mov Click_X, 333
-		mov eax, Thief_Y
-		mov Click_Y, eax
-		INVOKE mciSendString,ADDR closeTextBGM, NULL, 0, NULL
-		INVOKE mciSendString,ADDR BGMName2, NULL, 0, NULL
-		INVOKE mciSendString,ADDR playTextBGM, NULL, 0, NULL
-	.ENDIF
-	ret
-RunForYourLife endp
-
-; #########################################################################
-
-;场景3的非水平移动
-CalculateThiefY3 proc 
-	;左上的楼梯
-	.IF Thief_Y >= 128 && Thief_Y <= 148 && Thief_X >= 170 && Thief_X <= 195
-		mov eax, Thief_X
-		mov edx, 0
-		sub eax, 170
-		mov ebx, 5
-		div ebx
-		mov ebx, 4
-		mul ebx
-		add eax, 128
-		mov Thief_Y, eax
-	;上的斜坡
-	.ELSEIF Thief_Y < 150 && Thief_X > 195
-		mov eax, Thief_X
-		mov edx, 0
-		sub eax, 195
-		mov ebx, 50
-		div ebx
-		mov ebx, 1
-		mul ebx
-		mov ebx, 148
-		sub ebx, eax
-		mov Thief_Y, ebx
-	;右下的楼梯
-	.ELSEIF Thief_Y >= 452 && Thief_Y <= 516 && Thief_X <= 680 && Thief_X >= 600
-		mov eax, Thief_X
-		mov edx, 0
-		sub eax, 600
-		mov ebx, 5
-		div ebx
-		mov ebx, 4
-		mul ebx
-		mov ebx, 516
-		sub ebx, eax
-		mov Thief_Y, ebx
-	.ENDIF
-	ret
-CalculateThiefY3 endp
-
-; #########################################################################
-
-;播放BGM
-PlayBGM proc hWin:DWORD,NameOfFile:DWORD
-
-      local mciOpenParms:MCI_OPEN_PARMS,mciPlayParms:MCI_PLAY_PARMS
-
-            mov eax,hWin        
-            mov mciPlayParms.dwCallback,eax
-            mov eax,OFFSET Mp3Device
-            mov mciOpenParms.lpstrDeviceType,eax
-            mov eax,NameOfFile
-            mov mciOpenParms.lpstrElementName,eax
-            INVOKE mciSendCommand,0,MCI_OPEN,MCI_OPEN_TYPE or MCI_OPEN_ELEMENT,ADDR mciOpenParms
-            mov eax,mciOpenParms.wDeviceID
-            mov BGMID,eax
-            INVOKE mciSendCommand,BGMID,MCI_PLAY,MCI_NOTIFY,ADDR mciPlayParms
-            ret  
-
-PlayBGM endp
-
-; #########################################################################
-
-;播放音效
-PlayVolume proc hWin:DWORD,NameOfFile:DWORD
-
-      local mciOpenParms:MCI_OPEN_PARMS,mciPlayParms:MCI_PLAY_PARMS
-
-            mov eax,hWin        
-            mov mciPlayParms.dwCallback,eax
-            mov eax,OFFSET Mp3Device
-            mov mciOpenParms.lpstrDeviceType,eax
-            mov eax,NameOfFile
-            mov mciOpenParms.lpstrElementName,eax
-            INVOKE mciSendCommand,0,MCI_OPEN,MCI_OPEN_TYPE or MCI_OPEN_ELEMENT,ADDR mciOpenParms
-            mov eax,mciOpenParms.wDeviceID
-            mov VolumeID,eax
-            INVOKE mciSendCommand,VolumeID,MCI_PLAY,0,ADDR mciPlayParms
-            ret  
-
-PlayVolume endp

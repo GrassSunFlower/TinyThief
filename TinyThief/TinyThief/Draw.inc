@@ -1,9 +1,15 @@
+;-----------------------------------------------------------|
+;															|
+;					本文件用于游戏画面的绘制				|
+;															|
+;___________________________________________________________|
 
 .code
 
+; #########################################################################
+
 ;绘制物品
 DrawObject proc bID:DWORD, img:DWORD, xDesc:DWORD, yDesc:DWORD, sWidth:DWORD, sHeight:DWORD
-
 
 	.IF bID == IMG_30202
 		mov xDesc, 198
@@ -23,6 +29,8 @@ DrawObject proc bID:DWORD, img:DWORD, xDesc:DWORD, yDesc:DWORD, sWidth:DWORD, sH
 	ret
 DrawObject endp
 
+; #########################################################################
+
 ;绘制背景透明的物品
 DrawTransparentObject proc bID:DWORD, img:DWORD, xDesc:DWORD, yDesc:DWORD, sWidth:DWORD, sHeight:DWORD
 
@@ -41,9 +49,12 @@ DrawTransparentObject proc bID:DWORD, img:DWORD, xDesc:DWORD, yDesc:DWORD, sWidt
 	ret
 DrawTransparentObject endp
 
+; #########################################################################
+
 ;绘制盗贼
-DrawThief proc 
+DrawThief proc
 	local thiefX
+
 	mov eax, Thief_X
 	mov thiefX, eax
 	sub thiefX, 16
@@ -62,6 +73,8 @@ DrawThief proc
     ret
 
 DrawThief endp
+
+; #########################################################################
 
 ;绘制背景
 DrawBackground proc
@@ -82,6 +95,8 @@ DrawBackground proc
 	.ENDIF
 	ret
 DrawBackground endp
+
+; #########################################################################
 
 ;绘制其余物品
 DrawItems proc
@@ -107,6 +122,8 @@ DrawItems proc
 	ret
 DrawItems endp
 
+; #########################################################################
+
 ;绘制Icons
 DrawIcons proc
 	local i:DWORD
@@ -130,6 +147,8 @@ DrawIcons proc
 	.ENDW
 	ret
 DrawIcons endp
+
+; #########################################################################
 
 ;绘制收集品
 DrawCollection proc
@@ -157,6 +176,8 @@ DrawCollection proc
 	ret
 DrawCollection endp
 
+; #########################################################################
+
 ;绘制提示
 DrawPassBy proc
 	.IF PassBy == -1
@@ -175,6 +196,8 @@ DrawPassBy proc
 	ret
 DrawPassBy endp
 
+; #########################################################################
+
 ;绘制场景五的倒刺
 DrawSting proc
 	mov eax, IMG_501
@@ -184,12 +207,16 @@ DrawSting proc
 	mov ebx, (ItemList[eax]).y1
 	sub ebx, StingPos
 	INVOKE DrawTransparentObject, esi, (ItemList[eax]).img, (ItemList[eax]).x1, ebx, (ItemList[eax]).iwidth, (ItemList[eax]).iheight
-	.IF StingPos == 0
+	.IF StingPos == 0 && cClick == 1
 		mov PassBy, -1
 		mov cJudge, 0
 		mov cClick, 0
 		mov Click_X, 105
 		mov Orientation, 1
+		INVOKE mciSendString,ADDR closeTextBGM, NULL, 0, NULL
+		INVOKE RunForYourLife
+		jmp _EXIT
+	.ELSEIF StingPos == 0 && cClick == 0
 		INVOKE RunForYourLife
 		jmp _EXIT
 	.ENDIF
@@ -199,6 +226,8 @@ DrawSting proc
 _EXIT:
 	ret
 DrawSting endp
+
+; #########################################################################
 
 ;绘制场景五的圈
 DrawRounds proc
@@ -222,6 +251,8 @@ DrawRounds proc
 _EXIT:
 	ret
 DrawRounds endp
+
+; #########################################################################
 
 ;绘制场景6的灯
 DrawLight proc
@@ -248,6 +279,9 @@ _EXIT:
 	ret
 DrawLight endp
 
+; #########################################################################
+
+;绘制鬼
 DrawGhost proc
 	.IF Light6 == IMG_60703 || Light6 == IMG_60803 || Light6 == IMG_60903 || Light6 == IMG_61003
 		jmp _EXIT
@@ -309,7 +343,9 @@ _EXIT:
 	ret
 DrawGhost endp
 
-;绘制暂停
+; #########################################################################
+
+;绘制暂停提示
 DrawStopFlag proc
 	
 	.IF isPlayingBGM == 1
@@ -324,6 +360,8 @@ DrawStopFlag proc
 
 	ret
 DrawStopFlag endp
+
+; #########################################################################
 
 ;绘制所得星星
 DrawStar proc
@@ -388,6 +426,8 @@ DrawStar proc
 	ret
 DrawStar endp
 
+; #########################################################################
+
 ;绘制提示书
 DrawBook proc
 	mov eax, book_page
@@ -397,6 +437,8 @@ DrawBook proc
 	INVOKE DrawTransparentObject, esi, (ItemList[eax]).img, (ItemList[eax]).x1, (ItemList[eax]).y1,(ItemList[eax]).iwidth, (ItemList[eax]).iheight
 	ret
 DrawBook endp
+
+; #########################################################################
 
 ;绘制结束图
 DrawFinish proc
@@ -454,6 +496,8 @@ DrawFinish proc
 	ret
 DrawFinish endp
 
+; #########################################################################
+
 ;绘制场景三第二层的孔
 DrawHoles proc
 	LOCAL count:DWORD
@@ -470,6 +514,8 @@ DrawHoles proc
 _EXIT:
 	ret
 DrawHoles endp
+
+; #########################################################################
 
 ;绘制场景三第三层的眼睛
 DrawEyes proc
@@ -505,6 +551,9 @@ _EXIT:
 	ret
 DrawEyes endp
 
+; #########################################################################
+
+;进行画面绘制的函数
 DrawProc proc
 
 	INVOKE DrawBackground

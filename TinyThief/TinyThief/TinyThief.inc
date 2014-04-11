@@ -1,8 +1,9 @@
-;----------------------------------------------------------------
+;-----------------------------------------------------------|
+;															|
+;					INCLUDE头文件定义						|
+;															|
+;___________________________________________________________|
 
-;Include文件定义
-
-;----------------------------------------------------------------
 INCLUDELIB kernel32.lib
 INCLUDELIB user32.lib
 INCLUDELIB gdi32.lib
@@ -22,7 +23,9 @@ INCLUDE masm32.inc
 INCLUDE comdlg32.inc
 INCLUDE shell32.inc
 
-INCLUDE Global.inc
-INCLUDE Collision.inc
-INCLUDE Draw.inc
+INCLUDE global.inc
+INCLUDE init.inc
+INCLUDE util.inc
+INCLUDE collision.inc
+INCLUDE draw.inc
 INCLUDE mouse.inc

@@ -1,277 +1,6 @@
-
+.code
 ; #########################################################################
 
-clickPosition proc left: DWORD, top: DWORD, right: DWORD, bottom: DWORD
-	mov eax, 0
-	mov ebx, left
-	mov ecx, right
-	.IF Click_X > ebx && Click_X < ecx
-		mov ebx, top
-		mov ecx, bottom
-		.IF Click_Y > ebx && Click_Y < ecx
-			mov eax, 1
-		.ENDIF
-	.ENDIF
-	ret
-clickPosition endp
-
-; #########################################################################
-
-resetIcon proc
-	mov eax, IMG_415
-	mov ecx, 0
-	.WHILE ecx < 5
-		mov drawIcon[ecx*4], eax
-		add eax, 1
-		add ecx, 1
-	.ENDW
-	ret
-resetIcon endp
-
-; #########################################################################
-
-removeIcon proc imageID: DWORD
-	mov ecx, 0
-	mov ebx, imageID
-	.WHILE drawIcon[ecx*4] != ebx
-		add ecx, 1
-	.ENDW
-	.WHILE ecx < 4 && drawIcon[ecx*4] != -1
-		mov ebx, ecx
-		add ebx, 1
-		mov edx, drawIcon[ebx*4]
-		mov drawIcon[ecx*4], edx
-		add ecx, 1
-	.ENDW
-	.IF ecx == 4
-		mov drawIcon[ecx*4], -1
-	.ENDIF
-	ret
-removeIcon endp
-
-; #########################################################################
-
-restartGame proc
-	mov cClick, 1
-	mov cJudge, 1
-	mov pThief, 1
-	mov isStopped, 0
-	mov isFinished, 0
-
-	mov Orientation, 0
-	mov Run, 0
-	mov PassBy, -1
-	INVOKE ResetpSequence 
-	INVOKE resetIcon
-
-	mov ecx, 0
-	.WHILE ecx < 5
-		mov player[ecx*4], 0
-		add ecx, 1
-	.ENDW
-
-	mov step, 0
-	mov pearStep, 0
-	mov PPTstatus, 0
-	mov StingPos, 300
-
-	mov Rounds[0], IMG_5020101
-	mov Rounds[4], IMG_5020201
-	mov Rounds[8], IMG_5020301
-	mov Light6, -1
-	mov LightCount, 0
-	mov GhostCount, 0
-	mov GhostStep, -1
-	mov CollectionStep, 0
-
-	mov Apple, 0
-	mov AppleShow, 0
-	mov Banana, 0
-	mov BananaShow, 0
-	mov Pear, 0
-	mov Dog, 0
-	mov Bug, 0
-	mov Triangle, 0
-	mov Cross, 0	
-	mov Circle, 0
-	mov CircleShow, 0
-	mov door3Open, 0
-	mov door5Open, 0
-
-	mov Scenario, 3
-	INVOKE mciSendString,ADDR closeTextBGM, NULL, 0, NULL
-	INVOKE mciSendString,ADDR BGMName2, NULL, 0, NULL
-	INVOKE mciSendString,ADDR playTextBGM, NULL, 0, NULL
-    INVOKE mciSendCommand,VolumeID,MCI_CLOSE,0,0
-	INVOKE PlayVolume,hWinMain,ADDR Volume1
-	mov Thief_X, 79
-	mov Thief_Y, 128
-	mov Click_X, 79
-	mov Click_Y, 128
-	mov pSequence[0], IMG_30201
-	inc pSequenceLength
-
-restartGame endp
-
-; #########################################################################
-
-isCorrectOrder proc
-	mov eax, 1
-	mov ecx, 0
-	.WHILE ecx < 5
-		mov ebx, player[ecx*4]
-		.IF correctOrder[ecx*4] != ebx
-			mov eax, 0
-			ret
-		.ENDIF
-		add ecx, 1
-	.ENDW
-	ret
-isCorrectOrder endp
-
-; #########################################################################
-;检查场景5的圈是否正确
-CheckRounds proc
-	.IF Rounds[0] == IMG_5020102 && Rounds[4] == IMG_5020203 && Rounds[8] == IMG_5020304
-		mov door5Open, 1
-		INVOKE addTopSequence, IMG_507
-		INVOKE mciSendString,ADDR closeTextBGM, NULL, 0, NULL
-		INVOKE ChangepSequence, IMG_30903, IMG_30904
-		INVOKE PlayVolume,hWinMain,ADDR Volume17
-	.ENDIF
-	ret
-CheckRounds endp
-
-; #########################################################################
-
-doorTransition proc imageID: DWORD
-	.IF imageID == IMG_401
-		mov Thief_X, 120
-		mov Thief_Y, 293
-		mov PassBy, -1
-		mov Orientation, 0
-	.ELSEIF imageID == IMG_402
-		mov Thief_X, 465
-		mov Thief_Y, 510
-		mov PassBy, -1
-		mov Orientation, 0
-	.ELSEIF imageID == IMG_403
-		mov Thief_X, 575
-		mov Thief_Y, 290
-		mov PassBy, -1
-		mov Orientation, 0
-	.ELSEIF imageID == IMG_404
-		mov Thief_X, 400
-		mov Thief_Y, 340
-		mov PassBy, -1
-		mov Orientation, 0
-	.ELSEIF imageID == IMG_405
-		mov Thief_X, 702
-		mov Thief_Y, 146
-		mov PassBy, -1
-		mov Orientation, 1
-	.ELSEIF imageID == IMG_406
-		mov Thief_X, 575
-		mov Thief_Y, 510
-		mov PassBy, -1
-		mov Orientation, 1
-	.ELSEIF imageID == IMG_407
-		mov Thief_X, 248
-		mov Thief_Y, 510
-		mov PassBy, -1
-		mov Orientation, 1
-	.ELSEIF imageID == IMG_408
-		mov Thief_X, 700
-		mov Thief_Y, 510
-		mov PassBy, -1
-		mov Orientation, 1
-	.ELSEIF imageID == IMG_409
-		mov Thief_X, 349
-		mov Thief_Y, 151
-		mov PassBy, -1
-		mov Orientation, 1
-	.ELSEIF imageID == IMG_410	;切换回场景3
-		INVOKE mciSendString,ADDR closeTextBGM, NULL, 0, NULL
-		INVOKE mciSendString,ADDR BGMName2, NULL, 0, NULL
-		INVOKE mciSendString,ADDR playTextBGM, NULL, 0, NULL
-		mov Thief_X, 270
-		mov Thief_Y, 148
-		INVOKE CalculateThiefY3
-		mov Click_X, 270
-		mov eax, Thief_Y
-		mov Click_Y, eax
-		mov Scenario, 3
-		INVOKE ResetpSequence
-		.IF Triangle == 1
-			mov pSequence[0], IMG_30301
-			mov pSequenceLength, 1
-		.ELSE
-			mov pSequence[0], IMG_30201
-			mov pSequenceLength, 1
-			mov AppleShow, 0
-		.ENDIF
-	.ELSEIF imageID == IMG_411
-		mov Thief_X, 700
-		mov Thief_Y, 290
-		mov PassBy, -1
-		mov Orientation, 1
-	.ELSEIF imageID == IMG_412
-		mov Thief_X, 400
-		mov Thief_Y, 340
-		mov PassBy, -1
-		mov Orientation, 0
-	.ELSEIF imageID == IMG_413
-		mov Thief_X, 248
-		mov PassBy, -1
-		mov Orientation, 1
-	.ELSEIF imageID == IMG_414
-		mov Thief_X, 565
-		mov PassBy, -1
-		mov Orientation, 0
-	.ENDIF
-	ret
-doorTransition endp
-
-; #########################################################################
-
-CheckHoles proc
-	mov ecx, 0
-	.WHILE ecx < 7
-		mov ebx, Holes[ecx*4]
-		.IF CorrectHoles[ecx*4] != ebx
-			ret
-		.ENDIF
-		add ecx, 1
-	.ENDW
-	mov CollectionStep, 6
-	INVOKE ChangepSequence, IMG_30903, IMG_30904
-	INVOKE mciSendCommand,VolumeID,MCI_CLOSE,0,0
-	INVOKE PlayVolume,hWinMain,ADDR Volume16
-	mov Thief_Y, 313
-	mov Holes[12], IMG_315
-	ret
-CheckHoles endp
-
-; #########################################################################
-
-MoveHoles proc ID: DWORD
-	mov ebx, ID
-	.IF Holes[ebx*4] != IMG_31404
-		mov eax, Holes[ebx*4]
-		mov ecx, 0
-		.WHILE ecx < 7
-			.IF Holes[ecx*4] == IMG_31404
-				mov Holes[ecx*4], eax
-				mov Holes[ebx*4], IMG_31404
-			.ENDIF
-			inc ecx
-		.ENDW
-	.ENDIF
-	INVOKE CheckHoles
-	ret
-MoveHoles endp
-
-; #########################################################################
 ;针对场景3的事件响应
 eventResponses3 proc imageID: DWORD
 	mov ecx, 0
@@ -281,6 +10,8 @@ eventResponses3 proc imageID: DWORD
 		INVOKE mciSendString,ADDR closeTextBGM, NULL, 0, NULL
 		INVOKE mciSendString,ADDR BGMName3, NULL, 0, NULL
 		INVOKE mciSendString,ADDR playTextBGM, NULL, 0, NULL
+		INVOKE mciSendCommand,VolumeID,MCI_CLOSE,0,0
+		INVOKE PlayVolume,hWinMain,ADDR Volume3
 		INVOKE ResetpSequence
 		mov Scenario, 4
 		mov Thief_X, 120
@@ -297,10 +28,10 @@ eventResponses3 proc imageID: DWORD
 				add pSequenceLength, 1
 			.ENDIF
 		.ENDIF
-		INVOKE mciSendCommand,VolumeID,MCI_CLOSE,0,0
-		INVOKE PlayVolume,hWinMain,ADDR Volume3
 	;到场景5的门
 	.ELSEIF imageID == IMG_30302
+		INVOKE mciSendCommand,VolumeID,MCI_CLOSE,0,0
+		INVOKE PlayVolume,hWinMain,ADDR Volume3
 		INVOKE ResetpSequence
 		mov Scenario, 5
 		mov Thief_X, 120
@@ -326,21 +57,19 @@ eventResponses3 proc imageID: DWORD
 			mov pSequence[4], IMG_507
 			inc pSequenceLength
 		.ELSE
-			INVOKE mciSendString,ADDR Volume12, NULL, 0, NULL
+			INVOKE mciSendString,ADDR BGMName4, NULL, 0, NULL
 			INVOKE mciSendString,ADDR playTextBGM, NULL, 0, NULL
 		.ENDIF
-		INVOKE mciSendCommand,VolumeID,MCI_CLOSE,0,0
-		INVOKE PlayVolume,hWinMain,ADDR Volume3
 	;到场景6的门
 	.ELSEIF imageID == IMG_30402
+		INVOKE mciSendString,ADDR closeTextBGM, NULL, 0, NULL
+		INVOKE mciSendCommand,VolumeID,MCI_CLOSE,0,0
+		INVOKE PlayVolume,hWinMain,ADDR Volume3
 		INVOKE ResetpSequence
 		mov Scenario, 6
 		mov Thief_X, 675
 		mov Thief_Y, 510
 		mov Orientation, 1
-		INVOKE mciSendString,ADDR closeTextBGM, NULL, 0, NULL
-		INVOKE mciSendCommand,VolumeID,MCI_CLOSE,0,0
-		INVOKE PlayVolume,hWinMain,ADDR Volume3
 	;上下的门之上
 	.ELSEIF imageID == IMG_30601
 		mov Thief_X, 720
@@ -391,6 +120,7 @@ eventResponses3 proc imageID: DWORD
 		INVOKE addTopSequence, IMG_30901
 		INVOKE mciSendCommand,VolumeID,MCI_CLOSE,0,0
 		INVOKE PlayVolume,hWinMain,ADDR Volume8
+		INVOKE PlayVolume,hWinMain,ADDR Volume14
 	;开启第一层
 	.ELSEIF imageID == IMG_310
 		INVOKE ChangepSequence, IMG_30901, IMG_30902
@@ -518,8 +248,6 @@ eventResponses3 proc imageID: DWORD
 		INVOKE mciSendCommand,VolumeID,MCI_CLOSE,0,0
 		INVOKE PlayVolume,hWinMain,ADDR Volume6
 		jmp _EXIT
-		
-		;INVOKE MessageBox, NULL, OFFSET szText,OFFSET szCaption, MB_OK
 	.ELSE
 		jmp _EXIT
 	.ENDIF
@@ -599,6 +327,7 @@ _EXIT:
 eventResponses4 endp
 
 ; #########################################################################
+
 ;针对场景5的事件响应
 eventResponses5 proc imageID: DWORD
 	mov ecx, 0
@@ -715,7 +444,7 @@ eventResponses6 proc imageID: DWORD
 		mov eax, Thief_Y
 		mov Click_Y, eax
 		mov Orientation, 0
-		INVOKE mciSendCommand,VolumeID,MCI_CLOSE,0,0
+		;INVOKE mciSendCommand,VolumeID,MCI_CLOSE,0,0
 		INVOKE PlayVolume,hWinMain,ADDR Volume3
 	;四个控制灯的把手
 	.ELSEIF imageID == IMG_60201
@@ -789,6 +518,8 @@ eventResponses6 proc imageID: DWORD
 	;拿圆
 	.ELSEIF imageID == IMG_61102
 		mov Circle, 1
+		INVOKE mciSendCommand,VolumeID,MCI_CLOSE,0,0
+		INVOKE PlayVolume,hWinMain,ADDR Volume4
 		mov ecx, 0
 		.WHILE ecx < pSequenceLength
 			mov ebx, pSequence[ecx * 4]
@@ -803,8 +534,6 @@ eventResponses6 proc imageID: DWORD
 			.ENDIF
 			inc ecx
 		.ENDW
-		INVOKE mciSendCommand,VolumeID,MCI_CLOSE,0,0
-		INVOKE PlayVolume,hWinMain,ADDR Volume4
 	;香蕉机关
 	.ELSEIF imageID == IMG_61301
 		INVOKE addTopSequence, IMG_61401
@@ -1140,7 +869,7 @@ processScenario5 endp
 
 processScenario6 proc
 	LOCAL imgID: DWORD, count: DWORD
-	;
+	;拿香蕉的ppt
 	.IF PPTstatus == 3
 		INVOKE ChangepSequence, IMG_61403, IMG_61404
 		mov PPTstatus, 0
@@ -1249,7 +978,6 @@ eventResponsesBook endp
 ; #########################################################################
 
 processMouseEvent proc currentScenario:DWORD
-
 	;已结束
 	.IF isFinished == 1
 		INVOKE clickPosition, 296, 407, 508, 472
